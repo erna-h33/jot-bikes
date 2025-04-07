@@ -7,6 +7,9 @@ const baseQuery = fetchBaseQuery({
     const token = getState().auth.userInfo?.token;
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
+      console.log('Setting Authorization header with token:', token);
+    } else {
+      console.log('No token found in Redux store');
     }
     return headers;
   },
@@ -34,3 +37,39 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
 // Export the hook with a clear name
 export const { useGetUsersQuery } = usersApiSlice;
+
+export const authApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: '/api/users/login',
+        method: 'POST',
+        body: credentials,
+        credentials: 'include',
+      }),
+    }),
+    register: builder.mutation({
+      query: (userData) => ({
+        url: '/api/users',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: '/api/users/logout',
+        method: 'POST',
+        credentials: 'include',
+      }),
+    }),
+    getProfile: builder.query({
+      query: () => ({
+        url: '/api/users/profile',
+        credentials: 'include',
+      }),
+    }),
+  }),
+});
+
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useGetProfileQuery } =
+  authApiSlice;
