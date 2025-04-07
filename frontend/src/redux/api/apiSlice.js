@@ -18,9 +18,7 @@ export const apiSlice = createApi({
   endpoints: () => ({}),
 });
 
-// Export hooks for usage in components
-export const { useGetUsersQuery } = apiSlice;
-
+// This is the correct way to inject endpoints
 export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
@@ -34,4 +32,5 @@ export const usersApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetUsersQuery: useGetUsersQueryFromUsersApiSlice } = usersApiSlice;
+// Export the hook with a clear name
+export const { useGetUsersQuery } = usersApiSlice;
