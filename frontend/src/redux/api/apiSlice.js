@@ -1,9 +1,8 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
-import { BASE_URL } from '../features/constants';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: BASE_URL,
-  credentials: 'include', // Include credentials in all requests
+  baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  credentials: 'include',
 });
 
 export const apiSlice = createApi({
