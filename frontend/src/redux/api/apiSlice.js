@@ -15,7 +15,14 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   baseQuery,
   tagTypes: ['Product', 'Order', 'User', 'Category'],
-  endpoints: () => ({
+  endpoints: () => ({}),
+});
+
+// Export hooks for usage in components
+export const { useGetUsersQuery } = apiSlice;
+
+export const usersApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => ({
         url: '/api/users',
@@ -23,5 +30,8 @@ export const apiSlice = createApi({
       }),
       providesTags: ['User'],
     }),
+    // Add other user-related endpoints here
   }),
 });
+
+export const { useGetUsersQuery: useGetUsersQueryFromUsersApiSlice } = usersApiSlice;
