@@ -43,11 +43,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Mount routes
 app.use('/api/users', userRoutes);
 
+// Test endpoint
 app.get('/api/test', (req, res) => {
   res.json({ message: 'API is working!' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
 });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
