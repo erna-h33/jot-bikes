@@ -100,8 +100,21 @@ const logoutUser = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({});
-  res.json(users);
+  try {
+    console.log('Getting all users. Request user:', {
+      id: req.user._id,
+      isAdmin: req.user.isAdmin,
+    });
+
+    const users = await User.find({}).select('-password');
+    console.log(`Found ${users.length} users`);
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error in getUsers:', error);
+    res.status(500);
+    throw new Error(`Error fetching users: ${error.message}`);
+  }
 });
 
 // @desc    Get user profile
