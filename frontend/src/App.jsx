@@ -5,13 +5,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-[#fffff0]">
       <ToastContainer />
       <Navigation />
       <main className="py-3">
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
 
