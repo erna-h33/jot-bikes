@@ -7,9 +7,6 @@ const baseQuery = fetchBaseQuery({
     const token = getState().auth.userInfo?.token;
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
-      console.log('Setting Authorization header with token:', token);
-    } else {
-      console.log('No token found in Redux store');
     }
     return headers;
   },
@@ -20,23 +17,6 @@ export const apiSlice = createApi({
   tagTypes: ['Product', 'Order', 'User', 'Category'],
   endpoints: () => ({}),
 });
-
-// This is the correct way to inject endpoints
-export const usersApiSlice = apiSlice.injectEndpoints({
-  endpoints: (builder) => ({
-    getUsers: builder.query({
-      query: () => ({
-        url: '/api/users',
-        credentials: 'include',
-      }),
-      providesTags: ['User'],
-    }),
-    // Add other user-related endpoints here
-  }),
-});
-
-// Export the hook with a clear name
-export const { useGetUsersQuery } = usersApiSlice;
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -62,7 +42,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
         credentials: 'include',
       }),
     }),
-    getProfile: builder.query({
+    getUserProfile: builder.query({
       query: () => ({
         url: '/api/users/profile',
         credentials: 'include',
@@ -71,5 +51,48 @@ export const authApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useGetProfileQuery } =
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation, useGetUserProfileQuery } =
   authApiSlice;
+
+export const usersApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => ({
+        url: '/api/users',
+        credentials: 'include',
+      }),
+      providesTags: ['User'],
+    }),
+    getUserById: builder.query({
+      query: (id) => ({
+        url: `/api/users/${id}`,
+        credentials: 'include',
+      }),
+      providesTags: (result, error, id) => [{ type: 'User', id }],
+    }),
+    updateUser: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/api/users/${id}`,
+        method: 'PUT',
+        body: data,
+        credentials: 'include',
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'User', id }],
+    }),
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/api/users/${id}`,
+        method: 'DELETE',
+        credentials: 'include',
+      }),
+      invalidatesTags: ['User'],
+    }),
+  }),
+});
+
+export const {
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} = usersApiSlice;
