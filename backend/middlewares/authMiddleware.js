@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 
 const protect = asyncHandler(async (req, res, next) => {
   let token;
+
   console.log('Auth Headers:', req.headers.authorization);
   console.log('Cookies:', req.cookies);
 
@@ -18,9 +19,25 @@ const protect = asyncHandler(async (req, res, next) => {
       console.log('Token decoded successfully:', decoded);
 
       // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
-      console.log('User found:', req.user ? 'Yes' : 'No', 'Admin:', req.user?.isAdmin);
+      const user = await User.findById(decoded.userId).select('-password');
+      console.log(
+        'User lookup result:',
+        user
+          ? {
+              id: user._id,
+              username: user.username,
+              isAdmin: user.isAdmin,
+            }
+          : 'No user found'
+      );
 
+      if (!user) {
+        console.error('User not found in database for ID:', decoded.userId);
+        res.status(401);
+        throw new Error('User not found');
+      }
+
+      req.user = user;
       next();
     } catch (error) {
       console.error('Token verification failed:', error);
@@ -38,9 +55,25 @@ const protect = asyncHandler(async (req, res, next) => {
       console.log('Token decoded successfully:', decoded);
 
       // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
-      console.log('User found:', req.user ? 'Yes' : 'No', 'Admin:', req.user?.isAdmin);
+      const user = await User.findById(decoded.userId).select('-password');
+      console.log(
+        'User lookup result:',
+        user
+          ? {
+              id: user._id,
+              username: user.username,
+              isAdmin: user.isAdmin,
+            }
+          : 'No user found'
+      );
 
+      if (!user) {
+        console.error('User not found in database for ID:', decoded.userId);
+        res.status(401);
+        throw new Error('User not found');
+      }
+
+      req.user = user;
       next();
     } catch (error) {
       console.error('Cookie verification failed:', error);
@@ -58,7 +91,17 @@ const protect = asyncHandler(async (req, res, next) => {
 
 // Check if user is an admin
 const admin = (req, res, next) => {
-  console.log('Checking admin status:', req.user?.isAdmin);
+  console.log(
+    'Checking admin status for user:',
+    req.user
+      ? {
+          id: req.user._id,
+          username: req.user.username,
+          isAdmin: req.user.isAdmin,
+        }
+      : 'No user in request'
+  );
+
   if (req.user && req.user.isAdmin) {
     console.log('User is admin, proceeding');
     next();
