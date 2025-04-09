@@ -89,18 +89,20 @@ const UserList = () => {
                     )}
                   </td>
                   <td className="py-2 px-4 border-b">
-                    <Link
-                      to={`/admin/user/${user._id}/edit`}
-                      className="text-blue-500 hover:text-blue-700 mr-4"
-                    >
-                      <FaEdit />
-                    </Link>
-                    <button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => deleteHandler(user._id)}
-                    >
-                      <FaTrash />
-                    </button>
+                    <div className="flex items-center space-x-4">
+                      <Link
+                        to={`/admin/user/${user._id}/edit`}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        <FaEdit />
+                      </Link>
+                      <button
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => deleteHandler(user._id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
