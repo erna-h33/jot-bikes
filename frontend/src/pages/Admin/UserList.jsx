@@ -52,7 +52,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="ml-16 md:ml-24 lg:ml-32">
+    <div className="ml-20 md:ml-28 lg:ml-36 xl:ml-40">
       <h1 className="text-3xl font-bold mb-4 text-center">Users</h1>
       {loadingDelete && <Loader />}
       {isLoading ? (
