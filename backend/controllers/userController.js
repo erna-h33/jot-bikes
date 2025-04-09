@@ -210,14 +210,13 @@ const authUser = asyncHandler(async (req, res) => {
 });
 
 export {
-  createUser,
-  loginUser,
-  logoutCurrentUser,
-  getAllUsers,
-  getCurrentUserProfile,
-  updateCurrentUserProfile,
+  authUser,
+  registerUser,
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  getUsers,
   deleteUser,
   getUserById,
-  updateUserById,
-  authUser,
+  updateUser,
 };

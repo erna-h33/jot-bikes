@@ -1,14 +1,5 @@
 import express from 'express';
 import {
-  createUser,
-  loginUser,
-  logoutCurrentUser,
-  getAllUsers,
-  getCurrentUserProfile,
-  updateCurrentUserProfile,
-  deleteUserById,
-  getUserById,
-  updateUserById,
   authUser,
   registerUser,
   logoutUser,
@@ -16,6 +7,7 @@ import {
   updateUserProfile,
   getUsers,
   deleteUser,
+  getUserById,
   updateUser,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
@@ -36,3 +28,15 @@ router
   .put(protect, admin, updateUser);
 
 export default router;
+
+export {
+  authUser,
+  registerUser,
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  getUsers,
+  deleteUser,
+  getUserById,
+  updateUser,
+};
