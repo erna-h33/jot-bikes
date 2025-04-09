@@ -67,18 +67,18 @@ const UserList = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
             <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">ID</th>
-                <th className="py-2 px-4 border-b">NAME</th>
-                <th className="py-2 px-4 border-b">EMAIL</th>
-                <th className="py-2 px-4 border-b">ADMIN</th>
-                <th className="py-2 px-4 border-b"></th>
+              <tr className="bg-gray-100">
+                <th className="py-2 px-4 border-b text-left pl-8">ID</th>
+                <th className="py-2 px-4 border-b text-left">NAME</th>
+                <th className="py-2 px-4 border-b text-left">EMAIL</th>
+                <th className="py-2 px-4 border-b text-left">ADMIN</th>
+                <th className="py-2 px-4 border-b text-left">ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user._id}>
-                  <td className="py-2 px-4 border-b">{user._id}</td>
+                <tr key={user._id} className="hover:bg-gray-50">
+                  <td className="py-2 px-4 border-b pl-8">{user._id}</td>
                   <td className="py-2 px-4 border-b">{user.username}</td>
                   <td className="py-2 px-4 border-b">{user.email}</td>
                   <td className="py-2 px-4 border-b">
