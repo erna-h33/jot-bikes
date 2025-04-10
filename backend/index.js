@@ -22,6 +22,7 @@ console.log('Environment variables loaded:', {
 // Utiles
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -51,6 +52,7 @@ app.use((req, res, next) => {
 
 // Mount routes
 app.use('/api/users', userRoutes);
+app.use('/api/category', categoryRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
