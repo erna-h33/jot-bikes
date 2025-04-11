@@ -33,7 +33,11 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://jot-bikes.vercel.app'],
+    origin: [
+      'http://localhost:5173',
+      'https://jot-bikes.vercel.app',
+      'https://jot-bikes.netlify.app',
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -52,7 +56,7 @@ app.use((req, res, next) => {
 
 // Mount routes
 app.use('/api/users', userRoutes);
-app.use('/api/category', categoryRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
