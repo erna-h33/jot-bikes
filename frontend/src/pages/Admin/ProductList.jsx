@@ -33,12 +33,12 @@ const ProductList = () => {
       productData.append('brand', brand);
       productData.append('countInStock', stock);
 
-      const { data } = await createProduct(productData);
+      const result = await createProduct(productData);
 
-      if (data.error) {
+      if (result.error) {
         toast.error('Product create failed. Try Again.');
       } else {
-        toast.success(`${data.name} is created`);
+        toast.success(`${result.data.name} is created`);
         navigate('/');
       }
     } catch (error) {
@@ -58,11 +58,6 @@ const ProductList = () => {
 
     const formData = new FormData();
     formData.append('image', file);
-
-    // Log the FormData contents
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
 
     try {
       console.log('Sending request to /api/uploads');
@@ -84,7 +79,7 @@ const ProductList = () => {
       console.log('Upload successful:', data);
       toast.success('Image uploaded successfully');
       setImage(file);
-      setImageUrl(data.image);
+      setImageUrl(`http://localhost:5000${data.image}`);
     } catch (err) {
       console.error('Upload error:', err);
       toast.error(err.message || 'Failed to upload image');
