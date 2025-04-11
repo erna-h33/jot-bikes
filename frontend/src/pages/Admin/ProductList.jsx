@@ -64,12 +64,11 @@ const ProductList = () => {
       const response = await fetch('/api/uploads', {
         method: 'POST',
         body: formData,
-        credentials: 'include',
       });
 
-      console.log('Response status:', response.status);
-
       if (!response.ok) {
+        console.log('Response status:', response.status);
+        console.log('Request URL:', '/api/uploads');
         const errorText = await response.text();
         console.error('Error response:', errorText);
         throw new Error(`Upload failed: ${response.status} - ${errorText}`);
