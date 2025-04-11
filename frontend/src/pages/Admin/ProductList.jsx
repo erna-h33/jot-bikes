@@ -119,7 +119,7 @@ const ProductList = () => {
       console.log('Upload successful:', data);
       toast.success('Image uploaded successfully');
       setImage(file);
-      setImageUrl(`http://localhost:5000${data.image}`);
+      setImageUrl(data.image);
     } catch (err) {
       console.error('Upload error:', err);
       toast.error(err.message || 'Failed to upload image');
