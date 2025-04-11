@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  useCreateProductMutation,
-  useUploadProductImageMutation,
-} from '../../redux/api/productApiSlice';
+import { useCreateProductMutation } from '../../redux/api/productApiSlice';
 import { useFetchCategoriesQuery } from '../../redux/api/categoryApiSlice';
 import { toast } from 'react-toastify';
 
@@ -19,7 +16,6 @@ const ProductList = () => {
   const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
 
-  const [uploadProductImage] = useUploadProductImageMutation();
   const [createProduct] = useCreateProductMutation();
   const { data: categories } = useFetchCategoriesQuery();
 
@@ -52,16 +48,46 @@ const ProductList = () => {
   };
 
   const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      toast.error('No file selected');
+      return;
+    }
+
+    console.log('File selected:', file.name, file.type, file.size);
+
     const formData = new FormData();
-    formData.append('image', e.target.files[0]);
+    formData.append('image', file);
+
+    // Log the FormData contents
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
 
     try {
-      const res = await uploadProductImage(formData).unwrap();
-      toast.success(res.message);
-      setImage(res.image);
-      setImageUrl(res.image);
-    } catch (error) {
-      toast.error(error?.data?.message || error.error);
+      console.log('Sending request to /api/uploads');
+      const response = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Upload successful:', data);
+      toast.success('Image uploaded successfully');
+      setImage(file);
+      setImageUrl(data.image);
+    } catch (err) {
+      console.error('Upload error:', err);
+      toast.error(err.message || 'Failed to upload image');
     }
   };
 
@@ -155,7 +181,7 @@ const ProductList = () => {
                 </label>
                 <textarea
                   type="text"
-                  className="p-2 mb-3 w-full border rounded-lg bg-gray-700 text-white"
+                  className="p-2 mb-3 w-full h-32 border rounded-lg bg-gray-700 text-white"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
