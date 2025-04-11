@@ -3,7 +3,7 @@ const CategoryForm = ({ value, setValue, handleSubmit, buttonText = 'Submit', ha
     <div className="space-y-4 mr-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="categoryName" className="block text-sm font-medium text-white mb-1 pl-3">
+          <label htmlFor="categoryName" className="block text-sm font-medium text-white mb-3 pl-3">
             Category Name
           </label>
           <input
