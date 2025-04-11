@@ -50,15 +50,6 @@ const router = createBrowserRouter(
           }
         />
         <Route
-          path="categorylist"
-          element={
-            <div className="p-4">
-              <h1 className="text-2xl font-semibold mb-4">Categories</h1>
-              <p>Category list coming soon</p>
-            </div>
-          }
-        />
-        <Route
           path="orderlist"
           element={
             <div className="p-4">
