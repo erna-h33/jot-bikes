@@ -1,6 +1,6 @@
-import path from 'path';
 import express from 'express';
 import multer from 'multer';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const router = express.Router();
@@ -9,43 +9,33 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Use the uploads folder in the root directory
+  destination: function (req, file, cb) {
     cb(null, path.join(__dirname, '../../uploads'));
   },
-
-  filename: (req, file, cb) => {
-    const extname = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${Date.now()}${extname}`);
+  filename: function (req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
-const fileFilter = (req, file, cb) => {
-  const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+const upload = multer({ storage: storage });
 
-  const extname = path.extname(file.originalname).toLowerCase();
-  const mimetype = file.mimetype;
-
-  if (filetypes.test(extname) && mimetypes.test(mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Unsupported file type'), false);
-  }
-};
-
-const upload = multer({ storage, fileFilter });
-
+// Route to handle file uploads
 router.post('/', upload.single('image'), (req, res) => {
-  if (req.file) {
-    res.status(200).json({
-      message: 'Image uploaded successfully',
-      image: `/uploads/${req.file.filename}`,
-    });
-  } else {
-    res.status(400).json({ error: 'No image uploaded' });
+  console.log('Upload request received');
+  console.log('Request body:', req.body);
+  console.log('Request file:', req.file);
+
+  if (!req.file) {
+    console.log('No file in request');
+    return res.status(400).json({ error: 'No file uploaded' });
   }
+
+  console.log('File uploaded successfully:', req.file);
+
+  // Return the file path
+  res.json({ image: `/uploads/${req.file.filename}` });
 });
 
 export default router;
