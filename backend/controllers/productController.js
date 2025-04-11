@@ -1,35 +1,66 @@
 import asyncHandler from '../middlewares/asyncHandler.js';
 import Product from '../models/productModel.js';
 
-const addProduct = asyncHandler(async (req, res) => {
+export const addProduct = async (req, res) => {
   try {
-    const { name, description, brand, price, quantity, category } = req.fields;
+    console.log('Received request fields:', req.fields);
+    console.log('Received request files:', req.files);
+    console.log('User in request:', req.user);
 
-    // Validation
-    switch (true) {
-      case !name:
-        return res.json({ error: 'Name is required' });
-      case !description:
-        return res.json({ error: 'Description is required' });
-      case !brand:
-        return res.json({ error: 'Brand is required' });
-      case !price:
-        return res.json({ error: 'Price is required' });
-      case !quantity:
-        return res.json({ error: 'Quantity is required' });
-      case !category:
-        return res.json({ error: 'Category is required' });
+    const { name, description, brand, price, quantity, category, countInStock } = req.fields;
+
+    // Validate required fields
+    if (!name || !description || !brand || !price || !quantity || !category) {
+      console.log('Missing required fields:', {
+        name: !name,
+        description: !description,
+        brand: !brand,
+        price: !price,
+        quantity: !quantity,
+        category: !category,
+      });
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Create product
-    const product = new Product({ ...req.fields });
-    await product.save();
-    res.json(product);
+    // Set default image path
+    let image = '/uploads/default.jpg';
+
+    // If an image was uploaded, use its path
+    if (req.files && req.files.image) {
+      const file = req.files.image;
+      // Get the filename from the file object
+      const filename = file.originalFilename || file.name;
+      image = `/uploads/${filename}`;
+      console.log('Image path:', image);
+    }
+
+    const productData = {
+      name,
+      description,
+      brand,
+      price: Number(price),
+      quantity: Number(quantity),
+      category,
+      countInStock: Number(countInStock || 0),
+      image,
+      user: req.user._id,
+    };
+
+    console.log('Creating product with data:', productData);
+
+    try {
+      const product = await Product.create(productData);
+      console.log('Product created successfully:', product);
+      res.status(201).json(product);
+    } catch (dbError) {
+      console.error('Database error creating product:', dbError);
+      res.status(400).json({ message: dbError.message });
+    }
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: error.message });
+    console.error('Error in addProduct controller:', error);
+    res.status(400).json({ message: error.message });
   }
-});
+};
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
@@ -185,7 +216,6 @@ const fetchNewProducts = asyncHandler(async (req, res) => {
 });
 
 export {
-  addProduct,
   updateProductDetails,
   removeProduct,
   fetchProducts,
