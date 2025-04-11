@@ -66,19 +66,20 @@ const ProductList = () => {
   };
 
   return (
-    <div className="container xl:mx-[9rem] sm:mx-[0]">
+    <div className="container mx-auto max-w-[70%]">
       <div className="flex flex-col md:flex-row">
         <div className="md:w-full p-3">
-          <div className="h-12">Create Product</div>
+          <div className="h-12 text-2xl font-bold p-3">Create Product</div>
 
+          {/* Image Upload */}
           {imageUrl && (
             <div className="text-center">
               <img src={imageUrl} alt="product" className="block mx-auto max-h-[200px]" />
             </div>
           )}
 
-          <div className="mb-3">
-            <label className="border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
+          <div className="mb-3 p-3">
+            <label className="bg-gray-700 border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
               {image ? image.name : 'Upload Image'}
 
               <input
@@ -91,64 +92,82 @@ const ProductList = () => {
             </label>
           </div>
 
+          {/* Product Details */}
           <div className="p-3">
-            <div className="flex flex-wrap">
-              <div className="one">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <label htmlFor="name">Name</label> <br />
                 <input
                   type="text"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="two ml-10 ">
+              <div>
                 <label htmlFor="name block">Price</label> <br />
                 <input
                   type="number"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
-            </div>
-            <div className="flex flex-wrap">
-              <div className="one">
+              <div>
                 <label htmlFor="name block">Quantity</label> <br />
                 <input
                   type="number"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                 />
               </div>
-              <div className="two ml-10 ">
+              <div>
                 <label htmlFor="name block">Brand</label> <br />
-                <input
-                  type="text"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                <select
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                />
+                >
+                  <option value="">Select Brand</option>
+                  <option value="Bolzzen">Bolzzen</option>
+                  <option value="Dragon">Dragon</option>
+                  <option value="Dulatron">Dulatron</option>
+                  <option value="Inokim">Inokim</option>
+                  <option value="Kaabo">Kaabo</option>
+                  <option value="Kristall">Kristall</option>
+                  <option value="Mercane">Mercane</option>
+                  <option value="NCM">NCM</option>
+                  <option value="Segway">Segway</option>
+                  <option value="The Cullen">The Cullen</option>
+                  <option value="Vamos">Vamos</option>
+                  <option value="Vsett">Vsett</option>
+                  <option value="Xiaomi">Xiaomi</option>
+                  <option value="Zero">Zero</option>
+                </select>
               </div>
             </div>
 
-            <label htmlFor="" className="my-5">
-              Description
-            </label>
-            <textarea
-              type="text"
-              className="p-2 mb-3 bg-[#101011] border rounded-lg w-[95%] text-white"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
+            <div className="flex flex-wrap">
+              <div className="w-full">
+                <label htmlFor="" className="my-5">
+                  Description
+                </label>
+                <textarea
+                  type="text"
+                  className="p-2 mb-3 w-full border rounded-lg bg-gray-700 text-white"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
 
-            <div className="flex justify-between">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="name block">Count In Stock</label> <br />
                 <input
                   type="text"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
                 />
@@ -158,7 +177,7 @@ const ProductList = () => {
                 <label htmlFor="">Category</label> <br />
                 <select
                   placeholder="Choose Category"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   onChange={(e) => setCategory(e.target.value)}
                 >
                   {categories?.map((c) => (
@@ -172,7 +191,7 @@ const ProductList = () => {
 
             <button
               onClick={handleSubmit}
-              className="py-4 px-10 mt-5 rounded-lg text-lg font-bold bg-pink-600"
+              className="py-4 px-10 mt-5 rounded-lg text-lg text-white font-bold bg-pink-500"
             >
               Submit
             </button>
