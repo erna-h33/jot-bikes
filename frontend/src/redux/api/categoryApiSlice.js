@@ -27,7 +27,7 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
     }),
 
     fetchCategories: builder.query({
-      query: () => `${CATEGORIES_URL}/categories`,
+      query: () => CATEGORIES_URL,
     }),
   }),
 });
