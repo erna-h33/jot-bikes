@@ -23,8 +23,25 @@ const ProductList = () => {
     e.preventDefault();
 
     try {
+      if (!category) {
+        toast.error('Please select a category');
+        return;
+      }
+
+      if (!brand) {
+        toast.error('Please select a brand');
+        return;
+      }
+
+      if (!name || !description || !price || !quantity || !stock) {
+        toast.error('Please fill in all fields');
+        return;
+      }
+
       const productData = new FormData();
-      productData.append('image', image);
+      if (image) {
+        productData.append('image', image);
+      }
       productData.append('name', name);
       productData.append('description', description);
       productData.append('price', price);
@@ -33,17 +50,33 @@ const ProductList = () => {
       productData.append('brand', brand);
       productData.append('countInStock', stock);
 
+      // Debug log
+      console.log('Submitting product data:', {
+        name,
+        description,
+        price,
+        category,
+        quantity,
+        brand,
+        stock,
+        hasImage: !!image,
+      });
+
       const result = await createProduct(productData);
 
       if (result.error) {
-        toast.error('Product create failed. Try Again.');
+        console.error('Product creation error:', result.error);
+        const errorMessage =
+          result.error.data?.message || 'Product creation failed. Please try again.';
+        toast.error(errorMessage);
       } else {
-        toast.success(`${result.data.name} is created`);
-        navigate('/');
+        console.log('Product created successfully:', result.data);
+        toast.success(`${name} is created successfully`);
+        navigate('/admin/productlist');
       }
     } catch (error) {
-      console.error(error);
-      toast.error('Product create failed. Try Again.');
+      console.error('Product creation error:', error);
+      toast.error('Product creation failed. Please try again.');
     }
   };
 
@@ -54,7 +87,12 @@ const ProductList = () => {
       return;
     }
 
-    console.log('File selected:', file.name, file.type, file.size);
+    console.log('File selected:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      lastModified: file.lastModified,
+    });
 
     const formData = new FormData();
     formData.append('image', file);
@@ -64,7 +102,10 @@ const ProductList = () => {
       const response = await fetch('/api/uploads', {
         method: 'POST',
         body: formData,
+        credentials: 'include',
       });
+
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
         console.log('Response status:', response.status);
@@ -186,10 +227,10 @@ const ProductList = () => {
               <div>
                 <label htmlFor="name block">Count In Stock</label> <br />
                 <input
-                  type="text"
+                  type="number"
                   className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={stock}
-                  onChange={(e) => setStock(e.target.value)}
+                  onChange={(e) => setStock(Number(e.target.value))}
                 />
               </div>
 
@@ -198,8 +239,10 @@ const ProductList = () => {
                 <select
                   placeholder="Choose Category"
                   className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
+                  value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
+                  <option value="">Select Category</option>
                   {categories?.map((c) => (
                     <option key={c._id} value={c._id}>
                       {c.name}
