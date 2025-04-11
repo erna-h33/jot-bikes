@@ -99,21 +99,21 @@ const CategoryList = () => {
       <div className="w-full max-w-[60%]">
         <h1 className="text-3xl font-bold my-6 text-center">Categories</h1>
 
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-xl font-semibold mb-4">Add New Category</h2>
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
+          <h2 className="text-xl text-white font-semibold mb-4 pl-3">Add New Category</h2>
           <CategoryForm value={name} setValue={setName} handleSubmit={handleCreateCategory} />
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Existing Categories</h2>
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl text-white font-semibold mb-4 pl-3">Existing Categories</h2>
           {categories?.length === 0 ? (
             <Message variant="info">No categories found</Message>
           ) : (
-            <div className="flex flex-wrap justify-center">
+            <div className="flex flex-wrap justify-left">
               {categories?.map((category) => (
                 <div key={category._id}>
                   <button
-                    className="bg-white border border-pink-500 text-pink-500 py-2 px-4 rounded-lg m-3 hover:bg-pink-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
+                    className="bg-pink-500 text-white pt-1 pb-2 px-4 rounded-lg m-3 hover:bg-white hover:text-pink-500 border border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 transition-colors"
                     onClick={() => {
                       setModalVisible(true);
                       setSelectedCategory(category);
