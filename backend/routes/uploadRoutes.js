@@ -12,10 +12,14 @@ const __dirname = path.dirname(__filename);
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads'));
+    const uploadPath = path.join(__dirname, '../../uploads');
+    console.log('Upload destination path:', uploadPath);
+    cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+    const filename = `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
+    console.log('Generated filename:', filename);
+    cb(null, filename);
   },
 });
 
@@ -24,6 +28,7 @@ const upload = multer({ storage: storage });
 // Route to handle file uploads
 router.post('/', upload.single('image'), (req, res) => {
   console.log('Upload request received');
+  console.log('Request headers:', req.headers);
   console.log('Request body:', req.body);
   console.log('Request file:', req.file);
 
@@ -32,10 +37,17 @@ router.post('/', upload.single('image'), (req, res) => {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  console.log('File uploaded successfully:', req.file);
+  console.log('File uploaded successfully:', {
+    filename: req.file.filename,
+    path: req.file.path,
+    size: req.file.size,
+    mimetype: req.file.mimetype,
+  });
 
   // Return the file path
-  res.json({ image: `/uploads/${req.file.filename}` });
+  const imageUrl = `/uploads/${req.file.filename}`;
+  console.log('Returning image URL:', imageUrl);
+  res.json({ image: imageUrl });
 });
 
 export default router;

@@ -5,9 +5,11 @@ export const addProduct = async (req, res) => {
   try {
     console.log('Received request fields:', req.fields);
     console.log('Received request files:', req.files);
+    console.log('Received request file (multer):', req.file);
     console.log('User in request:', req.user);
 
-    const { name, description, brand, price, quantity, category, countInStock } = req.fields;
+    const { name, description, brand, price, quantity, category, countInStock } =
+      req.fields || req.body;
 
     // Validate required fields
     if (!name || !description || !brand || !price || !quantity || !category) {
@@ -25,13 +27,18 @@ export const addProduct = async (req, res) => {
     // Set default image path
     let image = '/uploads/default.jpg';
 
-    // If an image was uploaded, use its path
+    // If an image was uploaded via formidable
     if (req.files && req.files.image) {
       const file = req.files.image;
       // Get the filename from the file object
       const filename = file.originalFilename || file.name;
       image = `/uploads/${filename}`;
-      console.log('Image path:', image);
+      console.log('Image path (formidable):', image);
+    }
+    // If an image was uploaded via multer
+    else if (req.file) {
+      image = `/uploads/${req.file.filename}`;
+      console.log('Image path (multer):', image);
     }
 
     const productData = {
@@ -64,7 +71,7 @@ export const addProduct = async (req, res) => {
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, quantity, category } = req.fields;
+    const { name, description, brand, price, quantity, category } = req.fields || req.body;
 
     // Validation
     switch (true) {
@@ -82,12 +89,24 @@ const updateProductDetails = asyncHandler(async (req, res) => {
         return res.json({ error: 'Category is required' });
     }
 
+    // Check for image upload
+    let updateData = { ...req.fields };
+
+    // If an image was uploaded via formidable
+    if (req.files && req.files.image) {
+      const file = req.files.image;
+      const filename = file.originalFilename || file.name;
+      updateData.image = `/uploads/${filename}`;
+      console.log('Update image path (formidable):', updateData.image);
+    }
+    // If an image was uploaded via multer
+    else if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
+      console.log('Update image path (multer):', updateData.image);
+    }
+
     // Update product
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { ...req.fields },
-      { new: true }
-    );
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
 
     await product.save();
 
