@@ -98,18 +98,20 @@ const ProductList = () => {
     formData.append('image', file);
 
     try {
-      console.log('Sending request to /api/uploads');
-      const response = await fetch('/api/uploads', {
+      const apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL;
+      console.log('Sending request to', `${apiUrl}/api/uploads`);
+
+      const response = await fetch(`${apiUrl}/api/uploads`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
       });
 
+      console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
-        console.log('Response status:', response.status);
-        console.log('Request URL:', '/api/uploads');
+        console.log('Request URL:', `${apiUrl}/api/uploads`);
         const errorText = await response.text();
         console.error('Error response:', errorText);
         throw new Error(`Upload failed: ${response.status} - ${errorText}`);
@@ -119,7 +121,7 @@ const ProductList = () => {
       console.log('Upload successful:', data);
       toast.success('Image uploaded successfully');
       setImage(file);
-      setImageUrl(data.image);
+      setImageUrl(`${apiUrl}${data.image}`);
     } catch (err) {
       console.error('Upload error:', err);
       toast.error(err.message || 'Failed to upload image');

@@ -1,7 +1,9 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
 
+const baseUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL;
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'https://jot-bikes.onrender.com',
+  baseUrl,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.userInfo?.token;
@@ -13,6 +15,7 @@ const baseQuery = fetchBaseQuery({
 });
 
 export const apiSlice = createApi({
+  reducerPath: 'api',
   baseQuery,
   tagTypes: ['Product', 'Order', 'User', 'Category'],
   endpoints: () => ({}),
