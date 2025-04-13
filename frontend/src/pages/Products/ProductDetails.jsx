@@ -71,7 +71,9 @@ const ProductDetails = () => {
               {/* Product Image */}
               <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl">
                 <img
-                  src={`http://localhost:5000${product.image}`}
+                  src={`${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${
+                    product.image
+                  }`}
                   alt={product.name}
                   className="w-full h-auto object-cover"
                 />

@@ -44,7 +44,9 @@ const ProductCarousel = () => {
                 <div key={_id} className="relative">
                   <div className="relative h-[520px]">
                     <img
-                      src={`http://localhost:5000${image}`}
+                      src={`${
+                        import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
+                      }${image}`}
                       alt={name}
                       className="w-full h-full object-cover"
                     />
