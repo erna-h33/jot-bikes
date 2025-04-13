@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import HeartIcon from './HeartIcon';
+import Ratings from './Ratings';
 
 const SmallProduct = ({ product }) => {
   return (
@@ -10,7 +10,6 @@ const SmallProduct = ({ product }) => {
           alt={product.name}
           className="w-full h-48 object-cover hover:opacity-90 transition duration-300"
         />
-        <HeartIcon product={product} />
       </div>
 
       <div className="p-4">
@@ -18,6 +17,9 @@ const SmallProduct = ({ product }) => {
           <div className="mb-3">
             <h2 className="text-lg font-semibold text-gray-800 mb-1 truncate">{product.name}</h2>
             <p className="text-gray-600 text-sm line-clamp-1">{product.description}</p>
+            <div className="mt-1">
+              <Ratings value={product.rating} text={`(${product.numReviews})`} />
+            </div>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xl font-bold text-pink-600">${product.price}</span>

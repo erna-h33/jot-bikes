@@ -80,7 +80,9 @@ const Home = () => {
       {isLoading ? (
         <Loader />
       ) : isError ? (
-        <Message variant="danger">{isError?.data.message || isError.error}</Message>
+        <Message variant="danger">
+          {isError?.data?.message || isError?.error || 'An error occurred'}
+        </Message>
       ) : (
         <>
           {/* Features Section */}

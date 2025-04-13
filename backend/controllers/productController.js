@@ -256,7 +256,7 @@ const addProductReview = asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'Product already reviewed' });
       }
       const review = {
-        name: req.user.name,
+        name: req.user.username || req.user.name || 'Anonymous User',
         rating: Number(rating),
         comment,
         user: req.user._id,

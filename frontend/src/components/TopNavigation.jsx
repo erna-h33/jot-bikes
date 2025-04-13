@@ -12,7 +12,6 @@ import {
   AiOutlineOrderedList,
   AiOutlineTeam,
 } from 'react-icons/ai';
-import { FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -61,9 +60,6 @@ const TopNavigation = () => {
             </Link>
             <Link to="/cart" className="text-white hover:text-pink-400 transition-colors">
               Cart
-            </Link>
-            <Link to="/favorite" className="text-white hover:text-pink-400 transition-colors">
-              Favorites
             </Link>
           </div>
 
