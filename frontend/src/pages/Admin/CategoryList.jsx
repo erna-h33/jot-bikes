@@ -95,10 +95,10 @@ const CategoryList = () => {
   if (error) return <Message variant="danger">{error.message}</Message>;
 
   return (
-    <div className="ml-14 md:ml-20 lg:ml-24 xl:ml-28 mr-8 flex justify-center">
+    <div className="ml-14 md:ml-20 lg:ml-24 xl:ml-28 mr-8 pt-[60px] flex justify-center">
       <AdminMenu />
       <div className="w-full max-w-[60%]">
-        <h1 className="text-3xl font-bold my-6 text-center">Categories</h1>
+        <h1 className="text-3xl font-bold mb-10 text-center">Categories</h1>
 
         <div className="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-xl text-white font-semibold mb-4 pl-3">Add New Category</h2>

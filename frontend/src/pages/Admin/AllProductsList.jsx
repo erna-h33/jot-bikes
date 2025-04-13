@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetProductsQuery, useDeleteProductMutation } from '../../redux/api/productApiSlice';
 import { toast } from 'react-toastify';
@@ -28,7 +27,7 @@ const AllProductsList = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-[100px]">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">All Products</h1>
         <Link
@@ -39,68 +38,56 @@ const AllProductsList = () => {
         </Link>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-800 rounded-lg">
-          <thead>
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Image
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Price
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Brand
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-700">
-            {products?.map((product) => (
-              <tr key={product._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {products?.map((product) => (
+            <div
+              key={product._id}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="flex p-4">
+                <div className="flex-shrink-0">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="h-16 w-16 object-cover rounded"
+                    className="h-24 w-24 object-cover rounded"
                   />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">${product.price}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.category?.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.brand}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{product.countInStock}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex space-x-3">
+                </div>
+                <div className="ml-4 flex-1">
+                  <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+                  <div className="mt-1 text-sm text-gray-600">
+                    <p>
+                      <span className="font-medium">Price:</span> ${product.price}
+                    </p>
+                    <p>
+                      <span className="font-medium">Category:</span> {product.category?.name}
+                    </p>
+                    <p>
+                      <span className="font-medium">Brand:</span> {product.brand}
+                    </p>
+                    <p>
+                      <span className="font-medium">Stock:</span> {product.countInStock}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex space-x-3">
                     <Link
                       to={`/admin/updateproduct/${product._id}`}
-                      className="text-blue-400 hover:text-blue-500"
+                      className="text-blue-600 hover:text-blue-800 transition-colors"
                     >
-                      <FaEdit size={20} />
+                      <FaEdit size={18} />
                     </Link>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="text-red-400 hover:text-red-500"
+                      className="text-red-600 hover:text-red-800 transition-colors"
                     >
-                      <FaTrash size={20} />
+                      <FaTrash size={18} />
                     </button>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

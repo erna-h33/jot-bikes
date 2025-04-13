@@ -122,18 +122,16 @@ const AdminProductUpdate = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-[70%]">
+    <div className="container mx-auto max-w-[70%] ml-[20%] pt-[60px]">
       <div className="flex flex-col md:flex-row">
         <AdminMenu />
         <div className="md:w-full p-3">
-          <div className="h-12 text-2xl font-bold p-3">Update Product</div>
+          <div className="h-12 text-2xl font-bold p-3 mb-2">Update Product</div>
 
           {/* Image Preview */}
           {imagePreview && (
-            <div className="text-center mb-4">
-              <div className="w-full h-[300px] overflow-hidden rounded-lg">
-                <img src={imagePreview} alt="product" className="w-full h-full object-cover" />
-              </div>
+            <div className="text-center">
+              <img src={imagePreview} alt="product" className="block mx-auto max-h-[200px]" />
             </div>
           )}
 
@@ -252,7 +250,7 @@ const AdminProductUpdate = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-4 mt-5">
               <Button variant="green" onClick={handleSubmit}>
                 Update
               </Button>

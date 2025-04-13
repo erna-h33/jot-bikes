@@ -22,17 +22,21 @@ import { logout } from '../redux/features/auth/authSlice';
 const TopNavigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset;
-      setHasScrolled(scrollTop > 50);
+      const isScrolled = window.scrollY > 50;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -55,8 +59,8 @@ const TopNavigation = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-[9999] transition-colors duration-300 ${
-        hasScrolled ? 'bg-black bg-opacity-50' : ''
+      className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
+        scrolled ? 'bg-black bg-opacity-70' : 'bg-transparent'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -177,7 +181,7 @@ const TopNavigation = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-pink-600 text-white px-4 py-2 rounded-full hover:bg-pink-700 transition-colors"
+                  className="bg-pink-600 text-white px-4 pb-2 mt-2 rounded hover:bg-pink-700 transition-colors"
                 >
                   Register
                 </Link>

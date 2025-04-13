@@ -15,19 +15,19 @@ const AllProducts = () => {
   }
 
   return (
-    <div className="container mx-auto max-w-[50%] pb-10">
+    <div className="container mx-auto max-w-[75%] pb-10 ml-[20%]">
       <div className="flex flex-col md:flex-row">
         <AdminMenu />
         <div className="md:w-full p-3">
           <div className="text-2xl font-bold my-8">All Products ({products.length})</div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <div
                 key={product._id}
-                className="flex bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors"
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100"
               >
-                <div className="w-[14.4rem] h-[14rem] overflow-hidden flex-shrink-0">
+                <div className="w-full h-48 overflow-hidden">
                   <img
                     src={`${
                       import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
@@ -36,24 +36,23 @@ const AllProducts = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="p-4 flex flex-col justify-between flex-grow">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h5 className="text-xl font-semibold text-white">{product?.name}</h5>
-                      <p className="text-gray-400 text-xs">
-                        {moment(product.createdAt).format('MMMM Do YYYY')}
-                      </p>
-                    </div>
-
-                    <p className="text-gray-300 text-sm mb-4 line-clamp-2 mt-8">
-                      {product?.description?.substring(0, 160)}...
+                <div className="p-5">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">{product?.name}</h3>
+                    <p className="text-lg font-semibold text-pink-600 mt-1">$ {product?.price}</p>
+                    <p className="text-gray-500 text-xs">
+                      {moment(product.createdAt).format('MMMM Do YYYY')}
                     </p>
                   </div>
 
-                  <div className="flex justify-between items-center mt-auto">
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {product?.description?.substring(0, 160)}...
+                  </p>
+
+                  <div className="flex justify-end mt-4 pt-3 border-t border-gray-100">
                     <Link
                       to={`/admin/product/update/${product._id}`}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-pink-600 rounded-lg hover:bg-pink-700 focus:ring-4 focus:outline-none focus:ring-pink-300 transition-colors"
+                      className="bg-blue-100 text-blue-700 py-1 px-3 rounded-md hover:bg-blue-200 transition-colors flex items-center"
                     >
                       Update Product
                       <svg
@@ -72,7 +71,6 @@ const AllProducts = () => {
                         />
                       </svg>
                     </Link>
-                    <p className="text-lg font-semibold text-white">$ {product?.price}</p>
                   </div>
                 </div>
               </div>
