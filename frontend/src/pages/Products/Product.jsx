@@ -1,26 +1,30 @@
 import { Link } from 'react-router-dom';
-import HeartIcon from './HeartIcon';
+// import HeartIcon from './HeartIcon';
 
 const Product = ({ product }) => {
   return (
-    <div className="w-[30rem] ml-[2rem] p-3 relative">
-      <div className="relative">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="relative aspect-w-1 aspect-h-1">
         <img
           src={`http://localhost:5000${product.image}`}
           alt={product.name}
-          className="w-[30rem] rounded object-cover"
+          className="w-full h-64 object-cover hover:opacity-90 transition duration-300"
         />
-        <HeartIcon product={product} />
+        {/* <HeartIcon product={product} /> */}
       </div>
 
-      <div className="p-4">
+      <div className="p-6">
         <Link to={`/product/${product._id}`}>
-          <h2 className="flex justify-between items-center">
-            <div className="text-lg">{product.name}</div>
-            <span className="bg-pink-100 text-pink-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
-              $ {product.price}
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">{product.name}</h2>
+            <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-2xl font-bold text-pink-600">${product.price}</span>
+            <span className="bg-pink-100 text-pink-800 text-sm px-3 py-1 rounded-full">
+              View Details
             </span>
-          </h2>
+          </div>
         </Link>
       </div>
     </div>
