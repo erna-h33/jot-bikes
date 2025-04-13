@@ -17,13 +17,31 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
-    const filename = `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
+    // Generate a unique filename with timestamp and original extension
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const filename = `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`;
     console.log('Generated filename:', filename);
     cb(null, filename);
   },
 });
 
-const upload = multer({ storage: storage });
+// File filter to accept only images
+const fileFilter = (req, file, cb) => {
+  // Accept images only
+  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|webp|WEBP)$/)) {
+    req.fileValidationError = 'Only image files are allowed!';
+    return cb(new Error('Only image files are allowed!'), false);
+  }
+  cb(null, true);
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max file size
+  },
+});
 
 // Route to handle file uploads
 router.post('/', upload.single('image'), (req, res) => {
@@ -31,6 +49,10 @@ router.post('/', upload.single('image'), (req, res) => {
   console.log('Request headers:', req.headers);
   console.log('Request body:', req.body);
   console.log('Request file:', req.file);
+
+  if (req.fileValidationError) {
+    return res.status(400).json({ error: req.fileValidationError });
+  }
 
   if (!req.file) {
     console.log('No file in request');

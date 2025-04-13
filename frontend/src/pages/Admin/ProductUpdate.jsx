@@ -1,59 +1,78 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCreateProductMutation } from '../../redux/api/productApiSlice';
+import { useState, useEffect } from 'react';
+import AdminMenu from './AdminMenu';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+  useGetProductByIdQuery,
+} from '../../redux/api/productApiSlice';
 import { useFetchCategoriesQuery } from '../../redux/api/categoryApiSlice';
 import { toast } from 'react-toastify';
-import AdminMenu from './AdminMenu';
 import Button from '../../components/Button';
 
-const ProductList = () => {
-  const [image, setImage] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState(0);
-  const [category, setCategory] = useState('');
-  const [quantity, setQuantity] = useState(0);
-  const [brand, setBrand] = useState('');
-  const [stock, setStock] = useState(0);
-  const [imageUrl, setImageUrl] = useState('');
+const AdminProductUpdate = () => {
+  const { id } = useParams();
+  const { data: productData } = useGetProductByIdQuery(id);
+  const [updateProduct] = useUpdateProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
+  const { data: categories = [] } = useFetchCategoriesQuery();
   const navigate = useNavigate();
 
-  const [createProduct] = useCreateProductMutation();
-  const { data: categories } = useFetchCategoriesQuery();
+  const [image, setImage] = useState(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [brand, setBrand] = useState('');
+  const [stock, setStock] = useState('');
+  const [imagePreview, setImagePreview] = useState('');
+
+  useEffect(() => {
+    if (productData) {
+      setName(productData.name || '');
+      setDescription(productData.description || '');
+      setPrice(productData.price?.toString() || '');
+      setCategory(productData.category?._id || '');
+      setQuantity(productData.quantity?.toString() || '');
+      setBrand(productData.brand || '');
+      setStock(productData.countInStock?.toString() || '');
+      setImagePreview(productData.image || '');
+    }
+  }, [productData]);
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      // Create a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      if (!category) {
-        toast.error('Please select a category');
+      // Validate required fields
+      if (!name || !description || !brand || !price || !quantity || !category) {
+        toast.error('All fields are required');
         return;
       }
 
-      if (!brand) {
-        toast.error('Please select a brand');
-        return;
-      }
-
-      if (!name || !description || !price || !quantity || !stock) {
-        toast.error('Please fill in all fields');
-        return;
-      }
-
-      const productData = new FormData();
+      const formData = new FormData();
       if (image) {
-        productData.append('image', image);
+        formData.append('image', image);
       }
-      productData.append('name', name);
-      productData.append('description', description);
-      productData.append('price', price);
-      productData.append('category', category);
-      productData.append('quantity', quantity);
-      productData.append('brand', brand);
-      productData.append('countInStock', stock);
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('category', category);
+      formData.append('quantity', quantity);
+      formData.append('brand', brand);
+      formData.append('countInStock', stock || '0');
 
-      // Debug log
-      console.log('Submitting product data:', {
+      console.log('Submitting form data:', {
         name,
         description,
         price,
@@ -64,42 +83,42 @@ const ProductList = () => {
         hasImage: !!image,
       });
 
-      const result = await createProduct(productData);
+      const result = await updateProduct({ productId: id, data: formData });
 
       if (result.error) {
-        console.error('Product creation error:', result.error);
-        const errorMessage =
-          result.error.data?.message || 'Product creation failed. Please try again.';
-        toast.error(errorMessage);
+        console.error('Update error:', result.error);
+        toast.error(result.error.data?.message || 'Update failed');
       } else {
-        console.log('Product created successfully:', result.data);
-        toast.success(`${name} is created successfully`);
-        navigate('/admin/productlist');
+        toast.success('Product successfully updated');
+        navigate('/admin/allproductslist');
       }
-    } catch (error) {
-      console.error('Product creation error:', error);
-      toast.error('Product creation failed. Please try again.');
+    } catch (err) {
+      console.error('Update error:', err);
+      toast.error('Product update failed. Try again.');
     }
   };
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    if (!file) {
-      toast.error('No file selected');
-      return;
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm('Are you sure you want to delete this product?');
+      if (!answer) return;
+
+      if (!id) {
+        toast.error('Product ID is missing');
+        return;
+      }
+
+      const result = await deleteProduct(id);
+      if (result.error) {
+        toast.error(result.error.data?.message || 'Delete failed');
+      } else {
+        toast.success('Product deleted successfully');
+        navigate('/admin/allproductslist');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      toast.error('Delete failed. Try again.');
     }
-
-    console.log('File selected:', {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    });
-
-    // Create a preview URL for the image
-    const previewUrl = URL.createObjectURL(file);
-    setImageUrl(previewUrl);
-    setImage(file);
   };
 
   return (
@@ -107,19 +126,21 @@ const ProductList = () => {
       <div className="flex flex-col md:flex-row">
         <AdminMenu />
         <div className="md:w-full p-3">
-          <div className="h-12 text-2xl font-bold p-3">Create Product</div>
+          <div className="h-12 text-2xl font-bold p-3">Update Product</div>
 
-          {/* Image Upload */}
-          {imageUrl && (
-            <div className="text-center">
-              <img src={imageUrl} alt="product" className="block mx-auto max-h-[200px]" />
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="text-center mb-4">
+              <div className="w-full h-[300px] overflow-hidden rounded-lg">
+                <img src={imagePreview} alt="product" className="w-full h-full object-cover" />
+              </div>
             </div>
           )}
 
+          {/* Image Upload */}
           <div className="mb-3 p-3">
             <label className="bg-gray-700 border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
               {image ? image.name : 'Upload Image'}
-
               <input
                 type="file"
                 name="image"
@@ -155,6 +176,7 @@ const ProductList = () => {
                 <label htmlFor="name block">Quantity</label> <br />
                 <input
                   type="number"
+                  min="1"
                   className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
@@ -205,9 +227,10 @@ const ProductList = () => {
                 <label htmlFor="name block">Count In Stock</label> <br />
                 <input
                   type="number"
+                  min="0"
                   className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={stock}
-                  onChange={(e) => setStock(Number(e.target.value))}
+                  onChange={(e) => setStock(e.target.value)}
                 />
               </div>
 
@@ -229,9 +252,14 @@ const ProductList = () => {
               </div>
             </div>
 
-            <Button variant="pink" onClick={handleSubmit} className="mt-5">
-              Submit
-            </Button>
+            <div className="flex gap-4 mt-6">
+              <Button variant="green" onClick={handleSubmit}>
+                Update
+              </Button>
+              <Button variant="red" onClick={handleDelete}>
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -239,4 +267,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default AdminProductUpdate;

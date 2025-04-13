@@ -32,6 +32,10 @@ const formidableOptions = {
   keepExtensions: true,
   maxFileSize: 5 * 1024 * 1024, // 5MB
   multiples: false,
+  filter: function ({ name, originalFilename, mimetype }) {
+    // Accept images only
+    return mimetype && mimetype.includes('image/');
+  },
 };
 
 // Routes

@@ -140,11 +140,11 @@ const Navigation = () => {
                       Dashboard
                     </Link>
                     <Link
-                      to="/admin/productlist"
+                      to="/admin/allproductslist"
                       className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                     >
                       <AiOutlineAppstore className="mr-2" size={18} />
-                      Products
+                      All Products
                     </Link>
                     <Link
                       to="/admin/categorylist"

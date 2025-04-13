@@ -1,44 +1,53 @@
 import asyncHandler from '../middlewares/asyncHandler.js';
 import Product from '../models/productModel.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const addProduct = async (req, res) => {
   try {
-    console.log('Received request fields:', req.fields);
-    console.log('Received request files:', req.files);
-    console.log('Received request file (multer):', req.file);
-    console.log('User in request:', req.user);
-
     const { name, description, brand, price, quantity, category, countInStock } =
       req.fields || req.body;
 
     // Validate required fields
     if (!name || !description || !brand || !price || !quantity || !category) {
-      console.log('Missing required fields:', {
-        name: !name,
-        description: !description,
-        brand: !brand,
-        price: !price,
-        quantity: !quantity,
-        category: !category,
-      });
       return res.status(400).json({ message: 'All fields are required' });
     }
 
     // Set default image path
     let image = '/uploads/default.jpg';
 
-    // If an image was uploaded via formidable
+    // If an image was uploaded
     if (req.files && req.files.image) {
       const file = req.files.image;
-      // Get the filename from the file object
-      const filename = file.originalFilename || file.name;
-      image = `/uploads/${filename}`;
-      console.log('Image path (formidable):', image);
-    }
-    // If an image was uploaded via multer
-    else if (req.file) {
-      image = `/uploads/${req.file.filename}`;
-      console.log('Image path (multer):', image);
+      const filename = `upload_${Date.now()}_${file.originalFilename || file.name}`;
+      const targetPath = path.join(__dirname, '../../uploads', filename);
+
+      try {
+        // Move the file to the uploads directory
+        if (fs.existsSync(file.path)) {
+          fs.renameSync(file.path, targetPath);
+          image = `/uploads/${filename}`;
+          console.log('Image saved successfully at:', targetPath);
+        } else {
+          console.error('Source file does not exist:', file.path);
+          return res.status(500).json({ error: 'Image upload failed - source file not found' });
+        }
+      } catch (fileError) {
+        console.error('Error handling file:', fileError);
+        // Clean up temporary file if it exists
+        if (fs.existsSync(file.path)) {
+          try {
+            fs.unlinkSync(file.path);
+          } catch (cleanupError) {
+            console.error('Error cleaning up temporary file:', cleanupError);
+          }
+        }
+        return res.status(500).json({ error: 'Failed to process image upload' });
+      }
     }
 
     const productData = {
@@ -53,16 +62,8 @@ export const addProduct = async (req, res) => {
       user: req.user._id,
     };
 
-    console.log('Creating product with data:', productData);
-
-    try {
-      const product = await Product.create(productData);
-      console.log('Product created successfully:', product);
-      res.status(201).json(product);
-    } catch (dbError) {
-      console.error('Database error creating product:', dbError);
-      res.status(400).json({ message: dbError.message });
-    }
+    const product = await Product.create(productData);
+    res.status(201).json(product);
   } catch (error) {
     console.error('Error in addProduct controller:', error);
     res.status(400).json({ message: error.message });
@@ -71,59 +72,123 @@ export const addProduct = async (req, res) => {
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, quantity, category } = req.fields || req.body;
+    console.log('Update request received:', {
+      fields: req.fields,
+      files: req.files,
+      params: req.params,
+    });
+
+    const { name, description, brand, price, quantity, category, countInStock } =
+      req.fields || req.body;
 
     // Validation
     switch (true) {
       case !name:
-        return res.json({ error: 'Name is required' });
+        return res.status(400).json({ error: 'Name is required' });
       case !description:
-        return res.json({ error: 'Description is required' });
+        return res.status(400).json({ error: 'Description is required' });
       case !brand:
-        return res.json({ error: 'Brand is required' });
+        return res.status(400).json({ error: 'Brand is required' });
       case !price:
-        return res.json({ error: 'Price is required' });
+        return res.status(400).json({ error: 'Price is required' });
       case !quantity:
-        return res.json({ error: 'Quantity is required' });
+        return res.status(400).json({ error: 'Quantity is required' });
       case !category:
-        return res.json({ error: 'Category is required' });
+        return res.status(400).json({ error: 'Category is required' });
     }
 
-    // Check for image upload
-    let updateData = { ...req.fields };
+    // Find the product first
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
 
-    // If an image was uploaded via formidable
+    // Prepare update data
+    const updateData = {
+      name,
+      description,
+      brand,
+      price: Number(price),
+      quantity: Number(quantity),
+      category,
+      countInStock: Number(countInStock || 0),
+    };
+
+    // Handle image upload
     if (req.files && req.files.image) {
       const file = req.files.image;
-      const filename = file.originalFilename || file.name;
-      updateData.image = `/uploads/${filename}`;
-      console.log('Update image path (formidable):', updateData.image);
+      console.log('Image file received:', file);
+
+      // Get the filename and ensure it's unique
+      const filename = `${Date.now()}-${file.originalFilename || file.name}`;
+      const targetPath = path.join(__dirname, '../../uploads', filename);
+
+      try {
+        // Log the current path and target path
+        console.log('Current file path:', file.path);
+        console.log('Target path:', targetPath);
+
+        // Move the file to the uploads directory
+        if (fs.existsSync(file.path)) {
+          // Delete old image if it exists and is not the default image
+          if (product.image && product.image !== '/uploads/default.jpg') {
+            const oldImagePath = path.join(__dirname, '../..', product.image);
+            if (fs.existsSync(oldImagePath)) {
+              fs.unlinkSync(oldImagePath);
+            }
+          }
+
+          // Move the new image
+          fs.renameSync(file.path, targetPath);
+          updateData.image = `/uploads/${filename}`;
+          console.log('Image saved successfully at:', targetPath);
+        } else {
+          console.error('Source file does not exist:', file.path);
+          return res.status(500).json({ error: 'Image upload failed - source file not found' });
+        }
+      } catch (fileError) {
+        console.error('Error handling file:', fileError);
+        // Clean up temporary file if it exists
+        if (fs.existsSync(file.path)) {
+          try {
+            fs.unlinkSync(file.path);
+          } catch (cleanupError) {
+            console.error('Error cleaning up temporary file:', cleanupError);
+          }
+        }
+        return res.status(500).json({ error: 'Failed to process image upload' });
+      }
     }
-    // If an image was uploaded via multer
-    else if (req.file) {
-      updateData.image = `/uploads/${req.file.filename}`;
-      console.log('Update image path (multer):', updateData.image);
-    }
 
-    // Update product
-    const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    // Update the product fields
+    Object.assign(product, updateData);
+    const updatedProduct = await product.save();
+    console.log('Product updated successfully:', updatedProduct);
 
-    await product.save();
-
-    res.json(product);
+    res.json(updatedProduct);
   } catch (error) {
-    console.error(error);
+    console.error('Error updating product:', error);
     res.status(400).json({ error: error.message });
   }
 });
 
 const removeProduct = asyncHandler(async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    res.json(product);
+    console.log('Attempting to delete product with ID:', req.params.id);
+
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      console.error('Product not found for deletion');
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+    console.log('Product deleted successfully');
+    res.json({ message: 'Product removed successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error deleting product:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
