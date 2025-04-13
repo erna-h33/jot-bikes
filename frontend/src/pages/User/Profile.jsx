@@ -46,8 +46,8 @@ const Profile = () => {
 
   return (
     <div className="flex">
-      <AdminMenu />
-      <div className="flex-1">
+      {userInfo && userInfo.isAdmin && <AdminMenu />}
+      <div className={`flex-1 ${userInfo?.isAdmin ? 'ml-[20%]' : ''} pt-[60px]`}>
         <div className="container mx-auto p-4">
           <div className="flex justify-center align-center md:flex md:space-x-4">
             <div className="md:w-1/3">

@@ -23,14 +23,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
   console.log('Creating user with data:', { username, email, password: '[REDACTED]' });
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
   try {
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
+      password, // Let the pre-save middleware handle hashing
     });
 
     console.log('Created user successfully:', {
@@ -66,11 +63,33 @@ const registerUser = asyncHandler(async (req, res) => {
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Find user and explicitly select the password field
-  const user = await User.findOne({ email }).select('+password');
+  console.log('Login attempt for email:', email);
 
-  if (user && (await user.matchPassword(password))) {
+  try {
+    // Find user and explicitly select the password field
+    const user = await User.findOne({ email }).select('+password');
+
+    console.log('User found:', user ? 'Yes' : 'No');
+
+    if (!user) {
+      console.log('User not found with email:', email);
+      res.status(401);
+      throw new Error('Invalid email or password');
+    }
+
+    // Check if password matches
+    const isMatch = await user.matchPassword(password);
+    console.log('Password match:', isMatch ? 'Yes' : 'No');
+
+    if (!isMatch) {
+      console.log('Password does not match for user:', email);
+      res.status(401);
+      throw new Error('Invalid email or password');
+    }
+
+    // Generate token
     const token = generateToken(res, user._id);
+    console.log('Token generated successfully for user:', user._id);
 
     res.json({
       _id: user._id,
@@ -79,9 +98,10 @@ const authUser = asyncHandler(async (req, res) => {
       isAdmin: user.isAdmin,
       token,
     });
-  } else {
-    res.status(401);
-    throw new Error('Invalid email or password');
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500);
+    throw new Error(`Login failed: ${error.message}`);
   }
 });
 
@@ -146,9 +166,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.email = req.body.email || user.email;
 
     if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      user.password = hashedPassword;
+      user.password = req.body.password;
     }
     const updatedUser = await user.save();
     res.json({

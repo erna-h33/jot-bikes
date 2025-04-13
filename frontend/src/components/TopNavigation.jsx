@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   AiOutlineHome,
   AiOutlineShopping,
@@ -22,21 +22,6 @@ import { logout } from '../redux/features/auth/authSlice';
 const TopNavigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 50;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [scrolled]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -58,11 +43,7 @@ const TopNavigation = () => {
   };
 
   return (
-    <div
-      className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 ${
-        scrolled ? 'bg-black bg-opacity-70' : 'bg-transparent'
-      }`}
-    >
+    <div className="fixed top-0 left-0 right-0 z-[9999] bg-black bg-opacity-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
