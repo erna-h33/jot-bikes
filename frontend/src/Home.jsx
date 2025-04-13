@@ -47,10 +47,7 @@ const Home = () => {
         <div className="relative h-full flex items-center">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl">
-              <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                Jot Bikes
-              </h1>
-              <p className="text-2xl md:text-3xl text-gray-200 mb-8 font-light">
+              <p className="text-3xl md:text-4xl text-gray-200 mb-8 font-semibold">
                 Australia's Number 1 Electric Bike & Scooter Retailer
               </p>
               <div className="space-y-4 text-lg text-gray-200 mb-12 max-w-2xl">
