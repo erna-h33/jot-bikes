@@ -7,6 +7,7 @@ import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { toast } from 'react-toastify';
 import { useDeleteUserMutation } from '../../redux/api/apiSlice';
+import AdminMenu from './AdminMenu';
 
 const UserList = () => {
   const navigate = useNavigate();
@@ -65,6 +66,7 @@ const UserList = () => {
         <Message variant="info">No users found</Message>
       ) : (
         <div className="overflow-x-auto">
+          <AdminMenu />
           <table className="min-w-full bg-white rounded-lg overflow-hidden">
             <thead className="bg-gray-700 text-white">
               <tr>

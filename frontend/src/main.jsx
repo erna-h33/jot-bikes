@@ -6,6 +6,7 @@ import { Route, RouterProvider, createRoutesFromElements } from 'react-router';
 import { createBrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/features/store.js';
+import Home from './Home.jsx';
 
 // Private Route
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -23,6 +24,8 @@ import UserList from './pages/Admin/UserList.jsx';
 import Dashboard from './pages/Admin/Dashboard.jsx';
 import CategoryList from './pages/Admin/CategoryList.jsx';
 import ProductList from './pages/Admin/ProductList.jsx';
+import ProductUpdate from './pages/Admin/ProductUpdate.jsx';
+import AllProducts from './pages/Admin/AllProducts.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +33,7 @@ const router = createBrowserRouter(
       {/* Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route index={true} path="/" element={<Home />} />
 
       {/* Private Route */}
       <Route path="" element={<PrivateRoute />}>
@@ -42,6 +46,8 @@ const router = createBrowserRouter(
         <Route path="userlist" element={<UserList />} />
         <Route path="categorylist" element={<CategoryList />} />
         <Route path="productlist" element={<ProductList />} />
+        <Route path="product/update/:id" element={<ProductUpdate />} />
+        <Route path="allproductslist" element={<AllProducts />} />
         <Route
           path="orderlist"
           element={

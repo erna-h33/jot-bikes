@@ -10,7 +10,7 @@ import CategoryForm from '../../components/CategoryForm';
 import Modal from '../../components/Modal';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-
+import AdminMenu from './AdminMenu';
 const CategoryList = () => {
   const { data: categories, isLoading, error } = useFetchCategoriesQuery();
   const [name, setName] = useState('');
@@ -96,6 +96,7 @@ const CategoryList = () => {
 
   return (
     <div className="ml-14 md:ml-20 lg:ml-24 xl:ml-28 mr-8 flex justify-center">
+      <AdminMenu />
       <div className="w-full max-w-[60%]">
         <h1 className="text-3xl font-bold my-6 text-center">Categories</h1>
 
