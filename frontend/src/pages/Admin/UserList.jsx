@@ -54,7 +54,7 @@ const UserList = () => {
 
   return (
     <div className="ml-14 md:ml-20 lg:ml-24 xl:ml-28 mr-8">
-      <h1 className="text-3xl font-bold my-6 text-center">Users</h1>
+      <h1 className="text-3xl font-bold py-10 text-center">Users</h1>
       {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
@@ -65,7 +65,7 @@ const UserList = () => {
       ) : !users ? (
         <Message variant="info">No users found</Message>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto ml-[15%]">
           <AdminMenu />
           <table className="min-w-full bg-white rounded-lg overflow-hidden">
             <thead className="bg-gray-700 text-white">

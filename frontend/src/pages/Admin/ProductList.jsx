@@ -103,11 +103,11 @@ const ProductList = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-[70%]">
+    <div className="container mx-auto max-w-[70%] ml-[20%] pt-[60px]">
       <div className="flex flex-col md:flex-row">
         <AdminMenu />
         <div className="md:w-full p-3">
-          <div className="h-12 text-2xl font-bold p-3">Create Product</div>
+          <div className="h-12 text-2xl font-bold p-3 mb-2">Create Product</div>
 
           {/* Image Upload */}
           {imageUrl && (

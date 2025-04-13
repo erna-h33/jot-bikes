@@ -1,138 +1,204 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import Lottie from 'lottie-react';
-import hamburgerAnimation from '../../assets/animations/hamburger.json';
-import closeAnimation from '../../assets/animations/close.json';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   AiOutlineDashboard,
   AiOutlineAppstore,
   AiOutlineTags,
   AiOutlineOrderedList,
   AiOutlineTeam,
+  AiOutlineHome,
+  AiOutlineUser,
+  AiOutlineLogout,
 } from 'react-icons/ai';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogoutMutation } from '../../redux/api/usersApiSlice';
+import { logout } from '../../redux/features/auth/authSlice';
 
 const AdminMenu = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutApiCall] = useLogoutMutation();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate('/login');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
-    <>
-      <div className="fixed top-5 right-7 flex items-start gap-3">
-        {isMenuOpen && (
-          <section className="bg-gray-800 p-4 rounded-lg shadow-lg w-[220px]">
-            <ul className="list-none">
-              {/* Admin Dashboard */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/dashboard"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineDashboard className="mr-2" size={18} />
-                  <span>Admin Dashboard</span>
-                </NavLink>
-              </li>
+    <div className="fixed left-0 top-0 h-screen shadow-lg w-[250px] z-[10000]">
+      <div className="p-4 bg-white rounded-r-lg h-full flex flex-col">
+        <h2 className="text-xl font-bold mb-6 text-gray-800">Admin Menu</h2>
+        <ul className="list-none flex-grow flex flex-col justify-center">
+          {/* Home */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineHome
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Home</span>
+            </NavLink>
+          </li>
 
-              {/* Category List */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/categorylist"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineTags className="mr-2" size={18} />
-                  <span>Create Category</span>
-                </NavLink>
-              </li>
+          {/* Admin Dashboard */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/dashboard"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineDashboard
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Admin Dashboard</span>
+            </NavLink>
+          </li>
 
-              {/* Product List */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/productlist"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineAppstore className="mr-2" size={18} />
-                  <span>Create Product</span>
-                </NavLink>
-              </li>
+          {/* Category List */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/categorylist"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineTags
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Create Category</span>
+            </NavLink>
+          </li>
 
-              {/* All Products */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/allproductslist"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineAppstore className="mr-2" size={18} />
-                  <span>All Products</span>
-                </NavLink>
-              </li>
+          {/* Product List */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/productlist"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineAppstore
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Create Product</span>
+            </NavLink>
+          </li>
 
-              {/* Manage Users */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/userlist"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineTeam className="mr-2" size={18} />
-                  <span>Manage Users</span>
-                </NavLink>
-              </li>
+          {/* All Products */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/allproductslist"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineAppstore
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>All Products</span>
+            </NavLink>
+          </li>
 
-              {/* Manage Orders */}
-              <li className="mb-3">
-                <NavLink
-                  className="flex items-center py-2 px-1 hover:bg-gray-700 rounded-md transition-colors"
-                  to="/admin/orderlist"
-                  style={({ isActive }) => ({
-                    color: isActive ? '#ec4899' : 'white',
-                  })}
-                >
-                  <AiOutlineOrderedList className="mr-2" size={18} />
-                  <span>Manage Orders</span>
-                </NavLink>
-              </li>
-            </ul>
-          </section>
-        )}
+          {/* Manage Users */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/userlist"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineTeam
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Manage Users</span>
+            </NavLink>
+          </li>
 
-        <button
-          className="border border-gray-800 p-2 rounded-lg hover:bg-gray-800 hover:border-gray-800 transition-colors bg-white"
-          onClick={toggleMenu}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div className="w-6 h-6">
-            <Lottie
-              animationData={isMenuOpen ? closeAnimation : hamburgerAnimation}
-              loop={false}
-              autoplay={true}
-              style={{
-                width: '100%',
-                height: '100%',
-                filter: isHovered ? 'invert(1)' : 'none',
-              }}
-            />
+          {/* Manage Orders */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/orderlist"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineOrderedList
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Manage Orders</span>
+            </NavLink>
+          </li>
+        </ul>
+
+        {/* User Profile and Logout Section */}
+        <div className="mt-auto pt-4 border-t border-gray-200">
+          <div className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/profile"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <AiOutlineUser
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Profile</span>
+            </NavLink>
           </div>
-        </button>
+          <div className="mb-3">
+            <button
+              onClick={logoutHandler}
+              className="flex items-center w-full py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+            >
+              <AiOutlineLogout
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Logout</span>
+            </button>
+          </div>
+          {userInfo && (
+            <div className="text-sm text-gray-500 px-3 py-2">
+              Logged in as: <span className="font-medium">{userInfo.username}</span>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -5,7 +5,6 @@ import Message from './components/Message';
 import Header from './components/Header';
 import Product from './pages/Products/Product';
 import { FaArrowRight, FaMotorcycle, FaShieldAlt, FaHeadset } from 'react-icons/fa';
-import TopNavigation from './components/TopNavigation';
 
 const Home = () => {
   const { keyword } = useParams();
@@ -44,11 +43,6 @@ const Home = () => {
           <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         </div>
 
-        {/* Top Navigation */}
-        <div className="relative z-[9999]">
-          <TopNavigation />
-        </div>
-
         {/* Content */}
         <div className="relative h-full flex items-center">
           <div className="container mx-auto px-4">
@@ -69,14 +63,10 @@ const Home = () => {
                   Vamos, Bolzzen, Dulatron, Inokim, Kaabo, Mercane, Segway, Vsett, Xiaomi, Zero and
                   many more!
                 </p>
-                <p className="font-light">
-                  Visit our shop in Redfern to browse the range, get repairs, rent an e-bike or
-                  e-scooter and get helpful advice.
-                </p>
               </div>
               <Link
                 to="/shop"
-                className="inline-flex items-center bg-pink-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-pink-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="inline-flex items-center bg-pink-600 text-white px-8 pb-3 pt-2 rounded text-lg font-medium hover:bg-pink-700 transition duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Shop Now
                 <FaArrowRight className="ml-2" />

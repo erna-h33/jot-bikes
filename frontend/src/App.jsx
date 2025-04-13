@@ -1,14 +1,20 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import TopNavigation from './components/TopNavigation';
 // import Navigation from './pages/Auth/Navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const isHomePage = location.pathname === '/';
+
   return (
-    <div className="min-h-screen bg-[#fffff0]">
+    <div className="min-h-screen bg-gray-50">
+      {!isAdminPage && <TopNavigation />}
       <ToastContainer />
       {/* <Navigation /> */}
-      <main>
+      <main className={isAdminPage ? '' : isHomePage ? '' : 'pt-20'}>
         <Outlet />
       </main>
     </div>
