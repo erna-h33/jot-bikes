@@ -20,6 +20,7 @@ import { logout } from '../redux/features/auth/authSlice';
 
 const TopNavigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -41,6 +42,8 @@ const TopNavigation = () => {
     }
   };
 
+  const cartItemsCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[9999] bg-black bg-opacity-50">
       <div className="container mx-auto px-4">
@@ -52,14 +55,22 @@ const TopNavigation = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-white hover:text-pink-400 transition-colors">
-              Home
+            <Link
+              to="/shop?category=Bike%20Service"
+              className="text-white hover:text-pink-400 transition-colors"
+            >
+              Bike Service
             </Link>
             <Link to="/shop" className="text-white hover:text-pink-400 transition-colors">
               Shop
             </Link>
-            <Link to="/cart" className="text-white hover:text-pink-400 transition-colors">
+            <Link to="/cart" className="text-white hover:text-pink-400 transition-colors relative">
               Cart
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-5 bg-pink-500 text-white text-xs font-bold rounded-full h-5 w-5 pb-1 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
             </Link>
           </div>
 

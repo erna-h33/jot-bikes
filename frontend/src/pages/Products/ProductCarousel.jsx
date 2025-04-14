@@ -55,29 +55,31 @@ const ProductCarousel = () => {
                         <div className="max-w-2xl text-white">
                           <h2 className="text-4xl font-bold mb-4">{name}</h2>
                           <p className="text-lg mb-6">{description}</p>
-                          <div className="grid grid-cols-2 gap-4 mb-6">
-                            <div className="flex items-center mb-4">
-                              <FaStore className="mr-2" />
-                              <span>Brand: {brand}</span>
+                          <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-gray-700">
+                            <div className="flex items-center">
+                              <FaStore className="mr-2 text-pink-500" />
+                              <span className="text-gray-300">Brand: {brand}</span>
                             </div>
                             <div className="flex items-center">
-                              <FaStar className="mr-2" />
-                              <span>Rating: {Math.round(rating)}/5</span>
+                              <FaClock className="mr-2 text-pink-500" />
+                              <span className="text-gray-300">
+                                Added: {moment(createdAt).fromNow()}
+                              </span>
                             </div>
                             <div className="flex items-center">
-                              <FaShoppingCart className="mr-2" />
-                              <span>In Stock: {countInStock}</span>
+                              <FaStar className="mr-2 text-pink-500" />
+                              <span className="text-gray-300">Reviews: {numReviews}</span>
                             </div>
                             <div className="flex items-center">
-                              <FaClock className="mr-2" />
-                              <span>Added: {moment(createdAt).fromNow()}</span>
+                              <FaBox className="mr-2 text-pink-500" />
+                              <span className="text-gray-300">In Stock: {countInStock}</span>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col items-start space-y-4">
                             <span className="text-3xl font-bold">${price}</span>
                             <a
                               href={`/product/${_id}`}
-                              className="bg-pink-600 text-white px-6 pt-2 pb-3 rounded hover:bg-pink-700 transition duration-300"
+                              className="bg-pink-600 text-white px-6 py-2 rounded hover:bg-pink-700 transition duration-300"
                             >
                               View Details
                             </a>

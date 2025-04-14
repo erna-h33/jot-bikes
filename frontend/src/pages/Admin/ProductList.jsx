@@ -168,6 +168,7 @@ const ProductList = () => {
                   onChange={(e) => setBrand(e.target.value)}
                 >
                   <option value="">Select Brand</option>
+                  <option value="All Brands">All Brands</option>
                   <option value="Bolzzen">Bolzzen</option>
                   <option value="Dragon">Dragon</option>
                   <option value="Dulatron">Dulatron</option>

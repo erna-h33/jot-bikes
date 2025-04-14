@@ -12,6 +12,7 @@ import { FaBox, FaClock, FaShoppingCart, FaStar, FaStore, FaArrowLeft } from 're
 import moment from 'moment';
 import Ratings from './Ratings';
 import ProductTabs from './ProductTabs';
+import { addToCart } from '../../redux/features/cart/cartSlice';
 
 const ProductDetails = () => {
   const { id: productId } = useParams();
@@ -45,7 +46,15 @@ const ProductDetails = () => {
   };
 
   const addToCartHandler = () => {
-    dispatch(addToCart({ ...product, qty }));
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      image: product.image,
+      price: product.price,
+      countInStock: product.countInStock,
+      qty: qty,
+    };
+    dispatch(addToCart(cartItem));
     navigate('/cart');
   };
 

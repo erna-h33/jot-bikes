@@ -1,9 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
-import { useGetProductsQuery } from './redux/api/productApiSlice.js';
-import Loader from './components/Loader';
-import Message from './components/Message';
-import Header from './components/Header';
-import Product from './pages/Products/Product';
+import { useGetProductsQuery } from '../redux/api/productApiSlice.js';
+import Loader from '../components/Loader.jsx';
+import Message from '../components/Message.jsx';
+import Header from '../components/Header.jsx';
+import Product from './Products/Product.jsx';
 import { FaArrowRight, FaMotorcycle, FaShieldAlt, FaHeadset } from 'react-icons/fa';
 
 const Home = () => {
@@ -110,7 +110,7 @@ const Home = () => {
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {data.products.slice(0, 6).map((product) => (
+                {data.products.slice(0, 3).map((product) => (
                   <div
                     key={product._id}
                     className="transform hover:scale-105 transition duration-300"

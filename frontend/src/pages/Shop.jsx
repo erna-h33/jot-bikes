@@ -173,7 +173,7 @@ const Shop = () => {
             {/* Reset Button */}
             <button
               onClick={() => window.location.reload()}
-              className="w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg transition duration-300"
+              className="w-full py-2 px-4 pb-3 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-lg transition duration-300"
             >
               Reset Filters
             </button>
