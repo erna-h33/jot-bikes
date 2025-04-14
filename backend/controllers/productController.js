@@ -281,7 +281,29 @@ const addProductReview = asyncHandler(async (req, res) => {
 
 const fetchTopProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ rating: -1 }).limit(4);
+    // Get products with ratings, sorted by rating
+    const ratedProducts = await Product.find({ rating: { $exists: true, $ne: null } })
+      .sort({ rating: -1 })
+      .limit(4);
+
+    // Get newer products without ratings
+    const newProducts = await Product.find({
+      $or: [{ rating: { $exists: false } }, { rating: null }],
+    })
+      .sort({ createdAt: -1 })
+      .limit(4);
+
+    // Combine and deduplicate products
+    const allProducts = [...ratedProducts];
+    newProducts.forEach((product) => {
+      if (!allProducts.find((p) => p._id.toString() === product._id.toString())) {
+        allProducts.push(product);
+      }
+    });
+
+    // Limit to 6 products total
+    const products = allProducts.slice(0, 6);
+
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -299,6 +321,20 @@ const fetchNewProducts = asyncHandler(async (req, res) => {
   }
 });
 
+const filterProducts = asyncHandler(async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length > 0) args.price = { $gte: radio, $lte: radio[1] };
+    const products = await Product.find(args);
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export {
   updateProductDetails,
   removeProduct,
@@ -308,4 +344,5 @@ export {
   addProductReview,
   fetchTopProducts,
   fetchNewProducts,
+  filterProducts,
 };
