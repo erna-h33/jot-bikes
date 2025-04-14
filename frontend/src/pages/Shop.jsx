@@ -83,18 +83,15 @@ const Shop = () => {
     dispatch(setChecked(updatedChecked));
   };
 
-  // Add "All Brands" option to uniqueBrands and sort alphabetically
+  // Get unique brands and sort them alphabetically
   const uniqueBrands = filteredProductsQuery.data
-    ? [
-        'All Brands',
-        ...Array.from(
-          new Set(
-            filteredProductsQuery.data
-              .map((product) => product.brand)
-              .filter((brand) => brand !== undefined)
-          )
-        ).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
-      ]
+    ? Array.from(
+        new Set(
+          filteredProductsQuery.data
+            .map((product) => product.brand)
+            .filter((brand) => brand !== undefined)
+        )
+      ).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
     : [];
 
   const handlePriceChange = (e) => {
