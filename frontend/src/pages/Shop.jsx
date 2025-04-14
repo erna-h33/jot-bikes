@@ -51,16 +51,30 @@ const Shop = () => {
         );
       });
 
-      dispatch(setProducts(filteredProducts));
+      // Sort products alphabetically by name
+      const sortedProducts = [...filteredProducts].sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+
+      dispatch(setProducts(sortedProducts));
     }
   }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter]);
 
   const handleBrandClick = (brand) => {
     if (filteredProductsQuery.data) {
-      const productsByBrand = filteredProductsQuery.data.filter(
-        (product) => product.brand === brand
+      let productsToShow;
+      if (brand === 'All Brands') {
+        // If "All Brands" is selected, show all products
+        productsToShow = filteredProductsQuery.data;
+      } else {
+        // Otherwise filter by the selected brand
+        productsToShow = filteredProductsQuery.data.filter((product) => product.brand === brand);
+      }
+      // Sort products alphabetically by name
+      const sortedProducts = [...productsToShow].sort((a, b) =>
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
       );
-      dispatch(setProducts(productsByBrand));
+      dispatch(setProducts(sortedProducts));
     }
   };
 
@@ -69,16 +83,17 @@ const Shop = () => {
     dispatch(setChecked(updatedChecked));
   };
 
-  // Add "All Brands" option to uniqueBrands
+  // Add "All Brands" option to uniqueBrands and sort alphabetically
   const uniqueBrands = filteredProductsQuery.data
     ? [
+        'All Brands',
         ...Array.from(
           new Set(
             filteredProductsQuery.data
               .map((product) => product.brand)
               .filter((brand) => brand !== undefined)
           )
-        ),
+        ).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
       ]
     : [];
 
