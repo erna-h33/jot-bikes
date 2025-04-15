@@ -4,7 +4,7 @@ import { useGetFilteredProductsQuery } from '../redux/api/productApiSlice';
 import { useFetchCategoriesQuery } from '../redux/api/categoryApiSlice';
 import { useLocation } from 'react-router-dom';
 
-import { setCategories, setProducts, setChecked } from '../redux/features/shop/shopSlice';
+import { setCategories, setProducts, setChecked, setRadio } from '../redux/features/shop/shopSlice';
 import Loader from '../components/Loader';
 import ProductCard from './Products/ProductCard';
 
@@ -31,6 +31,10 @@ const Shop = () => {
       if (category) {
         dispatch(setChecked([category._id]));
       }
+    } else {
+      // Reset filters when there's no category parameter
+      dispatch(setChecked([]));
+      dispatch(setRadio([]));
     }
   }, [location.search, categoriesQuery.data, dispatch]);
 
