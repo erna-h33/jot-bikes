@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../../redux/api/usersApiSlice';
 import { setCredentials } from '../../redux/features/auth/authSlice';
 import { toast } from 'react-toastify';
@@ -17,13 +17,6 @@ const Login = () => {
   const redirect = sp.get('redirect') || '/';
 
   const [login, { isLoading }] = useLoginMutation();
-  const { userInfo } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate(redirect);
-    }
-  }, [navigate, redirect, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -31,7 +24,11 @@ const Login = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials(res));
       toast.success('Login successful!');
-      if (res.isVendor) {
+
+      // Redirect based on user role
+      if (res.isAdmin) {
+        navigate('/admin/dashboard');
+      } else if (res.isVendor) {
         navigate('/vendor/dashboard');
       } else {
         navigate(redirect);

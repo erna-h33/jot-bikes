@@ -54,6 +54,7 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
           paymentMethodId: paymentMethod.id,
           amount: totalPrice,
           currency: 'usd',
+          bookingId: bookingId,
         }),
       });
 

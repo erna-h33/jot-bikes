@@ -3,6 +3,7 @@ import asyncHandler from '../middlewares/asyncHandler.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import Booking from '../models/bookingModel.js';
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -26,7 +27,7 @@ const stripe = new Stripe(stripeKey, {
 // @route   POST /api/payment/process
 // @access  Private
 const processPayment = asyncHandler(async (req, res) => {
-  const { paymentMethodId, amount } = req.body;
+  const { paymentMethodId, amount, bookingId } = req.body;
 
   try {
     // Create a payment intent
@@ -42,6 +43,15 @@ const processPayment = asyncHandler(async (req, res) => {
     });
 
     if (paymentIntent.status === 'succeeded') {
+      // If bookingId is provided, update the booking status to confirmed
+      if (bookingId) {
+        const booking = await Booking.findById(bookingId);
+        if (booking) {
+          booking.status = 'confirmed';
+          await booking.save();
+        }
+      }
+
       res.json({
         success: true,
         clientSecret: paymentIntent.client_secret,
