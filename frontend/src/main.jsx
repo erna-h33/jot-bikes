@@ -25,6 +25,14 @@ import CategoryList from './pages/Admin/CategoryList.jsx';
 import ProductList from './pages/Admin/ProductList.jsx';
 import ProductUpdate from './pages/Admin/ProductUpdate.jsx';
 import AllProducts from './pages/Admin/AllProducts.jsx';
+
+// Vendor
+import VendorRoute from './pages/Vendor/VendorRoute.jsx';
+import VendorDashboard from './pages/Vendor/Dashboard.jsx';
+import VendorProducts from './pages/Vendor/Products.jsx';
+import AddProduct from './pages/Vendor/AddProduct.jsx';
+
+// Pages
 import Home from './pages/Home.jsx';
 import ProductDetails from './pages/Products/ProductDetails.jsx';
 import Cart from './pages/Cart.jsx';
@@ -40,6 +48,7 @@ const router = createBrowserRouter(
       <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/shop" element={<Shop />} />
+
       {/* Private Route */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/profile" element={<Profile />} />
@@ -62,6 +71,13 @@ const router = createBrowserRouter(
             </div>
           }
         />
+      </Route>
+
+      {/* Vendor Routes */}
+      <Route path="/vendor" element={<VendorRoute />}>
+        <Route path="dashboard" element={<VendorDashboard />} />
+        <Route path="products" element={<VendorProducts />} />
+        <Route path="products/new" element={<AddProduct />} />
       </Route>
     </Route>
   )

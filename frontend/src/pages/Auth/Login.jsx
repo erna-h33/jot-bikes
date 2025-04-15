@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../../redux/api/usersApiSlice';
 import { setCredentials } from '../../redux/features/auth/authSlice';
 import { toast } from 'react-toastify';
@@ -12,15 +12,12 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [login, { isLoading }] = useLoginMutation();
-
-  const { userInfo } = useSelector((state) => state.auth);
-
   const { search } = useLocation();
-
   const sp = new URLSearchParams(search);
   const redirect = sp.get('redirect') || '/';
+
+  const [login, { isLoading }] = useLoginMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userInfo) {
@@ -32,60 +29,66 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
-      console.log('Login response:', res);
-      dispatch(setCredentials({ ...res }));
-    } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      dispatch(setCredentials(res));
+      toast.success('Login successful!');
+      if (res.isVendor) {
+        navigate('/vendor/dashboard');
+      } else {
+        navigate(redirect);
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Login failed');
     }
   };
 
   return (
-    <div>
-      <section className="pl-[10rem] flex flex-wrap">
-        <div className="mr-[4rem] mt-[5rem]">
-          <h1 className="text-2xl font-semi-bold mb-4">Sign In</h1>
+    <section className="pl-[10rem] flex flex-wrap">
+      <div className="mr-[4rem] mt-[5rem]">
+        <h1 className="text-2xl font-semibold mb-4">Login</h1>
+        <form onSubmit={submitHandler} className="container w-[30rem]">
+          {/* Email */}
+          <div className="my-[2rem]">
+            <label htmlFor="email" className="block text-sm font-medium text-black">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email address"
+              className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
+            />
+          </div>
 
-          <form onSubmit={submitHandler} className="container w-[30rem]">
-            <div className="my-[2rem]">
-              <label htmlFor="email" className="block text-sm font-medium text-black">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+          {/* Password */}
+          <div className="my-[2rem]">
+            <label htmlFor="password" className="block text-sm font-medium text-black">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
+            />
+          </div>
 
-            <div className="my-[2rem]">
-              <label htmlFor="password" className="block text-sm font-medium text-black">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button
-              disabled={isLoading}
-              type="submit"
-              className="bg-pink-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
-            >
-              {isLoading ? 'Signing In...' : 'Sign In'}
-            </button>
+          <button
+            disabled={isLoading}
+            type="submit"
+            className="bg-pink-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+          >
+            {isLoading ? <Loader /> : 'Login'}
+          </button>
 
-            {isLoading && <Loader />}
-          </form>
           <div className="mt-4">
             <p className="text-black">
-              Don't have an account?{' '}
+              New Customer?{' '}
               <Link
                 to={redirect ? `/register?redirect=${redirect}` : '/register'}
                 className="text-pink-500 hover:underline"
@@ -94,9 +97,9 @@ const Login = () => {
               </Link>
             </p>
           </div>
-        </div>
-      </section>
-    </div>
+        </form>
+      </div>
+    </section>
   );
 };
 

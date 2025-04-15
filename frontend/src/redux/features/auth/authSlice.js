@@ -9,16 +9,20 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = action.payload;
-      console.log('Auth Slice - Setting credentials:', action.payload);
-      localStorage.setItem('userInfo', JSON.stringify(action.payload));
-      const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
-      localStorage.setItem('expirationTime', expirationTime);
+      const { _id, username, name, email, isAdmin, isVendor, token } = action.payload;
+      state.userInfo = {
+        _id,
+        name: name || username, // Use name if available, otherwise use username
+        email,
+        isAdmin,
+        isVendor,
+        token,
+      };
+      localStorage.setItem('userInfo', JSON.stringify(state.userInfo));
     },
-
     logout: (state) => {
       state.userInfo = null;
-      localStorage.clear();
+      localStorage.removeItem('userInfo');
     },
   },
 });

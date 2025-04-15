@@ -24,6 +24,20 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    isVendor: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    vendorId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    vendorName: {
+      type: String,
+      sparse: true,
+    },
   },
   {
     timestamps: true,

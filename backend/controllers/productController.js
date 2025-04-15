@@ -59,7 +59,7 @@ export const addProduct = async (req, res) => {
       category,
       countInStock: Number(countInStock || 0),
       image,
-      user: req.user._id,
+      vendor: req.user._id,
     };
 
     const product = await Product.create(productData);
@@ -204,7 +204,10 @@ const fetchProducts = asyncHandler(async (req, res) => {
         }
       : {};
     const count = await Product.countDocuments({ ...keyword });
-    const products = await Product.find({ ...keyword }).limit(pageSize);
+    const products = await Product.find({ ...keyword })
+      .populate('category')
+      .populate('vendor', 'name email vendorName')
+      .limit(pageSize);
 
     res.json({
       products,
@@ -220,14 +223,15 @@ const fetchProducts = asyncHandler(async (req, res) => {
 
 const fetchProductById = asyncHandler(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id)
+      .populate('category')
+      .populate('vendor', 'name email vendorName');
     if (product) {
       return res.json(product);
     } else {
       res.status(404);
       throw new Error('Product not found');
     }
-    res.json(product);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Product not found' });
@@ -236,7 +240,11 @@ const fetchProductById = asyncHandler(async (req, res) => {
 
 const fetchAllProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find({}).populate('category').limit(12).sort({ createAt: -1 });
+    const products = await Product.find({})
+      .populate('category')
+      .populate('vendor', 'name email vendorName')
+      .limit(12)
+      .sort({ createAt: -1 });
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -283,6 +291,8 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
   try {
     // Get products with ratings, sorted by rating
     const ratedProducts = await Product.find({ rating: { $exists: true, $ne: null } })
+      .populate('category')
+      .populate('vendor', 'name email vendorName')
       .sort({ rating: -1 })
       .limit(4);
 
@@ -290,6 +300,8 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
     const newProducts = await Product.find({
       $or: [{ rating: { $exists: false } }, { rating: null }],
     })
+      .populate('category')
+      .populate('vendor', 'name email vendorName')
       .sort({ createdAt: -1 })
       .limit(4);
 
@@ -313,7 +325,11 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
 
 const fetchNewProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ _id: -1 }).limit(5);
+    const products = await Product.find({})
+      .populate('category')
+      .populate('vendor', 'name email vendorName')
+      .sort({ _id: -1 })
+      .limit(5);
     res.json(products);
   } catch (error) {
     console.error(error);
@@ -327,7 +343,9 @@ const filterProducts = asyncHandler(async (req, res) => {
     let args = {};
     if (checked.length > 0) args.category = checked;
     if (radio.length > 0) args.price = { $gte: radio, $lte: radio[1] };
-    const products = await Product.find(args);
+    const products = await Product.find(args)
+      .populate('category')
+      .populate('vendor', 'name email vendorName');
     res.json(products);
   } catch (error) {
     console.error(error);

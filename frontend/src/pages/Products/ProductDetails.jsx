@@ -8,7 +8,15 @@ import {
 } from '../../redux/api/productApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import { FaBox, FaClock, FaShoppingCart, FaStar, FaStore, FaArrowLeft } from 'react-icons/fa';
+import {
+  FaBox,
+  FaClock,
+  FaShoppingCart,
+  FaStar,
+  FaStore,
+  FaArrowLeft,
+  FaUser,
+} from 'react-icons/fa';
 import moment from 'moment';
 import Ratings from './Ratings';
 import ProductTabs from './ProductTabs';
@@ -119,6 +127,14 @@ const ProductDetails = () => {
                     <FaBox className="mr-2 text-pink-500" />
                     <span className="text-gray-300">In Stock: {product.countInStock}</span>
                   </div>
+                  {product.vendor && (
+                    <div className="flex items-center col-span-2">
+                      <FaUser className="mr-2 text-pink-500" />
+                      <span className="text-gray-300">
+                        Vendor: {product.vendor.vendorName || product.vendor.name}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {product.countInStock > 0 && (

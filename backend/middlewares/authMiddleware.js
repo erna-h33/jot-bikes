@@ -112,4 +112,12 @@ const admin = (req, res, next) => {
   }
 };
 
+export const vendor = (req, res, next) => {
+  if (req.user && req.user.isVendor) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as a vendor' });
+  }
+};
+
 export { protect, admin };

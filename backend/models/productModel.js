@@ -25,6 +25,7 @@ const productSchema = mongoose.Schema(
     category: { type: ObjectId, ref: 'Category', required: true },
     countInStock: { type: Number, required: true },
     image: { type: String, required: true },
+    vendor: { type: ObjectId, ref: 'User', required: true },
     reviews: [reviewSchema],
     rating: { type: Number, required: 0, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },

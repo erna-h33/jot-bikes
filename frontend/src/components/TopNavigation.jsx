@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AiOutlineHome,
   AiOutlineShopping,
@@ -11,6 +11,7 @@ import {
   AiOutlineTags,
   AiOutlineOrderedList,
   AiOutlineTeam,
+  AiOutlineLogout,
 } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -23,8 +24,22 @@ const TopNavigation = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  useEffect(() => {
+    console.log('User Info:', userInfo);
+    console.log('User Info Details:', {
+      name: userInfo?.name,
+      username: userInfo?.username,
+      email: userInfo?.email,
+      isVendor: userInfo?.isVendor,
+    });
+  }, [userInfo]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setDropdownOpen(false);
   };
 
   const dispatch = useDispatch();
@@ -36,7 +51,8 @@ const TopNavigation = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      navigate('/login');
+      navigate('/');
+      closeDropdown();
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +98,7 @@ const TopNavigation = () => {
                   onClick={toggleDropdown}
                   className="flex items-center text-white hover:text-pink-400 transition-colors"
                 >
-                  <span>{userInfo.username}</span>
+                  <span>{userInfo.name}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-4 w-4 ml-1 ${dropdownOpen ? 'transform rotate-180' : ''}`}
@@ -103,10 +119,11 @@ const TopNavigation = () => {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-2 z-10">
                     {/* Admin menu items */}
-                    {userInfo && userInfo.isAdmin && (
+                    {userInfo.isAdmin && (
                       <>
                         <Link
                           to="/admin/dashboard"
+                          onClick={closeDropdown}
                           className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                         >
                           <AiOutlineDashboard className="mr-2" size={18} />
@@ -114,6 +131,7 @@ const TopNavigation = () => {
                         </Link>
                         <Link
                           to="/admin/allproductslist"
+                          onClick={closeDropdown}
                           className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                         >
                           <AiOutlineAppstore className="mr-2" size={18} />
@@ -121,6 +139,7 @@ const TopNavigation = () => {
                         </Link>
                         <Link
                           to="/admin/categorylist"
+                          onClick={closeDropdown}
                           className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                         >
                           <AiOutlineTags className="mr-2" size={18} />
@@ -128,6 +147,7 @@ const TopNavigation = () => {
                         </Link>
                         <Link
                           to="/admin/orderlist"
+                          onClick={closeDropdown}
                           className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                         >
                           <AiOutlineOrderedList className="mr-2" size={18} />
@@ -135,18 +155,49 @@ const TopNavigation = () => {
                         </Link>
                         <Link
                           to="/admin/userlist"
+                          onClick={closeDropdown}
                           className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                         >
                           <AiOutlineTeam className="mr-2" size={18} />
                           Users
                         </Link>
-                        <div className="border-t border-gray-700 my-1"></div>
                       </>
                     )}
 
-                    {/* Common menu items for all users */}
+                    {/* Vendor menu items */}
+                    {userInfo.isVendor && (
+                      <>
+                        <Link
+                          to="/vendor/dashboard"
+                          onClick={closeDropdown}
+                          className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        >
+                          <AiOutlineDashboard className="mr-2" size={18} />
+                          Vendor Dashboard
+                        </Link>
+                        <Link
+                          to="/vendor/products"
+                          onClick={closeDropdown}
+                          className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        >
+                          <AiOutlineAppstore className="mr-2" size={18} />
+                          My Products
+                        </Link>
+                        <Link
+                          to="/vendor/products/new"
+                          onClick={closeDropdown}
+                          className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        >
+                          <AiOutlineAppstore className="mr-2" size={18} />
+                          Add New Product
+                        </Link>
+                      </>
+                    )}
+
+                    {/* Common menu items */}
                     <Link
                       to="/profile"
+                      onClick={closeDropdown}
                       className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
                     >
                       <AiOutlineUser className="mr-2" size={18} />
@@ -154,9 +205,9 @@ const TopNavigation = () => {
                     </Link>
                     <button
                       onClick={logoutHandler}
-                      className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-700"
+                      className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700 w-full"
                     >
-                      <AiOutlineUserAdd className="mr-2" size={18} />
+                      <AiOutlineLogout className="mr-2" size={18} />
                       Logout
                     </button>
                   </div>
@@ -164,13 +215,18 @@ const TopNavigation = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link to="/login" className="text-white hover:text-pink-400 transition-colors">
+                <Link
+                  to="/login"
+                  className="flex items-center text-white hover:text-pink-400 transition-colors"
+                >
+                  <AiOutlineLogin className="mr-1" size={18} />
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-pink-600 text-white px-4 pb-2 mt-2 rounded hover:bg-pink-700 transition-colors"
+                  className="flex items-center text-white hover:text-pink-400 transition-colors"
                 >
+                  <AiOutlineUserAdd className="mr-1" size={18} />
                   Register
                 </Link>
               </div>

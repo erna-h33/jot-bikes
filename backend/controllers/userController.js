@@ -7,53 +7,51 @@ import generateToken from '../utils/createToken.js';
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, isVendor } = req.body;
 
-  if (!username || !email || !password) {
-    res.status(400);
-    throw new Error('Please fill all the inputs');
-  }
-
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    res.status(400);
-    throw new Error('User already exists');
-  }
-
-  console.log('Creating user with data:', { username, email, password: '[REDACTED]' });
+  console.log('Register attempt:', { username, email, isVendor });
 
   try {
+    // Check if user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      console.log('User already exists with email:', email);
+      res.status(400);
+      throw new Error('User already exists');
+    }
+
+    // Create user
     const user = await User.create({
       username,
       email,
-      password, // Let the pre-save middleware handle hashing
+      password,
+      isVendor: isVendor || false,
     });
 
-    console.log('Created user successfully:', {
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      isAdmin: user.isAdmin,
-    });
+    console.log('User created successfully:', user._id);
 
     if (user) {
-      generateToken(res, user._id);
+      // Generate token
+      const token = generateToken(res, user._id);
+      console.log('Token generated for new user:', user._id);
 
       res.status(201).json({
         _id: user._id,
         username: user.username,
         email: user.email,
         isAdmin: user.isAdmin,
+        isVendor: user.isVendor,
+        token,
       });
     } else {
+      console.log('Failed to create user');
       res.status(400);
       throw new Error('Invalid user data');
     }
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Registration error:', error);
     res.status(500);
-    throw new Error(`Error creating user: ${error.message}`);
+    throw new Error(`Registration failed: ${error.message}`);
   }
 });
 
@@ -96,6 +94,7 @@ const authUser = asyncHandler(async (req, res) => {
       username: user.username,
       email: user.email,
       isAdmin: user.isAdmin,
+      isVendor: user.isVendor,
       token,
     });
   } catch (error) {

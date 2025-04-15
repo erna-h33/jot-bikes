@@ -10,6 +10,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
       providesTags: ['Products'],
+      transformResponse: (response) => {
+        if (response.products) {
+          return {
+            ...response,
+            products: response.products.map((product) => ({
+              ...product,
+              vendor: product.vendor || null,
+            })),
+          };
+        }
+        return response;
+      },
     }),
 
     getProductById: builder.query({
@@ -18,6 +30,10 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
       providesTags: (result, error, id) => [{ type: 'Product', id }],
+      transformResponse: (response) => ({
+        ...response,
+        vendor: response.vendor || null,
+      }),
     }),
 
     allProducts: builder.query({
@@ -33,6 +49,10 @@ export const productApiSlice = apiSlice.injectEndpoints({
         url: `${PRODUCTS_URL}/${productId}`,
       }),
       keepUnusedDataFor: 5,
+      transformResponse: (response) => ({
+        ...response,
+        vendor: response.vendor || null,
+      }),
     }),
 
     createProduct: builder.mutation({
@@ -94,6 +114,12 @@ export const productApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: { checked, radio },
       }),
+      transformResponse: (response) => {
+        return response.map((product) => ({
+          ...product,
+          vendor: product.vendor || null,
+        }));
+      },
     }),
   }),
 });

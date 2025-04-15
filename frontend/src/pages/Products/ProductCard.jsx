@@ -45,6 +45,12 @@ const ProductCard = ({ p }) => {
           </p>
         </div>
 
+        {p?.vendor && (
+          <p className="text-sm text-gray-400 mb-2">
+            Vendor: {p.vendor.vendorName || p.vendor.name}
+          </p>
+        )}
+
         <p className="mb-3 font-normal text-[#CFCFCF]">{p?.description?.substring(0, 60)} ...</p>
 
         <section className="flex justify-between items-center">
@@ -70,7 +76,10 @@ const ProductCard = ({ p }) => {
             </svg>
           </Link>
 
-          <button className="p-2 rounded-full text-white" onClick={() => addToCartHandler(p, 1)}>
+          <button
+            className="p-2 rounded-full text-white transition-transform duration-200 hover:scale-110 active:scale-95"
+            onClick={() => addToCartHandler(p, 1)}
+          >
             <AiOutlineShoppingCart size={25} />
           </button>
         </section>

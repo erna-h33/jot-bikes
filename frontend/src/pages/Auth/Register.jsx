@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Loader from '../../components/Loader';
+import { useRegisterMutation } from '../../redux/api/usersApiSlice';
 import { setCredentials } from '../../redux/features/auth/authSlice';
 import { toast } from 'react-toastify';
-import { useRegisterMutation } from '../../redux/api/usersApiSlice';
+import Loader from '../../components/Loader';
 
 const Register = () => {
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isVendor, setIsVendor] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [register, { isLoading }] = useRegisterMutation();
-  const { userInfo } = useSelector((state) => state.auth);
-
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
   const redirect = sp.get('redirect') || '/';
+
+  const [register, { isLoading }] = useRegisterMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userInfo) {
@@ -33,16 +33,18 @@ const Register = () => {
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
-    } else {
-      try {
-        const res = await register({ username, email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
+    }
+    try {
+      const res = await register({ username: name, email, password, isVendor }).unwrap();
+      dispatch(setCredentials(res));
+      toast.success('Registration successful!');
+      if (res.isVendor) {
+        navigate('/vendor/dashboard');
+      } else {
         navigate(redirect);
-        toast.success('Registration successful');
-      } catch (error) {
-        console.log(error);
-        toast.error(error.data.message);
       }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Registration failed');
     }
   };
 
@@ -51,22 +53,21 @@ const Register = () => {
       <div className="mr-[4rem] mt-[5rem]">
         <h1 className="text-2xl font-semibold mb-4">Register</h1>
         <form onSubmit={submitHandler} className="container w-[30rem]">
-          {/* Username */}
           <div className="my-[2rem]">
             <label htmlFor="name" className="block text-sm font-medium text-black">
-              Username
+              Name
             </label>
             <input
               type="text"
               id="name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
               className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
             />
           </div>
 
-          {/* Email */}
           <div className="my-[2rem]">
             <label htmlFor="email" className="block text-sm font-medium text-black">
               Email Address
@@ -76,12 +77,12 @@ const Register = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
+              placeholder="Enter your email"
               className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
             />
           </div>
 
-          {/* Password */}
           <div className="my-[2rem]">
             <label htmlFor="password" className="block text-sm font-medium text-black">
               Password
@@ -91,12 +92,12 @@ const Register = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter password"
               className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
             />
           </div>
 
-          {/* Confirm Password */}
           <div className="my-[2rem]">
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-black">
               Confirm Password
@@ -106,32 +107,44 @@ const Register = () => {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm Password"
+              placeholder="Confirm password"
               className="mt-1 block w-full rounded-md bg-gray-700 px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:ring-opacity-50"
+              required
             />
           </div>
+
+          <div className="my-[2rem]">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={isVendor}
+                onChange={(e) => setIsVendor(e.target.checked)}
+                className="rounded border-gray-300 text-pink-500 shadow-sm focus:border-pink-300 focus:ring focus:ring-pink-200 focus:ring-opacity-50"
+              />
+              <span className="ml-2 text-sm text-black">Register as a Vendor</span>
+            </label>
+          </div>
+
           <button
             disabled={isLoading}
             type="submit"
             className="bg-pink-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isLoading ? <Loader /> : 'Register'}
           </button>
 
-          {isLoading && <Loader />}
+          <div className="mt-4">
+            <p className="text-black">
+              Already have an account?{' '}
+              <Link
+                to={redirect ? `/login?redirect=${redirect}` : '/login'}
+                className="text-pink-500 hover:underline"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
         </form>
-
-        <div className="mt-4">
-          <p className="text-black">
-            Already have an account? {''}
-            <Link
-              to={redirect ? `/login?redirect=${redirect}` : '/login'}
-              className="text-pink-500 hover:underline"
-            >
-              Login
-            </Link>
-          </p>
-        </div>
       </div>
     </section>
   );
