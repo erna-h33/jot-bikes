@@ -21,6 +21,7 @@ import moment from 'moment';
 import Ratings from './Ratings';
 import ProductTabs from './ProductTabs';
 import { addToCart } from '../../redux/features/cart/cartSlice';
+import { useCreateBookingMutation } from '../../redux/api/bookingApiSlice';
 
 const ProductDetails = () => {
   const { id: productId } = useParams();
@@ -30,12 +31,15 @@ const ProductDetails = () => {
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
 
   const { userInfo } = useSelector((state) => state.auth);
 
   const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
+  const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -64,6 +68,43 @@ const ProductDetails = () => {
     };
     dispatch(addToCart(cartItem));
     navigate('/cart');
+  };
+
+  const handleBooking = async (e) => {
+    e.preventDefault();
+    if (!userInfo) {
+      toast.error('Please log in to book.');
+      navigate('/login');
+      return;
+    }
+    if (!startDate || !endDate) {
+      toast.error('Please select both start and end dates.');
+      return;
+    }
+    if (new Date(startDate) >= new Date(endDate)) {
+      toast.error('End date must be after start date.');
+      return;
+    }
+    try {
+      await createBooking({ product: product._id, startDate, endDate }).unwrap();
+      toast.success('Booking successful!');
+      // Add to cart after successful booking
+      const cartItem = {
+        _id: product._id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        countInStock: product.countInStock,
+        qty: qty,
+      };
+      dispatch(addToCart(cartItem));
+      setStartDate('');
+      setEndDate('');
+      // Redirect to cart page
+      navigate('/cart');
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
   };
 
   return (
@@ -167,6 +208,49 @@ const ProductDetails = () => {
                     </button>
                   </div>
                 )}
+
+                {/* Booking Form */}
+                <form
+                  onSubmit={handleBooking}
+                  className="flex flex-col space-y-4 bg-gray-700 p-4 rounded-lg mt-4"
+                >
+                  <h2 className="text-xl font-bold">Book this product</h2>
+                  <div className="flex flex-col md:flex-row md:space-x-4">
+                    <div className="flex flex-col mb-2 md:mb-0">
+                      <label htmlFor="startDate" className="text-gray-300 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        id="startDate"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label htmlFor="endDate" className="text-gray-300 mb-1">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        id="endDate"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+                    disabled={bookingLoading}
+                  >
+                    {bookingLoading ? 'Booking...' : 'Book Now'}
+                  </button>
+                </form>
               </div>
             </div>
 

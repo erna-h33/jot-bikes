@@ -38,6 +38,7 @@ import Home from './pages/Home.jsx';
 import ProductDetails from './pages/Products/ProductDetails.jsx';
 import Cart from './pages/Cart.jsx';
 import Shop from './pages/Shop.jsx';
+import MyBookings from './pages/MyBookings.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
       {/* Private Route */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/profile" element={<Profile />} />
+        <Route path="/my-bookings" element={<MyBookings />} />
       </Route>
 
       {/* Admin Routes */}

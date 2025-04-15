@@ -26,6 +26,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -66,6 +67,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/vendors', vendorRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {

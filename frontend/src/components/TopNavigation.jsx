@@ -203,6 +203,14 @@ const TopNavigation = () => {
                       <AiOutlineUser className="mr-2" size={18} />
                       Profile
                     </Link>
+                    <Link
+                      to="/my-bookings"
+                      onClick={closeDropdown}
+                      className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                    >
+                      <AiOutlineShopping className="mr-2" size={18} />
+                      My Bookings
+                    </Link>
                     <button
                       onClick={logoutHandler}
                       className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700 w-full"
