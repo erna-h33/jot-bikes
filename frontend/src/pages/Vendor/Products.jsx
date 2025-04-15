@@ -70,7 +70,7 @@ const Products = () => {
                       </div>
                       <div className="flex gap-2">
                         <Link
-                          to={`/vendor/products/edit/${product._id}`}
+                          to={`/vendor/products/update/${product._id}`}
                           className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-full transition-colors"
                         >
                           <FaEdit size={20} />
@@ -94,10 +94,6 @@ const Products = () => {
                       <div className="flex items-center gap-2 text-gray-600">
                         <FaWarehouse className="text-pink-500" />
                         <span className="text-sm">Stock: {product.countInStock}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <FaBox className="text-pink-500" />
-                        <span className="text-sm">Quantity: {product.quantity}</span>
                       </div>
                     </div>
                   </div>

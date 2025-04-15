@@ -30,10 +30,11 @@ export const vendorApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     updateVendorProduct: builder.mutation({
-      query: ({ id, ...data }) => ({
+      query: ({ id, data }) => ({
         url: `/api/vendors/products/${id}`,
         method: 'PUT',
         body: data,
+        formData: true,
       }),
     }),
     deleteVendorProduct: builder.mutation({

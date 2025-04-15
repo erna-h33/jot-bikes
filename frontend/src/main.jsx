@@ -31,6 +31,7 @@ import VendorRoute from './pages/Vendor/VendorRoute.jsx';
 import VendorDashboard from './pages/Vendor/Dashboard.jsx';
 import VendorProducts from './pages/Vendor/Products.jsx';
 import AddProduct from './pages/Vendor/AddProduct.jsx';
+import VendorProductUpdate from './pages/Vendor/VendorProductUpdate.jsx';
 
 // Pages
 import Home from './pages/Home.jsx';
@@ -78,6 +79,7 @@ const router = createBrowserRouter(
         <Route path="dashboard" element={<VendorDashboard />} />
         <Route path="products" element={<VendorProducts />} />
         <Route path="products/new" element={<AddProduct />} />
+        <Route path="products/update/:id" element={<VendorProductUpdate />} />
       </Route>
     </Route>
   )

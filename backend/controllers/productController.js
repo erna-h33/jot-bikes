@@ -9,11 +9,10 @@ const __dirname = path.dirname(__filename);
 
 export const addProduct = async (req, res) => {
   try {
-    const { name, description, brand, price, quantity, category, countInStock } =
-      req.fields || req.body;
+    const { name, description, brand, price, category, countInStock } = req.fields || req.body;
 
     // Validate required fields
-    if (!name || !description || !brand || !price || !quantity || !category) {
+    if (!name || !description || !brand || !price || !category) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -55,7 +54,6 @@ export const addProduct = async (req, res) => {
       description,
       brand,
       price: Number(price),
-      quantity: Number(quantity),
       category,
       countInStock: Number(countInStock || 0),
       image,
@@ -78,8 +76,7 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       params: req.params,
     });
 
-    const { name, description, brand, price, quantity, category, countInStock } =
-      req.fields || req.body;
+    const { name, description, brand, price, category, countInStock } = req.fields || req.body;
 
     // Validation
     switch (true) {
@@ -91,8 +88,6 @@ const updateProductDetails = asyncHandler(async (req, res) => {
         return res.status(400).json({ error: 'Brand is required' });
       case !price:
         return res.status(400).json({ error: 'Price is required' });
-      case !quantity:
-        return res.status(400).json({ error: 'Quantity is required' });
       case !category:
         return res.status(400).json({ error: 'Category is required' });
     }
@@ -109,7 +104,6 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       description,
       brand,
       price: Number(price),
-      quantity: Number(quantity),
       category,
       countInStock: Number(countInStock || 0),
     };

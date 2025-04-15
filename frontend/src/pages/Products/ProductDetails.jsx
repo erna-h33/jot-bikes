@@ -92,7 +92,7 @@ const ProductDetails = () => {
                     product.image
                   }`}
                   alt={product.name}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-[500px] object-cover"
                 />
               </div>
 

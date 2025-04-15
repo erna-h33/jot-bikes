@@ -12,10 +12,9 @@ const ProductList = () => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState(0);
   const [category, setCategory] = useState('');
-  const [quantity, setQuantity] = useState(0);
   const [brand, setBrand] = useState('');
   const [stock, setStock] = useState(0);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imagePreview, setImagePreview] = useState('');
   const navigate = useNavigate();
 
   const [createProduct] = useCreateProductMutation();
@@ -35,7 +34,7 @@ const ProductList = () => {
         return;
       }
 
-      if (!name || !description || !price || !quantity || !stock) {
+      if (!name || !description || !price || !stock) {
         toast.error('Please fill in all fields');
         return;
       }
@@ -48,192 +47,170 @@ const ProductList = () => {
       productData.append('description', description);
       productData.append('price', price);
       productData.append('category', category);
-      productData.append('quantity', quantity);
       productData.append('brand', brand);
       productData.append('countInStock', stock);
 
-      // Debug log
-      console.log('Submitting product data:', {
-        name,
-        description,
-        price,
-        category,
-        quantity,
-        brand,
-        stock,
-        hasImage: !!image,
-      });
-
       const result = await createProduct(productData);
-
       if (result.error) {
-        console.error('Product creation error:', result.error);
-        const errorMessage =
-          result.error.data?.message || 'Product creation failed. Please try again.';
-        toast.error(errorMessage);
+        toast.error(result.error.data?.message || 'Failed to create product');
       } else {
-        console.log('Product created successfully:', result.data);
-        toast.success(`${name} is created successfully`);
-        navigate('/admin/productlist');
+        toast.success('Product created successfully');
+        navigate('/admin/allproductslist');
       }
-    } catch (error) {
-      console.error('Product creation error:', error);
-      toast.error('Product creation failed. Please try again.');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
     }
   };
 
-  const uploadFileHandler = async (e) => {
+  const uploadFileHandler = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      toast.error('No file selected');
-      return;
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
     }
-
-    console.log('File selected:', {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    });
-
-    // Create a preview URL for the image
-    const previewUrl = URL.createObjectURL(file);
-    setImageUrl(previewUrl);
-    setImage(file);
   };
 
   return (
-    <div className="container mx-auto max-w-[70%] ml-[20%] pt-[60px]">
-      <div className="flex flex-col md:flex-row">
-        <AdminMenu />
-        <div className="md:w-full p-3">
-          <div className="h-12 text-2xl font-bold p-3 mb-2">Create Product</div>
-
-          {/* Image Upload */}
-          {imageUrl && (
-            <div className="text-center">
-              <img src={imageUrl} alt="product" className="block mx-auto max-h-[200px]" />
-            </div>
-          )}
-
-          <div className="mb-3 p-3">
-            <label className="bg-gray-700 border text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
-              {image ? image.name : 'Upload Image'}
-
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={uploadFileHandler}
-                className={!image ? 'hidden' : 'text-white'}
-              />
-            </label>
+    <div className="flex">
+      <AdminMenu />
+      <div className="flex-1 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-semibold text-gray-800">Add New Product</h1>
           </div>
 
-          {/* Product Details */}
-          <div className="p-3">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name">Name</label> <br />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Product Image
+                </label>
                 <input
-                  type="text"
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  type="file"
+                  onChange={uploadFileHandler}
+                  className="w-full p-2 border rounded"
+                  accept="image/*"
                 />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="mt-2 h-32 w-32 object-cover rounded"
+                  />
+                )}
               </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                  <select
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    required
+                  >
+                    <option value="">Select Brand</option>
+                    <option value="All Brands">All Brands</option>
+                    <option value="Bolzzen">Bolzzen</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dulatron">Dulatron</option>
+                    <option value="Inokim">Inokim</option>
+                    <option value="Kaabo">Kaabo</option>
+                    <option value="Kristall">Kristall</option>
+                    <option value="Mercane">Mercane</option>
+                    <option value="NCM">NCM</option>
+                    <option value="Segway">Segway</option>
+                    <option value="The Cullen">The Cullen</option>
+                    <option value="Vamos">Vamos</option>
+                    <option value="Vsett">Vsett</option>
+                    <option value="Xiaomi">Xiaomi</option>
+                    <option value="Zero">Zero</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-2 border rounded"
+                rows="4"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name block">Price</label> <br />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
                 <input
                   type="number"
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  className="w-full p-2 border rounded"
+                  required
+                  min="0"
+                  step="0.01"
                 />
               </div>
+
               <div>
-                <label htmlFor="name block">Quantity</label> <br />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
                 <input
                   type="number"
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <div>
-                <label htmlFor="name block">Brand</label> <br />
-                <select
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
-                  value={brand}
-                  onChange={(e) => setBrand(e.target.value)}
-                >
-                  <option value="">Select Brand</option>
-                  <option value="All Brands">All Brands</option>
-                  <option value="Bolzzen">Bolzzen</option>
-                  <option value="Dragon">Dragon</option>
-                  <option value="Dulatron">Dulatron</option>
-                  <option value="Inokim">Inokim</option>
-                  <option value="Kaabo">Kaabo</option>
-                  <option value="Kristall">Kristall</option>
-                  <option value="Mercane">Mercane</option>
-                  <option value="NCM">NCM</option>
-                  <option value="Segway">Segway</option>
-                  <option value="The Cullen">The Cullen</option>
-                  <option value="Vamos">Vamos</option>
-                  <option value="Vsett">Vsett</option>
-                  <option value="Xiaomi">Xiaomi</option>
-                  <option value="Zero">Zero</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap">
-              <div className="w-full">
-                <label htmlFor="" className="my-5">
-                  Description
-                </label>
-                <textarea
-                  type="text"
-                  className="p-2 mb-3 w-full h-32 border rounded-lg bg-gray-700 text-white"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="name block">Count In Stock</label> <br />
-                <input
-                  type="number"
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
                   value={stock}
                   onChange={(e) => setStock(Number(e.target.value))}
+                  className="w-full p-2 border rounded"
+                  required
+                  min="0"
                 />
-              </div>
-
-              <div>
-                <label htmlFor="">Category</label> <br />
-                <select
-                  placeholder="Choose Category"
-                  className="p-4 mb-3 w-full border rounded-lg bg-gray-700 text-white"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="">Select Category</option>
-                  {categories?.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
-            <Button variant="pink" onClick={handleSubmit} className="mt-5">
-              Submit
-            </Button>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full p-2 border rounded"
+                required
+              >
+                <option value="">Select a category</option>
+                {categories?.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <Button
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                onClick={() => navigate('/admin/allproductslist')}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded"
+              >
+                Add Product
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

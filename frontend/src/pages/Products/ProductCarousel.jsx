@@ -38,7 +38,6 @@ const ProductCarousel = () => {
                 createdAt,
                 numReviews,
                 rating,
-                quantity,
                 countInStock,
               }) => (
                 <div key={_id} className="relative">

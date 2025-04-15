@@ -1,81 +1,113 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCreateVendorProductMutation } from '../../redux/api/vendorApiSlice';
+import { useState, useEffect } from 'react';
+import VendorMenu from './VendorMenu';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  useUpdateVendorProductMutation,
+  useDeleteVendorProductMutation,
+  useGetVendorProductsQuery,
+} from '../../redux/api/vendorApiSlice';
 import { useFetchCategoriesQuery } from '../../redux/api/categoryApiSlice';
 import { toast } from 'react-toastify';
-import VendorMenu from './VendorMenu';
 import Button from '../../components/Button';
 
-const AddProduct = () => {
-  const [image, setImage] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState(0);
-  const [category, setCategory] = useState('');
-  const [brand, setBrand] = useState('');
-  const [stock, setStock] = useState(0);
-  const [imagePreview, setImagePreview] = useState('');
+const VendorProductUpdate = () => {
+  const { id } = useParams();
+  const { data: products } = useGetVendorProductsQuery();
+  const [updateProduct] = useUpdateVendorProductMutation();
+  const [deleteProduct] = useDeleteVendorProductMutation();
+  const { data: categories = [] } = useFetchCategoriesQuery();
   const navigate = useNavigate();
 
-  const [createProduct] = useCreateVendorProductMutation();
-  const { data: categories } = useFetchCategoriesQuery();
+  const [image, setImage] = useState(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [brand, setBrand] = useState('');
+  const [stock, setStock] = useState('');
+  const [imagePreview, setImagePreview] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (!category) {
-        toast.error('Please select a category');
-        return;
+  useEffect(() => {
+    if (products) {
+      const product = products.find((p) => p._id === id);
+      if (product) {
+        setName(product.name || '');
+        setDescription(product.description || '');
+        setPrice(product.price?.toString() || '');
+        setCategory(product.category?._id || '');
+        setBrand(product.brand || '');
+        setStock(product.countInStock?.toString() || '');
+        setImagePreview(product.image || '');
       }
-
-      if (!brand) {
-        toast.error('Please select a brand');
-        return;
-      }
-
-      if (!name || !description || !price || !stock) {
-        toast.error('Please fill in all fields');
-        return;
-      }
-
-      const productData = new FormData();
-      if (image) {
-        productData.append('image', image);
-      }
-      productData.append('name', name);
-      productData.append('description', description);
-      productData.append('price', price);
-      productData.append('category', category);
-      productData.append('brand', brand);
-      productData.append('countInStock', stock);
-
-      const result = await createProduct(productData);
-
-      if (result.error) {
-        console.error('Product creation error:', result.error);
-        toast.error(result.error.data?.message || 'Product creation failed. Please try again.');
-      } else {
-        toast.success(`${name} is created successfully`);
-        navigate('/vendor/products');
-      }
-    } catch (error) {
-      console.error('Product creation error:', error);
-      toast.error('Product creation failed. Please try again.');
     }
-  };
+  }, [products, id]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      toast.error('No file selected');
-      return;
+    if (file) {
+      setImage(file);
+      // Create a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
     }
+  };
 
-    // Create a preview URL for the image
-    const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
-    setImage(file);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Validate required fields
+      if (!name || !description || !brand || !price || !stock || !category) {
+        toast.error('All fields are required');
+        return;
+      }
+
+      const formData = new FormData();
+      if (image) {
+        formData.append('image', image);
+      }
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('category', category);
+      formData.append('brand', brand);
+      formData.append('countInStock', stock);
+
+      const result = await updateProduct({ id, data: formData });
+
+      if (result.error) {
+        console.error('Update error:', result.error);
+        toast.error(result.error.data?.message || 'Update failed');
+      } else {
+        toast.success('Product successfully updated');
+        navigate('/vendor/products');
+      }
+    } catch (err) {
+      console.error('Update error:', err);
+      toast.error('Product update failed. Try again.');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      let answer = window.confirm('Are you sure you want to delete this product?');
+      if (!answer) return;
+
+      if (!id) {
+        toast.error('Product ID is missing');
+        return;
+      }
+
+      const result = await deleteProduct(id);
+      if (result.error) {
+        toast.error(result.error.data?.message || 'Delete failed');
+      } else {
+        toast.success('Product deleted successfully');
+        navigate('/vendor/products');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      toast.error('Product deletion failed. Try again.');
+    }
   };
 
   return (
@@ -84,7 +116,13 @@ const AddProduct = () => {
       <div className="flex-1 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-800">Add New Product</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">Update Product</h1>
+            <Button
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+              onClick={handleDelete}
+            >
+              Delete Product
+            </Button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -97,7 +135,6 @@ const AddProduct = () => {
                   type="file"
                   onChange={uploadFileHandler}
                   className="w-full p-2 border rounded"
-                  accept="image/*"
                 />
                 {imagePreview && (
                   <img
@@ -122,29 +159,13 @@ const AddProduct = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-                  <select
+                  <input
+                    type="text"
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                     className="w-full p-2 border rounded"
                     required
-                  >
-                    <option value="">Select Brand</option>
-                    <option value="All Brands">All Brands</option>
-                    <option value="Bolzzen">Bolzzen</option>
-                    <option value="Dragon">Dragon</option>
-                    <option value="Dulatron">Dulatron</option>
-                    <option value="Inokim">Inokim</option>
-                    <option value="Kaabo">Kaabo</option>
-                    <option value="Kristall">Kristall</option>
-                    <option value="Mercane">Mercane</option>
-                    <option value="NCM">NCM</option>
-                    <option value="Segway">Segway</option>
-                    <option value="The Cullen">The Cullen</option>
-                    <option value="Vamos">Vamos</option>
-                    <option value="Vsett">Vsett</option>
-                    <option value="Xiaomi">Xiaomi</option>
-                    <option value="Zero">Zero</option>
-                  </select>
+                  />
                 </div>
               </div>
             </div>
@@ -179,7 +200,7 @@ const AddProduct = () => {
                 <input
                   type="number"
                   value={stock}
-                  onChange={(e) => setStock(Number(e.target.value))}
+                  onChange={(e) => setStock(e.target.value)}
                   className="w-full p-2 border rounded"
                   required
                   min="0"
@@ -196,7 +217,7 @@ const AddProduct = () => {
                 required
               >
                 <option value="">Select a category</option>
-                {categories?.map((cat) => (
+                {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
@@ -215,7 +236,7 @@ const AddProduct = () => {
                 type="submit"
                 className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded"
               >
-                Add Product
+                Update Product
               </Button>
             </div>
           </form>
@@ -225,4 +246,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default VendorProductUpdate;
