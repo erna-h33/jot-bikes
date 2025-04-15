@@ -116,7 +116,7 @@ const ProductDetails = () => {
                   <div className="flex items-center">
                     <FaClock className="mr-2 text-pink-500" />
                     <span className="text-gray-300">
-                      Added: {moment(product.createAt).fromNow()}
+                      Added: {moment(product.createdAt).fromNow()}
                     </span>
                   </div>
                   <div className="flex items-center">

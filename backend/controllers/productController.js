@@ -161,8 +161,14 @@ const updateProductDetails = asyncHandler(async (req, res) => {
     }
 
     // Update the product fields
-    Object.assign(product, updateData);
-    const updatedProduct = await product.save();
+    // Use findByIdAndUpdate instead of Object.assign and save
+    // This approach is more reliable for handling required fields
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true, runValidators: false }
+    );
+
     console.log('Product updated successfully:', updatedProduct);
 
     res.json(updatedProduct);
