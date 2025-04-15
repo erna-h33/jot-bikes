@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
 import Ratings from './Ratings';
 
 const Product = ({ product }) => {
@@ -40,6 +41,7 @@ const Product = ({ product }) => {
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
+            <FaShoppingCart className="mr-2" />
             {product.countInStock > 0 ? 'Book Now' : 'Out of Stock'}
           </Link>
         </div>

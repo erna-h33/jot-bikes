@@ -70,10 +70,10 @@ const ProductDetails = () => {
     <div className="min-h-screen bg-gray-900 text-white pt-40 pb-10 -mt-20">
       <div className="container mx-auto px-4">
         <Link
-          to="/"
+          to="/shop"
           className="inline-flex items-center text-white hover:text-pink-400 transition-colors mb-8"
         >
-          <FaArrowLeft className="mr-2" /> Back to Products
+          <FaArrowLeft className="mr-2" /> Go to Shop
         </Link>
 
         {isLoading ? (
