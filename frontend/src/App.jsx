@@ -8,10 +8,11 @@ function App() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
   const isHomePage = location.pathname === '/';
+  const isProfilePage = location.pathname === '/profile';
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {!isAdminPage && <TopNavigation />}
+      {!isAdminPage && !isProfilePage && <TopNavigation />}
       <ToastContainer />
       {/* <Navigation /> */}
       <main className={isAdminPage ? '' : isHomePage ? '' : 'pt-20'}>

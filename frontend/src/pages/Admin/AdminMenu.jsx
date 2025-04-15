@@ -193,7 +193,8 @@ const AdminMenu = () => {
           </div>
           {userInfo && (
             <div className="text-sm text-gray-500 px-3 py-2">
-              Logged in as: <span className="font-medium">{userInfo.username}</span>
+              Logged in as:{' '}
+              <span className="font-medium">{userInfo.name || userInfo.username}</span>
             </div>
           )}
         </div>

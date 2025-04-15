@@ -47,7 +47,7 @@ const Profile = () => {
   return (
     <div className="flex">
       {userInfo && userInfo.isAdmin && <AdminMenu />}
-      <div className={`flex-1 ${userInfo?.isAdmin ? 'ml-[20%]' : ''} pt-[60px]`}>
+      <div className={`flex-1 ${userInfo?.isAdmin ? 'ml-[150px]' : ''} pt-[60px]`}>
         <div className="container mx-auto p-4">
           <div className="flex justify-center align-center md:flex md:space-x-4">
             <div className="md:w-1/3">
@@ -108,10 +108,10 @@ const Profile = () => {
                   </button>
 
                   <Link
-                    to="/user-orders"
+                    to="/"
                     className="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700"
                   >
-                    My Orders
+                    Back to Home
                   </Link>
                 </div>
                 {loadingUpdateProfile && <Loader />}

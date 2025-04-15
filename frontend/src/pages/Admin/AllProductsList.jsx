@@ -27,7 +27,7 @@ const AllProductsList = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-[100px]">
+    <div className="container py-8 mt-[100px] ml-[250px]">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">All Products</h1>
         <Link
