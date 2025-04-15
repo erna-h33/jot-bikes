@@ -5,15 +5,21 @@ import {
   getBookingById,
   updateBookingStatus,
   deleteBooking,
+  getAllBookings,
 } from '../controllers/bookingController.js';
-import { protect } from '../middlewares/authMiddleware.js';
+import { protect, admin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+// Admin route to get all bookings
+router.get('/', protect, admin, getAllBookings);
+
 // Create a booking
 router.post('/', protect, createBooking);
+
 // Get bookings for the logged-in user
-router.get('/my', protect, getMyBookings);
+router.get('/my-bookings', protect, getMyBookings);
+
 // Get, update, or delete a single booking
 router
   .route('/:id')

@@ -29,7 +29,7 @@ const MyBookings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-40 pb-10">
+    <div className="min-h-screen bg-gray-900 text-white pt-40 -mt-20 pb-10">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
         {isLoading ? (
@@ -43,20 +43,23 @@ const MyBookings = () => {
             <table className="min-w-full bg-gray-800 rounded-lg">
               <thead>
                 <tr>
-                  <th className="py-2 px-4">Product</th>
-                  <th className="py-2 px-4">Start Date</th>
-                  <th className="py-2 px-4">End Date</th>
-                  <th className="py-2 px-4">Total Price</th>
-                  <th className="py-2 px-4">Status</th>
-                  <th className="py-2 px-4">Action</th>
+                  <th className="py-3 px-4 text-center">Product</th>
+                  <th className="py-3 px-4 text-center">Start Date</th>
+                  <th className="py-3 px-4 text-center">End Date</th>
+                  <th className="py-3 px-4 text-center">Total Price</th>
+                  <th className="py-3 px-4 text-center">Status</th>
+                  <th className="py-3 px-4 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map((booking) => (
-                  <tr key={booking._id} className="border-b border-gray-700">
-                    <td className="py-2 px-4">
+                  <tr
+                    key={booking._id}
+                    className="border-b border-gray-700 hover:bg-gray-700 transition-colors"
+                  >
+                    <td className="py-3 px-4 text-center">
                       {booking.product ? (
-                        <div>
+                        <div className="flex flex-col items-center">
                           <div className="font-semibold">{booking.product.name}</div>
                           <div className="text-gray-400 text-sm">{booking.product.brand}</div>
                         </div>
@@ -64,11 +67,29 @@ const MyBookings = () => {
                         'Product deleted'
                       )}
                     </td>
-                    <td className="py-2 px-4">{moment(booking.startDate).format('YYYY-MM-DD')}</td>
-                    <td className="py-2 px-4">{moment(booking.endDate).format('YYYY-MM-DD')}</td>
-                    <td className="py-2 px-4">${booking.totalPrice}</td>
-                    <td className="py-2 px-4 capitalize">{booking.status}</td>
-                    <td className="py-2 px-4">
+                    <td className="py-3 px-4 text-center">
+                      {moment(booking.startDate).format('YYYY-MM-DD')}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {moment(booking.endDate).format('YYYY-MM-DD')}
+                    </td>
+                    <td className="py-3 px-4 text-center font-semibold text-pink-500">
+                      ${booking.totalPrice}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span
+                        className={`pb-2 pt-2 px-4 rounded text-xs font-semibold ${
+                          booking.status === 'confirmed'
+                            ? 'bg-green-500 text-white'
+                            : booking.status === 'cancelled'
+                            ? 'bg-red-500 text-white'
+                            : 'bg-yellow-500 text-white'
+                        }`}
+                      >
+                        {booking.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
                       {booking.status !== 'cancelled' && (
                         <button
                           onClick={() => handleCancel(booking._id)}

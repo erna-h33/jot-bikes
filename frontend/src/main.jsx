@@ -25,6 +25,7 @@ import CategoryList from './pages/Admin/CategoryList.jsx';
 import ProductList from './pages/Admin/ProductList.jsx';
 import ProductUpdate from './pages/Admin/ProductUpdate.jsx';
 import AllProducts from './pages/Admin/AllProducts.jsx';
+import AdminBookings from './pages/Admin/AdminBookings.jsx';
 
 // Vendor
 import VendorRoute from './pages/Vendor/VendorRoute.jsx';
@@ -32,6 +33,7 @@ import VendorDashboard from './pages/Vendor/Dashboard.jsx';
 import VendorProducts from './pages/Vendor/Products.jsx';
 import AddProduct from './pages/Vendor/AddProduct.jsx';
 import VendorProductUpdate from './pages/Vendor/VendorProductUpdate.jsx';
+import VendorBookings from './pages/Vendor/VendorBookings.jsx';
 
 // Pages
 import Home from './pages/Home.jsx';
@@ -39,6 +41,8 @@ import ProductDetails from './pages/Products/ProductDetails.jsx';
 import Cart from './pages/Cart.jsx';
 import Shop from './pages/Shop.jsx';
 import MyBookings from './pages/MyBookings.jsx';
+import Checkout from './pages/Checkout.jsx';
+import OrderSuccess from './pages/OrderSuccess.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +59,8 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/profile" element={<Profile />} />
         <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
       </Route>
 
       {/* Admin Routes */}
@@ -65,6 +71,7 @@ const router = createBrowserRouter(
         <Route path="productlist" element={<ProductList />} />
         <Route path="product/update/:id" element={<ProductUpdate />} />
         <Route path="allproductslist" element={<AllProducts />} />
+        <Route path="bookings" element={<AdminBookings />} />
         <Route
           path="orderlist"
           element={
@@ -82,6 +89,7 @@ const router = createBrowserRouter(
         <Route path="products" element={<VendorProducts />} />
         <Route path="products/new" element={<AddProduct />} />
         <Route path="products/update/:id" element={<VendorProductUpdate />} />
+        <Route path="bookings" element={<VendorBookings />} />
       </Route>
     </Route>
   )

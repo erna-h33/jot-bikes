@@ -12,6 +12,9 @@ const Checkout = () => {
   const { cartItems, itemsPrice, taxPrice, totalPrice } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
 
+  // Get the booking ID from the cart item
+  const bookingId = cartItems[0]?.bookingId;
+
   useEffect(() => {
     if (!userInfo) {
       navigate('/login?redirect=/checkout');
@@ -76,7 +79,7 @@ const Checkout = () => {
               </div>
 
               <div className="mt-6">
-                <StripePayment totalPrice={totalPrice} />
+                <StripePayment totalPrice={totalPrice} bookingId={bookingId} />
               </div>
             </div>
           </div>

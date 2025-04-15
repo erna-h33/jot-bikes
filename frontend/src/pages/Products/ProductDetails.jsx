@@ -86,7 +86,7 @@ const ProductDetails = () => {
       return;
     }
     try {
-      await createBooking({ product: product._id, startDate, endDate }).unwrap();
+      const booking = await createBooking({ product: product._id, startDate, endDate }).unwrap();
       toast.success('Booking successful!');
       // Add to cart after successful booking
       const cartItem = {
@@ -96,6 +96,9 @@ const ProductDetails = () => {
         price: product.price,
         countInStock: product.countInStock,
         qty: qty,
+        bookingId: booking._id,
+        startDate,
+        endDate,
       };
       dispatch(addToCart(cartItem));
       setStartDate('');

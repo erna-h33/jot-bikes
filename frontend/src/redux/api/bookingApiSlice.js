@@ -7,35 +7,34 @@ export const bookingApiSlice = apiSlice.injectEndpoints({
         url: '/api/bookings',
         method: 'POST',
         body: data,
-        credentials: 'include',
       }),
     }),
     getMyBookings: builder.query({
-      query: () => ({
-        url: '/api/bookings/my',
-        credentials: 'include',
-      }),
+      query: () => '/api/bookings/my-bookings',
+      providesTags: ['Bookings'],
     }),
-    getBookingById: builder.query({
-      query: (id) => ({
-        url: `/api/bookings/${id}`,
-        credentials: 'include',
-      }),
+    getAllBookings: builder.query({
+      query: () => '/api/bookings',
+      providesTags: ['Bookings'],
+    }),
+    getVendorBookings: builder.query({
+      query: () => '/api/bookings/vendor',
+      providesTags: ['Bookings'],
     }),
     updateBookingStatus: builder.mutation({
-      query: ({ id, status }) => ({
-        url: `/api/bookings/${id}`,
+      query: ({ bookingId, status }) => ({
+        url: `/api/bookings/${bookingId}/status`,
         method: 'PUT',
         body: { status },
-        credentials: 'include',
       }),
+      invalidatesTags: ['Bookings'],
     }),
     deleteBooking: builder.mutation({
       query: (id) => ({
         url: `/api/bookings/${id}`,
         method: 'DELETE',
-        credentials: 'include',
       }),
+      invalidatesTags: ['Bookings'],
     }),
   }),
 });
@@ -43,7 +42,8 @@ export const bookingApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateBookingMutation,
   useGetMyBookingsQuery,
-  useGetBookingByIdQuery,
+  useGetAllBookingsQuery,
+  useGetVendorBookingsQuery,
   useUpdateBookingStatusMutation,
   useDeleteBookingMutation,
 } = bookingApiSlice;

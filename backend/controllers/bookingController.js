@@ -118,3 +118,16 @@ export const deleteBooking = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// GET /api/bookings (admin only)
+export const getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate('product')
+      .populate('user', 'username email')
+      .sort({ createdAt: -1 });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

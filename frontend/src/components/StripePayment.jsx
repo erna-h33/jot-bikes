@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { clearCartItems } from '../redux/features/cart/cartSlice';
+import { useUpdateBookingStatusMutation } from '../redux/api/bookingApiSlice';
 import { toast } from 'react-toastify';
 
 // Load Stripe outside of component render to avoid recreating Stripe object on every render
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ totalPrice }) => {
+const CheckoutForm = ({ totalPrice, bookingId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ const CheckoutForm = ({ totalPrice }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth);
+  const [updateBookingStatus] = useUpdateBookingStatusMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -58,6 +60,20 @@ const CheckoutForm = ({ totalPrice }) => {
       const result = await response.json();
 
       if (result.success) {
+        // If payment is successful, update booking status to confirmed
+        if (bookingId) {
+          try {
+            await updateBookingStatus({
+              bookingId,
+              status: 'confirmed',
+            }).unwrap();
+          } catch (err) {
+            console.error('Error updating booking status:', err);
+            // Continue with success flow even if booking status update fails
+            // The admin can manually confirm the booking if needed
+          }
+        }
+
         toast.success('Payment successful!');
         dispatch(clearCartItems());
         navigate('/order-success');
@@ -115,10 +131,10 @@ const CheckoutForm = ({ totalPrice }) => {
   );
 };
 
-const StripePayment = ({ totalPrice }) => {
+const StripePayment = ({ totalPrice, bookingId }) => {
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm totalPrice={totalPrice} />
+      <CheckoutForm totalPrice={totalPrice} bookingId={bookingId} />
     </Elements>
   );
 };

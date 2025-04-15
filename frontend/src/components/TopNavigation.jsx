@@ -12,6 +12,7 @@ import {
   AiOutlineOrderedList,
   AiOutlineTeam,
   AiOutlineLogout,
+  AiOutlineCalendar,
 } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -182,6 +183,14 @@ const TopNavigation = () => {
                         >
                           <AiOutlineAppstore className="mr-2" size={18} />
                           My Products
+                        </Link>
+                        <Link
+                          to="/vendor/bookings"
+                          onClick={closeDropdown}
+                          className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                        >
+                          <AiOutlineCalendar className="mr-2" size={18} />
+                          Product Bookings
                         </Link>
                         <Link
                           to="/vendor/products/new"
