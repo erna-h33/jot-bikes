@@ -26,12 +26,8 @@ const Shop = () => {
     const searchParams = new URLSearchParams(location.search);
     const categoryParam = searchParams.get('category');
 
-    if (categoryParam && categoriesQuery.data) {
-      const category = categoriesQuery.data.find((c) => c.name === categoryParam);
-      if (category) {
-        dispatch(setChecked([category._id]));
-      }
-    }
+    // Remove category filtering
+    dispatch(setChecked([]));
   }, [location.search, categoriesQuery.data, dispatch]);
 
   useEffect(() => {

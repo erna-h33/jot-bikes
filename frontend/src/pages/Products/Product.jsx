@@ -1,24 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../redux/features/cart/cartSlice';
-import { FaShoppingCart } from 'react-icons/fa';
 import Ratings from './Ratings';
 
 const Product = ({ product }) => {
-  const dispatch = useDispatch();
-
-  const addToCartHandler = () => {
-    const cartItem = {
-      _id: product._id,
-      name: product.name,
-      image: product.image,
-      price: product.price,
-      countInStock: product.countInStock,
-      qty: 1,
-    };
-    dispatch(addToCart(cartItem));
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="relative aspect-w-1 aspect-h-1">
@@ -49,18 +32,16 @@ const Product = ({ product }) => {
         </Link>
 
         <div className="mt-4">
-          <button
-            onClick={addToCartHandler}
-            disabled={product.countInStock === 0}
+          <Link
+            to={`/product/${product._id}`}
             className={`w-full flex items-center justify-center py-2 px-4 rounded-md text-white font-medium transition duration-300 ${
               product.countInStock > 0
                 ? 'bg-pink-600 hover:bg-pink-700'
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
-            <FaShoppingCart className="mr-2" />
-            {product.countInStock > 0 ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+            {product.countInStock > 0 ? 'Book Now' : 'Out of Stock'}
+          </Link>
         </div>
       </div>
     </div>

@@ -78,7 +78,7 @@ const TopNavigation = () => {
               Bike Service
             </Link>
             <Link to="/shop" className="text-white hover:text-pink-400 transition-colors">
-              Shop
+              Rent a Bike
             </Link>
             <Link to="/cart" className="text-white hover:text-pink-400 transition-colors relative">
               Cart

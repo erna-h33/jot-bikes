@@ -1,20 +1,6 @@
 import { Link } from 'react-router-dom';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../redux/features/cart/cartSlice';
-import { toast } from 'react-toastify';
 
 const ProductCard = ({ p }) => {
-  const dispatch = useDispatch();
-
-  const addToCartHandler = (product, qty) => {
-    dispatch(addToCart({ ...product, qty }));
-    toast.success('Item added successfully', {
-      position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2000,
-    });
-  };
-
   return (
     <div className="max-w-sm relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <section className="relative">
@@ -76,12 +62,12 @@ const ProductCard = ({ p }) => {
             </svg>
           </Link>
 
-          <button
-            className="p-2 rounded-full text-white transition-transform duration-200 hover:scale-110 active:scale-95"
-            onClick={() => addToCartHandler(p, 1)}
+          <Link
+            to={`/product/${p._id}`}
+            className="p-2 rounded-full text-white bg-pink-600 hover:bg-pink-700 transition-transform duration-200 hover:scale-110 active:scale-95"
           >
-            <AiOutlineShoppingCart size={25} />
-          </button>
+            Book Now
+          </Link>
         </section>
       </div>
     </div>

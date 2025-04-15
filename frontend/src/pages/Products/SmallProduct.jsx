@@ -47,18 +47,16 @@ const SmallProduct = ({ product }) => {
         </Link>
 
         <div className="mt-4">
-          <button
-            onClick={addToCartHandler}
-            disabled={product.countInStock === 0}
+          <Link
+            to={`/product/${product._id}`}
             className={`w-full flex items-center justify-center py-2 px-4 rounded-md text-white font-medium transition duration-300 ${
               product.countInStock > 0
                 ? 'bg-pink-600 hover:bg-pink-700'
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
-            <FaShoppingCart className="mr-2" />
-            {product.countInStock > 0 ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+            {product.countInStock > 0 ? 'Book Now' : 'Out of Stock'}
+          </Link>
         </div>
       </div>
     </div>
