@@ -17,6 +17,10 @@ export const bookingApiSlice = apiSlice.injectEndpoints({
       query: () => '/api/bookings',
       providesTags: ['Bookings'],
     }),
+    getStockStatus: builder.query({
+      query: () => '/api/bookings/stock-status',
+      providesTags: ['Bookings'],
+    }),
     getVendorBookings: builder.query({
       query: () => '/api/bookings/vendor',
       providesTags: ['Bookings'],
@@ -43,6 +47,7 @@ export const {
   useCreateBookingMutation,
   useGetMyBookingsQuery,
   useGetAllBookingsQuery,
+  useGetStockStatusQuery,
   useGetVendorBookingsQuery,
   useUpdateBookingStatusMutation,
   useDeleteBookingMutation,

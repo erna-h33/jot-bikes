@@ -8,20 +8,12 @@ import {
 } from '../../redux/api/productApiSlice';
 import Loader from '../../components/Loader';
 import Message from '../../components/Message';
-import {
-  FaBox,
-  FaClock,
-  FaShoppingCart,
-  FaStar,
-  FaStore,
-  FaArrowLeft,
-  FaUser,
-} from 'react-icons/fa';
+import { FaBox, FaClock, FaStar, FaStore, FaArrowLeft, FaUser } from 'react-icons/fa';
 import moment from 'moment';
 import Ratings from './Ratings';
 import ProductTabs from './ProductTabs';
-import { addToCart } from '../../redux/features/cart/cartSlice';
 import { useCreateBookingMutation } from '../../redux/api/bookingApiSlice';
+import { addToCart } from '../../redux/features/cart/cartSlice';
 
 const ProductDetails = () => {
   const { id: productId } = useParams();
@@ -55,19 +47,6 @@ const ProductDetails = () => {
     } catch (error) {
       toast.error(error?.data || error.message);
     }
-  };
-
-  const addToCartHandler = () => {
-    const cartItem = {
-      _id: product._id,
-      name: product.name,
-      image: product.image,
-      price: product.price,
-      countInStock: product.countInStock,
-      qty: qty,
-    };
-    dispatch(addToCart(cartItem));
-    navigate('/cart');
   };
 
   const handleBooking = async (e) => {
@@ -200,15 +179,6 @@ const ProductDetails = () => {
                         ))}
                       </select>
                     </div>
-
-                    <button
-                      onClick={addToCartHandler}
-                      disabled={product.countInStock === 0}
-                      className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-lg transition-colors flex items-center"
-                    >
-                      <FaShoppingCart className="mr-2" />
-                      Add To Cart
-                    </button>
                   </div>
                 )}
 

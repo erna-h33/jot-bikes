@@ -44,7 +44,7 @@ const ProductCard = ({ p }) => {
             to={`/product/${p._id}`}
             className="inline-flex items-center px-3 pt-1.5 pb-2 text-sm font-medium text-center text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
           >
-            Read More
+            Book Now
             <svg
               className="w-3.5 h-3.5 ml-2"
               aria-hidden="true"
@@ -60,13 +60,6 @@ const ProductCard = ({ p }) => {
                 d="M1 5h12m0 0L9 1m4 4L9 9"
               />
             </svg>
-          </Link>
-
-          <Link
-            to={`/product/${p._id}`}
-            className="p-2 rounded-full text-white bg-pink-600 hover:bg-pink-700 transition-transform duration-200 hover:scale-110 active:scale-95"
-          >
-            Book Now
           </Link>
         </section>
       </div>

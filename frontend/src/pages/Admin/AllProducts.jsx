@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { useAllProductsQuery } from '../../redux/api/productApiSlice';
 import AdminMenu from './AdminMenu';
+import { FaBox } from 'react-icons/fa';
 
 const AllProducts = () => {
   const { data: products, isLoading, isError } = useAllProductsQuery();
@@ -14,6 +15,9 @@ const AllProducts = () => {
     return <div>Error loading products</div>;
   }
 
+  // Sort products alphabetically by name
+  const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="container mx-auto max-w-[75%] pb-10 ml-[20%]">
       <div className="flex flex-col md:flex-row">
@@ -22,7 +26,7 @@ const AllProducts = () => {
           <div className="text-2xl font-bold my-8">All Products ({products.length})</div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {sortedProducts.map((product) => (
               <div
                 key={product._id}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100"
@@ -40,7 +44,11 @@ const AllProducts = () => {
                   <div className="mb-4">
                     <h3 className="text-xl font-bold text-gray-800">{product?.name}</h3>
                     <p className="text-lg font-semibold text-pink-600 mt-1">$ {product?.price}</p>
-                    <p className="text-gray-500 text-xs">
+                    <div className="flex items-center mt-2 text-gray-600">
+                      <FaBox className="mr-2" />
+                      <span>Stock: {product.countInStock} units</span>
+                    </div>
+                    <p className="text-gray-500 text-xs mt-2">
                       {moment(product.createdAt).format('MMMM Do YYYY')}
                     </p>
                   </div>

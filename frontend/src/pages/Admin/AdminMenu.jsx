@@ -3,12 +3,10 @@ import {
   AiOutlineDashboard,
   AiOutlineAppstore,
   AiOutlineTags,
-  AiOutlineOrderedList,
   AiOutlineTeam,
   AiOutlineHome,
   AiOutlineUser,
   AiOutlineLogout,
-  AiOutlineShoppingCart,
   AiOutlineCalendar,
 } from 'react-icons/ai';
 import { useSelector, useDispatch } from 'react-redux';
@@ -144,24 +142,6 @@ const AdminMenu = () => {
             </NavLink>
           </li>
 
-          {/* Manage Orders */}
-          <li className="mb-3">
-            <NavLink
-              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
-              to="/admin/orderlist"
-              style={({ isActive }) => ({
-                color: isActive ? '#ec4899' : '#1f2937',
-                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
-              })}
-            >
-              <AiOutlineShoppingCart
-                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
-                size={20}
-              />
-              <span>Manage Orders</span>
-            </NavLink>
-          </li>
-
           {/* Bookings */}
           <li className="mb-3">
             <NavLink
@@ -176,7 +156,7 @@ const AdminMenu = () => {
                 className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
                 size={20}
               />
-              <span>Bookings</span>
+              <span>Manage Bookings</span>
             </NavLink>
           </li>
         </ul>

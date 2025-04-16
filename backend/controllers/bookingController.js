@@ -7,6 +7,62 @@ function getWeeksBetween(startDate, endDate) {
   return Math.ceil((endDate - startDate) / msInWeek);
 }
 
+// Helper to get available stock for a product on specific dates
+async function getAvailableStock(productId, startDate, endDate) {
+  const product = await Product.findById(productId);
+  if (!product) return 0;
+
+  const existingBookings = await Booking.countDocuments({
+    product: productId,
+    status: { $ne: 'cancelled' },
+    $or: [
+      {
+        startDate: { $lte: new Date(endDate) },
+        endDate: { $gte: new Date(startDate) },
+      },
+    ],
+  });
+
+  return Math.max(0, product.countInStock - existingBookings);
+}
+
+// GET /api/bookings/stock-status
+export const getStockStatus = async (req, res) => {
+  try {
+    const products = await Product.find();
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const stockStatus = await Promise.all(
+      products.map(async (product) => {
+        const availableStock = await getAvailableStock(product._id, today, nextWeek);
+        return {
+          _id: product._id,
+          name: product.name,
+          totalStock: product.countInStock,
+          availableStock,
+          isLowStock: availableStock < 5,
+        };
+      })
+    );
+
+    const lowStockProducts = stockStatus.filter((p) => p.isLowStock);
+
+    res.json({
+      allProducts: stockStatus,
+      lowStockAlert:
+        lowStockProducts.length > 0
+          ? {
+              message: `${lowStockProducts.length} products have less than 5 units available`,
+              products: lowStockProducts,
+            }
+          : null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // POST /api/bookings
 export const createBooking = async (req, res) => {
   try {
@@ -22,13 +78,23 @@ export const createBooking = async (req, res) => {
       return res.status(404).json({ message: 'Product not found.' });
     }
 
-    // Check for overlapping bookings
-    const overlapping = await Booking.findOne({
+    // Count existing bookings for the same date range
+    const existingBookings = await Booking.countDocuments({
       product: productId,
-      $or: [{ startDate: { $lt: new Date(endDate) }, endDate: { $gt: new Date(startDate) } }],
+      status: { $ne: 'cancelled' }, // Don't count cancelled bookings
+      $or: [
+        {
+          startDate: { $lte: new Date(endDate) },
+          endDate: { $gte: new Date(startDate) },
+        },
+      ],
     });
-    if (overlapping) {
-      return res.status(400).json({ message: 'Product is already booked for these dates.' });
+
+    // Check if there's enough stock available
+    if (existingBookings >= product.countInStock) {
+      return res.status(400).json({
+        message: 'No available stock for these dates. All units are booked.',
+      });
     }
 
     // Calculate total price (weekly price * number of weeks)

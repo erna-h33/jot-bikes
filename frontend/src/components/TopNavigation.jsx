@@ -89,6 +89,9 @@ const TopNavigation = () => {
                 </span>
               )}
             </Link>
+            <Link to="/about" className="text-white hover:text-pink-400 transition-colors">
+              About Us
+            </Link>
           </div>
 
           {/* User Menu */}

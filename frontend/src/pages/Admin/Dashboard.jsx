@@ -3,8 +3,14 @@ import { useSelector } from 'react-redux';
 import AdminMenu from './AdminMenu';
 import { useGetUsersQuery } from '../../redux/api/usersApiSlice';
 import { useAllProductsQuery } from '../../redux/api/productApiSlice';
-import { useGetAllBookingsQuery } from '../../redux/api/bookingApiSlice';
-import { FaUsers, FaBox, FaCalendarCheck, FaDollarSign } from 'react-icons/fa';
+import { useGetAllBookingsQuery, useGetStockStatusQuery } from '../../redux/api/bookingApiSlice';
+import {
+  FaUsers,
+  FaBox,
+  FaCalendarCheck,
+  FaDollarSign,
+  FaExclamationTriangle,
+} from 'react-icons/fa';
 import Loader from '../../components/Loader';
 import moment from 'moment';
 
@@ -13,6 +19,7 @@ const Dashboard = () => {
   const { data: users, isLoading: usersLoading } = useGetUsersQuery();
   const { data: products, isLoading: productsLoading } = useAllProductsQuery();
   const { data: bookings, isLoading: bookingsLoading } = useGetAllBookingsQuery();
+  const { data: stockStatus, isLoading: stockStatusLoading } = useGetStockStatusQuery();
 
   // Calculate booking statistics
   const bookingStats = bookings
@@ -32,7 +39,7 @@ const Dashboard = () => {
 
   console.log('All bookings:', bookings); // Temporary log to check bookings
 
-  const isLoading = usersLoading || productsLoading || bookingsLoading;
+  const isLoading = usersLoading || productsLoading || bookingsLoading || stockStatusLoading;
 
   return (
     <div className="flex">
@@ -47,6 +54,30 @@ const Dashboard = () => {
           <Loader />
         ) : (
           <>
+            {/* Stock Alert Section */}
+            {stockStatus?.lowStockAlert && (
+              <div className="mb-6">
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                  <div className="flex items-center">
+                    <FaExclamationTriangle className="text-red-500 mr-3" />
+                    <div>
+                      <h3 className="text-red-800 font-medium">
+                        {stockStatus.lowStockAlert.message}
+                      </h3>
+                      <div className="mt-2 space-y-1">
+                        {stockStatus.lowStockAlert.products.map((product) => (
+                          <p key={product._id} className="text-red-700">
+                            {product.name}: {product.availableStock} units available (Total:{' '}
+                            {product.totalStock})
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
                 <div className="flex items-center gap-4">
@@ -138,6 +169,9 @@ const Dashboard = () => {
                         <p className="text-sm text-gray-500">
                           {moment(booking.startDate).format('MMM D')} -{' '}
                           {moment(booking.endDate).format('MMM D, YYYY')}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Customer: {booking.user?.username || booking.user?.name || 'Unknown'}
                         </p>
                       </div>
                       <div className="text-right">

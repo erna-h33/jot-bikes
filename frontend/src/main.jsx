@@ -37,6 +37,7 @@ import VendorBookings from './pages/Vendor/VendorBookings.jsx';
 
 // Pages
 import Home from './pages/Home.jsx';
+import About from './pages/About.jsx';
 import ProductDetails from './pages/Products/ProductDetails.jsx';
 import Cart from './pages/Cart.jsx';
 import Shop from './pages/Shop.jsx';
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route index={true} path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
       <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/shop" element={<Shop />} />
@@ -72,15 +74,6 @@ const router = createBrowserRouter(
         <Route path="product/update/:id" element={<ProductUpdate />} />
         <Route path="allproductslist" element={<AllProducts />} />
         <Route path="bookings" element={<AdminBookings />} />
-        <Route
-          path="orderlist"
-          element={
-            <div className="p-4">
-              <h1 className="text-2xl font-semibold mb-4">Orders</h1>
-              <p>Order list coming soon</p>
-            </div>
-          }
-        />
       </Route>
 
       {/* Vendor Routes */}
