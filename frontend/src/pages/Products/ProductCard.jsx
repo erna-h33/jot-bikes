@@ -31,12 +31,6 @@ const ProductCard = ({ p }) => {
           </p>
         </div>
 
-        {p?.vendor && (
-          <p className="text-sm text-gray-400 mb-2">
-            Vendor: {p.vendor.vendorName || p.vendor.name}
-          </p>
-        )}
-
         <p className="mb-3 font-normal text-[#CFCFCF]">{p?.description?.substring(0, 60)} ...</p>
 
         <section className="flex justify-between items-center">

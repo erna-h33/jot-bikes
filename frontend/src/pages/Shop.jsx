@@ -12,6 +12,9 @@ const Shop = () => {
   const dispatch = useDispatch();
   const { categories, products, checked, radio } = useSelector((state) => state.shop);
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const categoryParam = searchParams.get('category');
+  const isBikeServicePage = categoryParam === 'Bike Service';
 
   const categoriesQuery = useFetchCategoriesQuery();
   const [priceFilter, setPriceFilter] = useState('');
@@ -23,9 +26,6 @@ const Shop = () => {
 
   // Handle category query parameter
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const categoryParam = searchParams.get('category');
-
     if (categoryParam && categoriesQuery.data) {
       const category = categoriesQuery.data.find((c) => c.name === categoryParam);
       if (category) {
@@ -40,15 +40,40 @@ const Shop = () => {
 
   useEffect(() => {
     if (!categoriesQuery.isLoading && categoriesQuery.data) {
-      dispatch(setCategories(categoriesQuery.data));
+      if (isBikeServicePage) {
+        // If on Bike Service page, only show Bike Service category
+        const bikeServiceCategory = categoriesQuery.data.find(
+          (category) => category.name === 'Bike Service'
+        );
+        dispatch(setCategories(bikeServiceCategory ? [bikeServiceCategory] : []));
+      } else {
+        // Otherwise, filter out Bike Service category
+        const filteredCategories = categoriesQuery.data.filter(
+          (category) => category.name !== 'Bike Service'
+        );
+        dispatch(setCategories(filteredCategories));
+      }
     }
-  }, [categoriesQuery.data, dispatch, categoriesQuery.isLoading]);
+  }, [categoriesQuery.data, dispatch, categoriesQuery.isLoading, isBikeServicePage]);
 
   useEffect(() => {
     if ((!checked.length || !radio.length) && filteredProductsQuery.data) {
-      // Filter products based on both checked categories and price filter
-      const filteredProducts = filteredProductsQuery.data.filter((product) => {
-        // Check if the product price includes the entered price filter value
+      let filteredProducts;
+
+      if (isBikeServicePage) {
+        // If on Bike Service page, only show Bike Service products
+        filteredProducts = filteredProductsQuery.data.filter(
+          (product) => product.category?.name === 'Bike Service'
+        );
+      } else {
+        // Otherwise, filter out Bike Service products
+        filteredProducts = filteredProductsQuery.data.filter(
+          (product) => product.category?.name !== 'Bike Service'
+        );
+      }
+
+      // Apply price filter
+      filteredProducts = filteredProducts.filter((product) => {
         return (
           product.price.toString().includes(priceFilter) ||
           product.price === parseInt(priceFilter, 10)
@@ -62,18 +87,36 @@ const Shop = () => {
 
       dispatch(setProducts(sortedProducts));
     }
-  }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter]);
+  }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter, isBikeServicePage]);
 
   const handleBrandClick = (brand) => {
     if (filteredProductsQuery.data) {
       let productsToShow;
-      if (brand === 'All Brands') {
-        // If "All Brands" is selected, show all products
-        productsToShow = filteredProductsQuery.data;
+
+      if (isBikeServicePage) {
+        // If on Bike Service page, only show Bike Service products
+        if (brand === 'All Brands') {
+          productsToShow = filteredProductsQuery.data.filter(
+            (product) => product.category?.name === 'Bike Service'
+          );
+        } else {
+          productsToShow = filteredProductsQuery.data.filter(
+            (product) => product.brand === brand && product.category?.name === 'Bike Service'
+          );
+        }
       } else {
-        // Otherwise filter by the selected brand
-        productsToShow = filteredProductsQuery.data.filter((product) => product.brand === brand);
+        // Otherwise, filter out Bike Service products
+        if (brand === 'All Brands') {
+          productsToShow = filteredProductsQuery.data.filter(
+            (product) => product.category?.name !== 'Bike Service'
+          );
+        } else {
+          productsToShow = filteredProductsQuery.data.filter(
+            (product) => product.brand === brand && product.category?.name !== 'Bike Service'
+          );
+        }
       }
+
       // Sort products alphabetically by name
       const sortedProducts = [...productsToShow].sort((a, b) =>
         a.name.toLowerCase().localeCompare(b.name.toLowerCase())
@@ -198,7 +241,9 @@ const Shop = () => {
           {/* Products Grid */}
           <div className="w-full md:w-3/4">
             <div className="flex flex-col items-start mb-8">
-              <h2 className="text-3xl font-bold text-black mb-2">Our Collection</h2>
+              <h2 className="text-3xl font-bold text-black mb-2">
+                {isBikeServicePage ? 'Bike Service' : 'Our Collection'}
+              </h2>
               <div className="flex items-center">
                 <span className="text-xl text-pink-500 font-semibold">{products?.length || 0}</span>
                 <span className="text-gray-400 ml-2 text-lg">Products Available</span>
