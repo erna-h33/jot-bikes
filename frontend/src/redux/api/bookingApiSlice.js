@@ -40,6 +40,13 @@ export const bookingApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Bookings'],
     }),
+    getProductBookings: builder.query({
+      query: (productId) => ({
+        url: `/api/bookings/product/${productId}`,
+        method: 'GET',
+      }),
+      providesTags: ['Bookings'],
+    }),
   }),
 });
 
@@ -51,4 +58,5 @@ export const {
   useGetVendorBookingsQuery,
   useUpdateBookingStatusMutation,
   useDeleteBookingMutation,
+  useGetProductBookingsQuery,
 } = bookingApiSlice;
