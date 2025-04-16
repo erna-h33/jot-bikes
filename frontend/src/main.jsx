@@ -44,6 +44,9 @@ import Shop from './pages/Shop.jsx';
 import MyBookings from './pages/MyBookings.jsx';
 import Checkout from './pages/Checkout.jsx';
 import OrderSuccess from './pages/OrderSuccess.jsx';
+import FeedbackForm from './pages/Feedback/FeedbackForm';
+import MyFeedback from './pages/Feedback/MyFeedback';
+import FeedbackManagement from './pages/Feedback/FeedbackManagement';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -74,6 +77,7 @@ const router = createBrowserRouter(
         <Route path="product/update/:id" element={<ProductUpdate />} />
         <Route path="allproductslist" element={<AllProducts />} />
         <Route path="bookings" element={<AdminBookings />} />
+        <Route path="feedback" element={<FeedbackManagement />} />
       </Route>
 
       {/* Vendor Routes */}
@@ -84,6 +88,25 @@ const router = createBrowserRouter(
         <Route path="products/update/:id" element={<VendorProductUpdate />} />
         <Route path="bookings" element={<VendorBookings />} />
       </Route>
+
+      {/* Feedback Routes */}
+      <Route path="/feedback" element={<FeedbackForm />} />
+      <Route
+        path="/my-feedback"
+        element={
+          <PrivateRoute>
+            <MyFeedback />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/feedback"
+        element={
+          <AdminRoute>
+            <FeedbackManagement />
+          </AdminRoute>
+        }
+      />
     </Route>
   )
 );

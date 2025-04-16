@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { AiOutlineDashboard, AiOutlineAppstore, AiOutlineUser } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 const VendorMenu = () => {
   const { userInfo } = useSelector((state) => state.auth);

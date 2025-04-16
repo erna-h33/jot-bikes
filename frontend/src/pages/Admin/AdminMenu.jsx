@@ -12,6 +12,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from '../../redux/api/usersApiSlice';
 import { logout } from '../../redux/features/auth/authSlice';
+import { Link } from 'react-router-dom';
+import { FaComments } from 'react-icons/fa';
 
 const AdminMenu = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -157,6 +159,24 @@ const AdminMenu = () => {
                 size={20}
               />
               <span>Manage Bookings</span>
+            </NavLink>
+          </li>
+
+          {/* Feedback */}
+          <li className="mb-3">
+            <NavLink
+              className="flex items-center py-2 px-3 hover:bg-gray-100 rounded-md transition-all duration-300 ease-in-out text-gray-800 hover:translate-x-1"
+              to="/admin/feedback"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#1f2937',
+                backgroundColor: isActive ? 'rgba(243, 244, 246, 0.5)' : 'transparent',
+              })}
+            >
+              <FaComments
+                className="mr-3 text-gray-800 transition-transform duration-300 group-hover:scale-110"
+                size={20}
+              />
+              <span>Manage Feedback</span>
             </NavLink>
           </li>
         </ul>

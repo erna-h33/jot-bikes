@@ -14,6 +14,7 @@ import {
   AiOutlineLogout,
   AiOutlineCalendar,
 } from 'react-icons/ai';
+import { FaComments } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -91,6 +92,9 @@ const TopNavigation = () => {
             </Link>
             <Link to="/about" className="text-white hover:text-pink-400 transition-colors">
               About Us
+            </Link>
+            <Link to="/feedback" className="text-white hover:text-pink-400 transition-colors">
+              Feedback
             </Link>
           </div>
 
@@ -222,6 +226,14 @@ const TopNavigation = () => {
                     >
                       <AiOutlineShopping className="mr-2" size={18} />
                       My Bookings
+                    </Link>
+                    <Link
+                      to="/my-feedback"
+                      onClick={closeDropdown}
+                      className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700"
+                    >
+                      <FaComments className="mr-2" size={18} />
+                      My Feedback
                     </Link>
                     <button
                       onClick={logoutHandler}

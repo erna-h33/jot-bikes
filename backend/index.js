@@ -28,6 +28,7 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -70,6 +71,7 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
