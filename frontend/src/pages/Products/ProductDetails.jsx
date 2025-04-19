@@ -27,6 +27,8 @@ const ProductDetails = () => {
   const [comment, setComment] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
 
   const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
 
@@ -44,14 +46,31 @@ const ProductDetails = () => {
     const start = moment(startDate);
     const end = moment(endDate);
     const days = end.diff(start, 'days') + 1; // Include both start and end days
-    const pricePerDay = product.price || 0;
-    const subtotal = days * pricePerDay * qty;
+
+    // Calculate full weeks and remaining days
+    const fullWeeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+
+    // Calculate prices
+    const pricePerDay = (product.price || 0) / 7; // Daily rate is weekly price divided by 7
+    const pricePerWeek = product.price || 0;
+
+    // Calculate subtotal: (full weeks × weekly price) + (remaining days × daily price)
+    const weeklySubtotal = fullWeeks * pricePerWeek;
+    const dailySubtotal = remainingDays * pricePerDay;
+    const subtotal = (weeklySubtotal + dailySubtotal) * qty;
+
     const tax = subtotal * 0.1; // 10% tax
     const total = subtotal + tax;
 
     return {
       days,
+      fullWeeks,
+      remainingDays,
       pricePerDay,
+      pricePerWeek,
+      weeklySubtotal,
+      dailySubtotal,
       subtotal,
       tax,
       total,
@@ -136,6 +155,8 @@ const ProductDetails = () => {
         startDate,
         endDate,
         quantity: qty,
+        size: selectedSize,
+        color: selectedColor,
       }).unwrap();
 
       toast.success('Booking successful!');
@@ -143,16 +164,20 @@ const ProductDetails = () => {
         _id: product._id,
         name: product.name,
         image: product.image,
-        price: product.price,
+        price: bookingDetails.total,
         countInStock: product.countInStock,
         qty: qty,
         bookingId: booking._id,
         startDate,
         endDate,
+        size: selectedSize,
+        color: selectedColor,
       };
       dispatch(addToCart(cartItem));
       setStartDate('');
       setEndDate('');
+      setSelectedSize('');
+      setSelectedColor('');
       navigate('/cart');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
@@ -222,6 +247,18 @@ const ProductDetails = () => {
                       <FaBox className="mr-2 text-pink-500" />
                       <span className="text-gray-300">In Stock: {product.countInStock}</span>
                     </div>
+                    {product.size && (
+                      <div className="flex items-center">
+                        <FaBox className="mr-2 text-pink-500" />
+                        <span className="text-gray-300">Size: {product.size}</span>
+                      </div>
+                    )}
+                    {product.color && (
+                      <div className="flex items-center">
+                        <FaBox className="mr-2 text-pink-500" />
+                        <span className="text-gray-300">Color: {product.color}</span>
+                      </div>
+                    )}
                     {product.vendor && (
                       <div className="flex items-center col-span-2">
                         <FaUser className="mr-2 text-pink-500" />
@@ -288,22 +325,63 @@ const ProductDetails = () => {
                   </div>
 
                   {product.countInStock > 0 && (
-                    <div className="flex items-center">
-                      <label htmlFor="qty" className="text-gray-300 mr-2">
-                        Quantity:
-                      </label>
-                      <select
-                        id="qty"
-                        value={qty}
-                        onChange={(e) => setQty(Number(e.target.value))}
-                        className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      >
-                        {[...Array(product.countInStock).keys()].map((x) => (
-                          <option key={x + 1} value={x + 1}>
-                            {x + 1}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="flex items-center space-x-4">
+                      <div>
+                        <label htmlFor="qty" className="text-gray-300 mr-2">
+                          Quantity:
+                        </label>
+                        <select
+                          id="qty"
+                          value={qty}
+                          onChange={(e) => setQty(Number(e.target.value))}
+                          className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        >
+                          {[...Array(product.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {product.size && (
+                        <div>
+                          <label htmlFor="size" className="text-gray-300 mr-2">
+                            Size:
+                          </label>
+                          <select
+                            id="size"
+                            value={selectedSize}
+                            onChange={(e) => setSelectedSize(e.target.value)}
+                            className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          >
+                            <option value="">Select Size</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                          </select>
+                        </div>
+                      )}
+
+                      {product.color && (
+                        <div>
+                          <label htmlFor="color" className="text-gray-300 mr-2">
+                            Color:
+                          </label>
+                          <select
+                            id="color"
+                            value={selectedColor}
+                            onChange={(e) => setSelectedColor(e.target.value)}
+                            className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          >
+                            <option value="">Select Color</option>
+                            <option value="White">White</option>
+                            <option value="Black">Black</option>
+                            <option value="Red">Red</option>
+                          </select>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -314,13 +392,36 @@ const ProductDetails = () => {
                       <div className="flex justify-between text-gray-300">
                         <span>Duration:</span>
                         <span>
-                          {bookingDetails.days} day{bookingDetails.days > 1 ? 's' : ''}
+                          {bookingDetails.fullWeeks > 0 &&
+                            `${bookingDetails.fullWeeks} week${
+                              bookingDetails.fullWeeks > 1 ? 's' : ''
+                            }`}
+                          {bookingDetails.remainingDays > 0 &&
+                            ` ${bookingDetails.remainingDays} day${
+                              bookingDetails.remainingDays > 1 ? 's' : ''
+                            }`}
+                          {` (${bookingDetails.days} days total)`}
                         </span>
                       </div>
-                      <div className="flex justify-between text-gray-300">
-                        <span>Price per day:</span>
-                        <span>${bookingDetails.pricePerDay.toFixed(2)}</span>
-                      </div>
+                      {bookingDetails.fullWeeks > 0 && (
+                        <div className="flex justify-between text-gray-300">
+                          <span>Weekly rate:</span>
+                          <span>
+                            ${bookingDetails.pricePerWeek.toFixed(2)} × {bookingDetails.fullWeeks}{' '}
+                            week{bookingDetails.fullWeeks > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
+                      {bookingDetails.remainingDays > 0 && (
+                        <div className="flex justify-between text-gray-300">
+                          <span>Daily rate:</span>
+                          <span>
+                            ${bookingDetails.pricePerDay.toFixed(2)} ×{' '}
+                            {bookingDetails.remainingDays} day
+                            {bookingDetails.remainingDays > 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-gray-300">
                         <span>Quantity:</span>
                         <span>× {qty}</span>
@@ -348,7 +449,7 @@ const ProductDetails = () => {
                     {bookingLoading
                       ? 'Booking...'
                       : bookingDetails
-                      ? `Book Now - $${bookingDetails.total.toFixed(2)}`
+                      ? `Book Now - $${Number(bookingDetails.total).toFixed(2)}`
                       : 'Select dates to see price'}
                   </button>
                 </form>

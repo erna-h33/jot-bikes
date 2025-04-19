@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
+import { FaStar } from 'react-icons/fa';
 
 const ProductCard = ({ p }) => {
   return (
-    <div className="max-w-sm relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div className="max-w-sm h-[400px] relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <section className="relative">
         <Link to={`/product/${p._id}`}>
           <span className="absolute bottom-3 right-3 bg-pink-100 text-pink-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
@@ -19,43 +20,30 @@ const ProductCard = ({ p }) => {
         </Link>
       </section>
 
-      <div className="p-5">
-        <div className="flex justify-between">
-          <h5 className="mb-2 text-xl text-white dark:text-white">{p?.name}</h5>
-
-          <p className="text-black font-semibold text-pink-500">
-            {p?.price?.toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-            })}
-          </p>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-300 mb-2">{p.name}</h3>
+        <p className="text-sm text-gray-300 mb-2">{p.description.substring(0, 180)}...</p>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-lg font-bold text-primary">${p.price}</span>
+          <span className="text-sm text-gray-500">Stock: {p.countInStock}</span>
         </div>
-
-        <p className="mb-3 font-normal text-[#CFCFCF]">{p?.description?.substring(0, 60)} ...</p>
-
-        <section className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <FaStar
+                key={i}
+                className={`${i < p.rating ? 'text-yellow-400' : 'text-gray-300'} w-4 h-4`}
+              />
+            ))}
+            <span className="ml-2 text-sm text-gray-600">({p.numReviews})</span>
+          </div>
           <Link
             to={`/product/${p._id}`}
-            className="inline-flex items-center px-3 pt-1.5 pb-2 text-sm font-medium text-center text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+            className="text-primary hover:text-primary-dark text-sm font-medium rounded-lg bg-pink-500 text-white px-4 pt-2 pb-2.5"
           >
-            Book Now
-            <svg
-              className="w-3.5 h-3.5 ml-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
+            View Details
           </Link>
-        </section>
+        </div>
       </div>
     </div>
   );

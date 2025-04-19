@@ -44,7 +44,7 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
       }
 
       // Send payment info to your backend
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/payment/process`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/payments/process`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
           loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'
         }`}
       >
-        {loading ? 'Processing...' : `Pay $${totalPrice}`}
+        {loading ? 'Processing...' : `Pay $${Number(totalPrice).toFixed(2)}`}
       </button>
     </form>
   );

@@ -16,13 +16,13 @@ const Dashboard = () => {
   const bookingStats = bookings
     ? {
         total: bookings.length,
-        pending: bookings.filter((b) => b.status === 'pending').length,
         confirmed: bookings.filter((b) => b.status === 'confirmed').length,
         cancelled: bookings.filter((b) => b.status === 'cancelled').length,
         totalRevenue: bookings
           .filter((b) => b.status === 'confirmed')
           .reduce((sum, b) => sum + b.totalPrice, 0),
         recentBookings: [...bookings]
+          .filter((b) => b.status === 'confirmed')
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5),
       }
@@ -134,14 +134,8 @@ const Dashboard = () => {
                 <h2 className="text-xl font-semibold mb-4">Booking Status Overview</h2>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-yellow-50 p-4 rounded-lg">
-                    <h3 className="text-yellow-800 font-medium">Pending</h3>
+                    <h3 className="text-yellow-800 font-medium">Confirmed</h3>
                     <p className="text-2xl font-bold text-yellow-600">
-                      {bookingStats?.pending || 0}
-                    </p>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h3 className="text-green-800 font-medium">Confirmed</h3>
-                    <p className="text-2xl font-bold text-green-600">
                       {bookingStats?.confirmed || 0}
                     </p>
                   </div>

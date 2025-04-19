@@ -70,7 +70,9 @@ const Cart = () => {
                         {item.name}
                       </Link>
                       <p className="text-gray-400">{item.brand}</p>
-                      <p className="text-2xl font-bold text-pink-500 mt-2">${item.price}</p>
+                      <p className="text-2xl font-bold text-pink-500 mt-2">
+                        ${Number(item.price).toFixed(2)}
+                      </p>
                     </div>
 
                     <div className="w-24">
@@ -112,14 +114,17 @@ const Cart = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-400">Subtotal</span>
                   <span className="font-semibold">
-                    ${cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
+                    $
+                    {Number(
+                      cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
+                    ).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Tax</span>
                   <span className="font-semibold">
                     $
-                    {(
+                    {Number(
                       cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
                     ).toFixed(2)}
                   </span>
@@ -129,9 +134,9 @@ const Cart = () => {
                     <span className="text-xl font-bold">Total</span>
                     <span className="text-xl font-bold text-pink-500">
                       $
-                      {(
+                      {Number(
                         cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) +
-                        cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
+                          cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
                       ).toFixed(2)}
                     </span>
                   </div>

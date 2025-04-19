@@ -26,7 +26,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-40 pb-10">
+    <div className="min-h-screen bg-gray-900 text-white pt-40 -mt-20 pb-10">
       <div className="container mx-auto px-4">
         <Link
           to="/cart"
@@ -53,7 +53,7 @@ const Checkout = () => {
                     <p className="text-gray-400">
                       {item.weeks} {item.weeks === 1 ? 'week' : 'weeks'} rental
                     </p>
-                    <p className="text-pink-500 font-semibold">${item.price}</p>
+                    <p className="text-pink-500 font-semibold">${Number(itemsPrice).toFixed(2)}</p>
                   </div>
                 </div>
               ))}
@@ -65,16 +65,18 @@ const Checkout = () => {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-400">Subtotal</span>
-                <span className="font-semibold">${itemsPrice}</span>
+                <span className="font-semibold">${Number(itemsPrice).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Tax</span>
-                <span className="font-semibold">${taxPrice}</span>
+                <span className="font-semibold">${Number(taxPrice).toFixed(2)}</span>
               </div>
               <div className="border-t border-gray-700 pt-4">
                 <div className="flex justify-between">
                   <span className="text-xl font-bold">Total</span>
-                  <span className="text-xl font-bold text-pink-500">${totalPrice}</span>
+                  <span className="text-xl font-bold text-pink-500">
+                    ${Number(totalPrice).toFixed(2)}
+                  </span>
                 </div>
               </div>
 

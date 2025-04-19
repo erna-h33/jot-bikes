@@ -25,6 +25,8 @@ const AdminProductUpdate = () => {
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [stock, setStock] = useState('');
+  const [size, setSize] = useState('');
+  const [color, setColor] = useState('');
   const [imagePreview, setImagePreview] = useState('');
 
   useEffect(() => {
@@ -35,6 +37,8 @@ const AdminProductUpdate = () => {
       setCategory(productData.category?._id || '');
       setBrand(productData.brand || '');
       setStock(productData.countInStock?.toString() || '');
+      setSize(productData.size || '');
+      setColor(productData.color || '');
       setImagePreview(productData.image || '');
     }
   }, [productData]);
@@ -68,6 +72,8 @@ const AdminProductUpdate = () => {
       formData.append('category', category);
       formData.append('brand', brand);
       formData.append('countInStock', stock || '0');
+      formData.append('size', size);
+      formData.append('color', color);
 
       const result = await updateProduct({ productId: id, data: formData });
 
@@ -216,6 +222,37 @@ const AdminProductUpdate = () => {
                   required
                   min="0"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                <select
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Size</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                <select
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Color</option>
+                  <option value="White">White</option>
+                  <option value="Black">Black</option>
+                  <option value="Red">Red</option>
+                </select>
               </div>
             </div>
 

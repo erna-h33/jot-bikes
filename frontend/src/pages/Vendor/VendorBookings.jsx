@@ -45,7 +45,6 @@ const VendorBookings = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-pink-500 focus:border-pink-500 p-2.5"
               >
                 <option value="all">All Bookings</option>
-                <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="cancelled">Cancelled</option>
               </select>
@@ -117,30 +116,20 @@ const VendorBookings = () => {
                           className={`px-2 py-1 text-xs font-semibold rounded-full ${
                             booking.status === 'confirmed'
                               ? 'bg-green-100 text-green-800'
-                              : booking.status === 'cancelled'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
                           }`}
                         >
                           {booking.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {booking.status === 'pending' && (
-                          <div className="space-x-2">
-                            <button
-                              onClick={() => handleStatusChange(booking._id, 'confirmed')}
-                              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs"
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => handleStatusChange(booking._id, 'cancelled')}
-                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
-                            >
-                              Decline
-                            </button>
-                          </div>
+                        {booking.status === 'confirmed' && (
+                          <button
+                            onClick={() => handleStatusChange(booking._id, 'cancelled')}
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                          >
+                            Cancel
+                          </button>
                         )}
                       </td>
                     </tr>

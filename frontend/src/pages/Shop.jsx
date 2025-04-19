@@ -250,7 +250,7 @@ const Shop = () => {
               </div>
               <div className="w-20 h-1 bg-pink-500 mt-4"></div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-white">
               {!products || products.length === 0 ? (
                 <div className="col-span-full flex justify-center items-center h-64">
                   <Loader />

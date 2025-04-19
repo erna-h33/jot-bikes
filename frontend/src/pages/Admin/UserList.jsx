@@ -126,6 +126,13 @@ const UserList = () => {
                       <td className="py-3 px-4 text-sm">
                         <div className="flex items-center space-x-4">
                           <Link
+                            to={`/admin/user/${user._id}`}
+                            className="text-blue-500 hover:text-blue-700 transition-colors duration-150"
+                            title="View Details"
+                          >
+                            <FaUsers size={18} />
+                          </Link>
+                          <Link
                             to={`/admin/user/${user._id}/edit`}
                             className="text-pink-500 hover:text-pink-700 transition-colors duration-150"
                             title="Edit User"

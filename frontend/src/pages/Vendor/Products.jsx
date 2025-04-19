@@ -96,6 +96,18 @@ const Products = () => {
                         <span className="text-sm">Stock: {product.countInStock}</span>
                       </div>
                     </div>
+
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                      <p className="text-sm text-gray-500">${product.price}</p>
+                      <p className="text-sm text-gray-500">Stock: {product.countInStock}</p>
+                      {product.size && (
+                        <p className="text-sm text-gray-500">Size: {product.size}</p>
+                      )}
+                      {product.color && (
+                        <p className="text-sm text-gray-500">Color: {product.color}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

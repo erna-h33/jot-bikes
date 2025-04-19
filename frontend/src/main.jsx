@@ -26,6 +26,7 @@ import ProductList from './pages/Admin/ProductList.jsx';
 import ProductUpdate from './pages/Admin/ProductUpdate.jsx';
 import AllProducts from './pages/Admin/AllProducts.jsx';
 import AdminBookings from './pages/Admin/AdminBookings.jsx';
+import UserDetails from './pages/Admin/UserDetails.jsx';
 
 // Vendor
 import VendorRoute from './pages/Vendor/VendorRoute.jsx';
@@ -72,6 +73,7 @@ const router = createBrowserRouter(
       <Route path="/admin" element={<AdminRoute />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="userlist" element={<UserList />} />
+        <Route path="user/:id" element={<UserDetails />} />
         <Route path="categorylist" element={<CategoryList />} />
         <Route path="productlist" element={<ProductList />} />
         <Route path="product/update/:id" element={<ProductUpdate />} />

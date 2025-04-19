@@ -68,6 +68,16 @@ const AllProductsList = () => {
                     <p>
                       <span className="font-medium">Stock:</span> {product.countInStock}
                     </p>
+                    {product.size && (
+                      <p>
+                        <span className="font-medium">Size:</span> {product.size}
+                      </p>
+                    )}
+                    {product.color && (
+                      <p>
+                        <span className="font-medium">Color:</span> {product.color}
+                      </p>
+                    )}
                   </div>
                   <div className="mt-3 flex space-x-3">
                     <Link

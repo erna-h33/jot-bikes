@@ -5,6 +5,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { toast } from 'react-toastify';
 import moment from 'moment';
+import RentalAgreement from '../components/RentalAgreement';
 
 const MyBookings = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -48,7 +49,7 @@ const MyBookings = () => {
                   <th className="py-3 px-4 text-center">End Date</th>
                   <th className="py-3 px-4 text-center">Total Price</th>
                   <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-4 text-center">Action</th>
+                  <th className="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,15 +91,20 @@ const MyBookings = () => {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-center">
-                      {booking.status !== 'cancelled' && (
-                        <button
-                          onClick={() => handleCancel(booking._id)}
-                          className="bg-pink-600 hover:bg-pink-700 text-white font-bold py-1 px-4 rounded-lg transition-colors"
-                          disabled={deleting}
-                        >
-                          {deleting ? 'Cancelling...' : 'Cancel'}
-                        </button>
-                      )}
+                      <div className="flex flex-col items-center space-y-2">
+                        {booking.status !== 'cancelled' && (
+                          <button
+                            onClick={() => handleCancel(booking._id)}
+                            disabled={deleting}
+                            className="text-red-500 hover:text-red-400 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                        {booking.status === 'confirmed' && (
+                          <RentalAgreement bookingId={booking._id} />
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
