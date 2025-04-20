@@ -23,11 +23,27 @@ export default defineConfig({
     rollupOptions: {
       external: ['react-calendar'],
     },
+    target: 'esnext',
+    modulePreload: {
+      polyfill: true,
+    },
+    cssCodeSplit: true,
+    sourcemap: true,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
   },
   optimizeDeps: {
     include: ['react-calendar'],
+    esbuildOptions: {
+      target: 'esnext',
+    },
   },
   base: '/',
   publicDir: 'public',
-  assetsInclude: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
+  assetsInclude: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mjs'],
 });
