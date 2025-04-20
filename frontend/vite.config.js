@@ -22,6 +22,13 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: ['react-calendar'],
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['react-icons', 'react-toastify'],
+          calendar: ['react-calendar'],
+        },
+      },
     },
     target: 'esnext',
     modulePreload: {
@@ -36,6 +43,7 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    chunkSizeWarningLimit: 1000,
   },
   optimizeDeps: {
     include: ['react-calendar'],
