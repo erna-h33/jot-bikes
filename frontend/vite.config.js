@@ -27,4 +27,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react-calendar'],
   },
+  base: '/',
+  publicDir: 'public',
+  assetsInclude: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
 });
