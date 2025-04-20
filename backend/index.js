@@ -29,6 +29,7 @@ import vendorRoutes from './routes/vendorRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
+import rentalAgreementRoutes from './routes/rentalAgreementRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -70,8 +71,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/payment', paymentRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/rental-agreements', rentalAgreementRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {
@@ -80,8 +82,17 @@ app.get('/api/test', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  console.error('Error details:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+  });
+
+  res.status(err.status || 500).json({
+    message: err.message || 'Something went wrong!',
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
 });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

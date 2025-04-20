@@ -7,8 +7,9 @@ import {
   deleteBooking,
   getAllBookings,
   getStockStatus,
+  getVendorBookings,
 } from '../controllers/bookingController.js';
-import { protect, admin } from '../middlewares/authMiddleware.js';
+import { protect, admin, vendor } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -23,6 +24,9 @@ router.post('/', protect, createBooking);
 
 // Get bookings for the logged-in user
 router.get('/my-bookings', protect, getMyBookings);
+
+// Get vendor bookings
+router.get('/vendor', protect, vendor, getVendorBookings);
 
 // Get, update, or delete a single booking
 router

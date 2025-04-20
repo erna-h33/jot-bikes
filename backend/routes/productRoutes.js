@@ -20,6 +20,7 @@ import {
   fetchTopProducts,
   fetchNewProducts,
   filterProducts,
+  getFSNAnalysis,
 } from '../controllers/productController.js';
 
 // Middleware
@@ -51,6 +52,8 @@ router.route('/:id/reviews').post(protect, checkId, addProductReview);
 router.get('/top', fetchTopProducts);
 router.get('/new', fetchNewProducts);
 router.post('/filtered-products', filterProducts);
+
+router.get('/fsn-analysis', protect, admin, getFSNAnalysis);
 
 router
   .route('/:id')

@@ -9,6 +9,7 @@ import {
   deleteUser,
   getUserById,
   updateUser,
+  getUserDetails,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 
@@ -27,6 +28,8 @@ router
   .get(protect, admin, getUserById)
   .put(protect, admin, updateUser);
 
+router.route('/:id/details').get(protect, admin, getUserDetails);
+
 export default router;
 
 export {
@@ -39,4 +42,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  getUserDetails,
 };

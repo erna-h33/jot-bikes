@@ -28,6 +28,8 @@ const productSchema = mongoose.Schema(
     reviews: [reviewSchema],
     rating: { type: Number, required: 0, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
+    size: { type: String, required: false },
+    color: { type: String, required: false },
   },
   { timestamps: true }
 );

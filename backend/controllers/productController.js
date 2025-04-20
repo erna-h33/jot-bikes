@@ -3,13 +3,15 @@ import Product from '../models/productModel.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import Booking from '../models/bookingModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const addProduct = async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock } = req.fields || req.body;
+    const { name, description, brand, price, category, countInStock, size, color } =
+      req.fields || req.body;
 
     // Validate required fields
     if (!name || !description || !brand || !price || !category) {
@@ -58,6 +60,8 @@ export const addProduct = async (req, res) => {
       countInStock: Number(countInStock || 0),
       image,
       vendor: req.user._id,
+      size,
+      color,
     };
 
     const product = await Product.create(productData);
@@ -353,6 +357,72 @@ const filterProducts = asyncHandler(async (req, res) => {
   }
 });
 
+const getFSNAnalysis = asyncHandler(async (req, res) => {
+  try {
+    // Get all products
+    const products = await Product.find({}).populate('category');
+
+    // Get all bookings from the last 6 months
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const bookings = await Booking.find({
+      createdAt: { $gte: sixMonthsAgo },
+      status: 'confirmed',
+    });
+
+    // Calculate booking frequency for each product
+    const productBookings = {};
+    bookings.forEach((booking) => {
+      const productId = booking.product.toString();
+      if (!productBookings[productId]) {
+        productBookings[productId] = 0;
+      }
+      productBookings[productId]++;
+    });
+
+    // Categorize products as Fast, Slow, or Non-moving
+    const fsnAnalysis = {
+      fast: [],
+      slow: [],
+      nonMoving: [],
+    };
+
+    products.forEach((product) => {
+      const bookingCount = productBookings[product._id.toString()] || 0;
+      const productData = {
+        _id: product._id,
+        name: product.name,
+        category: product.category.name,
+        countInStock: product.countInStock,
+        bookingCount,
+        lastBooked:
+          bookings
+            .filter((b) => b.product.toString() === product._id.toString())
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]?.createdAt || null,
+      };
+
+      if (bookingCount >= 5) {
+        fsnAnalysis.fast.push(productData);
+      } else if (bookingCount > 0) {
+        fsnAnalysis.slow.push(productData);
+      } else {
+        fsnAnalysis.nonMoving.push(productData);
+      }
+    });
+
+    // Sort each category by booking count (descending)
+    fsnAnalysis.fast.sort((a, b) => b.bookingCount - a.bookingCount);
+    fsnAnalysis.slow.sort((a, b) => b.bookingCount - a.bookingCount);
+    fsnAnalysis.nonMoving.sort((a, b) => new Date(b.lastBooked || 0) - new Date(a.lastBooked || 0));
+
+    res.json(fsnAnalysis);
+  } catch (error) {
+    console.error('Error in getFSNAnalysis:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export {
   updateProductDetails,
   removeProduct,
@@ -363,4 +433,5 @@ export {
   fetchTopProducts,
   fetchNewProducts,
   filterProducts,
+  getFSNAnalysis,
 };

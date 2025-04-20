@@ -64,7 +64,7 @@ const getVendorProducts = asyncHandler(async (req, res) => {
 // @access  Private/Vendor
 const createVendorProduct = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock } = req.fields;
+    const { name, description, brand, price, category, countInStock, size, color } = req.fields;
 
     // Validate required fields
     if (!name || !description || !brand || !price || !category) {
@@ -113,6 +113,8 @@ const createVendorProduct = asyncHandler(async (req, res) => {
       category,
       countInStock: Number(countInStock),
       vendor: req.user._id,
+      size,
+      color,
     });
 
     const createdProduct = await product.save();

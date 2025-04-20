@@ -24,9 +24,14 @@ const AdminBookings = () => {
     }
   };
 
-  const filteredBookings = bookings?.filter((booking) =>
-    statusFilter === 'all' ? true : booking.status === statusFilter
-  );
+  // Filter out pending orders and apply status filter
+  const filteredBookings = bookings?.filter((booking) => {
+    // First filter out any pending orders
+    if (booking.status === 'pending') return false;
+
+    // Then apply the status filter
+    return statusFilter === 'all' ? true : booking.status === statusFilter;
+  });
 
   return (
     <div className="flex">
@@ -71,15 +76,19 @@ const AdminBookings = () => {
                   {filteredBookings?.map((booking) => (
                     <tr key={booking._id} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-sm">{booking._id}</td>
-                      <td className="py-3 px-4 text-sm">{booking.user.username}</td>
-                      <td className="py-3 px-4 text-sm">{booking.product.name}</td>
                       <td className="py-3 px-4 text-sm">
-                        {moment(booking.startDate).format('YYYY-MM-DD')}
+                        {booking.user?.username || 'Unknown User'}
                       </td>
                       <td className="py-3 px-4 text-sm">
-                        {moment(booking.endDate).format('YYYY-MM-DD')}
+                        {booking.product?.name || 'Product Not Found'}
                       </td>
-                      <td className="py-3 px-4 text-sm">${booking.totalPrice}</td>
+                      <td className="py-3 px-4 text-sm">
+                        {booking.startDate ? moment(booking.startDate).format('YYYY-MM-DD') : 'N/A'}
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        {booking.endDate ? moment(booking.endDate).format('YYYY-MM-DD') : 'N/A'}
+                      </td>
+                      <td className="py-3 px-4 text-sm">${booking.totalPrice || 0}</td>
                       <td className="py-3 px-4">
                         <span
                           className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -88,7 +97,7 @@ const AdminBookings = () => {
                               : 'bg-red-100 text-red-800'
                           }`}
                         >
-                          {booking.status}
+                          {booking.status || 'Unknown'}
                         </span>
                       </td>
                       <td className="py-3 px-4">

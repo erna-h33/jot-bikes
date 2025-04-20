@@ -13,6 +13,7 @@ import {
 } from 'react-icons/fa';
 import Loader from '../../components/Loader';
 import moment from 'moment';
+import FSNAnalysis from '../../components/FSNAnalysis';
 
 const Dashboard = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -159,7 +160,9 @@ const Dashboard = () => {
                       className="flex items-center justify-between border-b pb-2"
                     >
                       <div>
-                        <p className="font-medium">{booking.product.name}</p>
+                        <p className="font-medium">
+                          {booking.product?.name || 'Product Unavailable'}
+                        </p>
                         <p className="text-sm text-gray-500">
                           {moment(booking.startDate).format('MMM D')} -{' '}
                           {moment(booking.endDate).format('MMM D, YYYY')}
@@ -186,6 +189,12 @@ const Dashboard = () => {
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* FSN Analysis */}
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-4">Inventory Analysis (FSN)</h2>
+              <FSNAnalysis />
             </div>
           </>
         )}

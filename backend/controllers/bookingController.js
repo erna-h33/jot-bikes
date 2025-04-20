@@ -156,7 +156,7 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
     const { status } = req.body;
-    if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
+    if (!['confirmed', 'cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
     booking.status = status;
@@ -192,6 +192,25 @@ export const getAllBookings = async (req, res) => {
       .populate('product')
       .populate('user', 'username email')
       .sort({ createdAt: -1 });
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// GET /api/bookings/vendor
+export const getVendorBookings = async (req, res) => {
+  try {
+    // First get all products owned by the vendor
+    const vendorProducts = await Product.find({ vendor: req.user._id }).select('_id');
+    const productIds = vendorProducts.map((product) => product._id);
+
+    // Then get all bookings for these products
+    const bookings = await Booking.find({ product: { $in: productIds } })
+      .populate('product')
+      .populate('user', 'username email name')
+      .sort({ createdAt: -1 });
+
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: error.message });

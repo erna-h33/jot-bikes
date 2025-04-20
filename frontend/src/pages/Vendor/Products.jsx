@@ -59,7 +59,7 @@ const Products = () => {
                         import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
                       }${product.image}`}
                       alt={product.name}
-                      className="w-full h-48 object-cover rounded-lg"
+                      className="w-full h-48 object-contain rounded-lg"
                     />
                   </div>
                   <div className="md:w-3/4 p-4">

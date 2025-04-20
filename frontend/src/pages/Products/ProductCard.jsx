@@ -3,7 +3,7 @@ import { FaStar } from 'react-icons/fa';
 
 const ProductCard = ({ p }) => {
   return (
-    <div className="max-w-sm h-[400px] relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div className="max-w-sm h-[550px] relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <section className="relative">
         <Link to={`/product/${p._id}`}>
           <span className="absolute bottom-3 right-3 bg-pink-100 text-pink-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">
@@ -15,7 +15,7 @@ const ProductCard = ({ p }) => {
               p.image
             }`}
             alt={p.name}
-            style={{ height: '170px', objectFit: 'cover' }}
+            style={{ height: '300px', objectFit: 'cover' }}
           />
         </Link>
       </section>

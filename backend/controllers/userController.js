@@ -2,6 +2,8 @@ import User from '../models/userModel.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import bcrypt from 'bcryptjs';
 import generateToken from '../utils/createToken.js';
+import Booking from '../models/bookingModel.js';
+import RentalAgreement from '../models/rentalAgreementModel.js';
 
 // @desc    Register a new user
 // @route   POST /api/users
@@ -239,6 +241,54 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get user details with rental history and agreements
+// @route   GET /api/users/:id/details
+// @access  Private/Admin
+const getUserDetails = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password');
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Get all bookings for this user
+  const allBookings = await Booking.find({ user: req.params.id })
+    .populate('product')
+    .sort({ createdAt: -1 });
+
+  // Filter out pending bookings
+  const bookings = allBookings.filter(
+    (booking) => booking.status === 'confirmed' || booking.status === 'completed'
+  );
+
+  // Get all rental agreements for this user
+  const rentalAgreements = await RentalAgreement.find({
+    'customer.email': user.email,
+  }).populate('booking');
+
+  // Calculate total spent (only from confirmed and completed bookings)
+  const totalSpent = bookings.reduce((total, booking) => {
+    return total + (booking.totalPrice || 0);
+  }, 0);
+
+  // Get rental history with status counts
+  const rentalHistory = {
+    total: bookings.length,
+    confirmed: bookings.filter((b) => b.status === 'confirmed').length,
+    completed: bookings.filter((b) => b.status === 'completed').length,
+    cancelled: allBookings.filter((b) => b.status === 'cancelled').length,
+  };
+
+  res.json({
+    user,
+    bookings,
+    rentalAgreements,
+    totalSpent,
+    rentalHistory,
+  });
+});
+
 export {
   authUser,
   registerUser,
@@ -249,4 +299,5 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  getUserDetails,
 };

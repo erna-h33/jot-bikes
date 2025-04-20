@@ -121,6 +121,13 @@ export const productApiSlice = apiSlice.injectEndpoints({
         }));
       },
     }),
+
+    getFSNAnalysis: builder.query({
+      query: () => ({
+        url: `${PRODUCTS_URL}/fsn-analysis`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -137,4 +144,5 @@ export const {
   useGetNewProductsQuery,
   useUploadProductImageMutation,
   useGetFilteredProductsQuery,
+  useGetFSNAnalysisQuery,
 } = productApiSlice;

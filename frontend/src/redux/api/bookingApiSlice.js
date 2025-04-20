@@ -8,6 +8,7 @@ export const bookingApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['Bookings'],
     }),
     getMyBookings: builder.query({
       query: () => '/api/bookings/my-bookings',

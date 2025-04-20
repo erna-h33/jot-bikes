@@ -1,10 +1,31 @@
 import { NavLink } from 'react-router-dom';
-import { AiOutlineDashboard, AiOutlineAppstore, AiOutlineUser } from 'react-icons/ai';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import {
+  AiOutlineDashboard,
+  AiOutlineAppstore,
+  AiOutlineUser,
+  AiOutlineCalendar,
+  AiOutlineLogout,
+} from 'react-icons/ai';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useLogoutMutation } from '../../redux/api/usersApiSlice';
+import { logout } from '../../redux/features/auth/authSlice';
 
 const VendorMenu = () => {
   const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutApiCall] = useLogoutMutation();
+
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="w-[300px] min-h-screen bg-gray-100 p-4">
@@ -69,6 +90,26 @@ const VendorMenu = () => {
             </NavLink>
           </li>
 
+          {/* Bookings */}
+          <li>
+            <NavLink
+              className="flex items-center py-3 px-4 rounded-lg transition-all duration-300 ease-in-out group"
+              to="/vendor/bookings"
+              style={({ isActive }) => ({
+                color: isActive ? '#ec4899' : '#4b5563',
+                backgroundColor: isActive ? 'rgba(236, 72, 153, 0.1)' : 'transparent',
+              })}
+            >
+              <AiOutlineCalendar
+                className="mr-3 text-lg transition-transform duration-300 group-hover:scale-110"
+                style={({ isActive }) => ({
+                  color: isActive ? '#ec4899' : '#4b5563',
+                })}
+              />
+              <span className="font-medium">Bookings</span>
+            </NavLink>
+          </li>
+
           {/* Profile */}
           <li>
             <NavLink
@@ -87,6 +128,17 @@ const VendorMenu = () => {
               />
               <span className="font-medium">Profile</span>
             </NavLink>
+          </li>
+
+          {/* Logout */}
+          <li className="mt-6 pt-4 border-t border-gray-200">
+            <button
+              onClick={logoutHandler}
+              className="flex items-center py-3 px-4 rounded-lg transition-all duration-300 ease-in-out group w-full text-red-600 hover:bg-red-50"
+            >
+              <AiOutlineLogout className="mr-3 text-lg transition-transform duration-300 group-hover:scale-110" />
+              <span className="font-medium">Logout</span>
+            </button>
           </li>
         </ul>
       </div>

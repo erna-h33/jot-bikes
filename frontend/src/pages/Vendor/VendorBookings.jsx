@@ -8,6 +8,7 @@ import Message from '../../components/Message';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { FaCalendarAlt, FaFilter } from 'react-icons/fa';
+import VendorMenu from './VendorMenu';
 
 const VendorBookings = () => {
   const [statusFilter, setStatusFilter] = useState('all');
@@ -29,8 +30,9 @@ const VendorBookings = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex">
+      <VendorMenu />
+      <div className="flex-1 p-6">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center">
