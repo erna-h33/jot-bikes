@@ -96,17 +96,17 @@ const UserList = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {users.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-150">
+                  {users?.map((user) => (
+                    <tr key={user?._id} className="hover:bg-gray-50 transition-colors duration-150">
                       <td className="py-3 px-4 pl-8 text-sm text-gray-700 truncate max-w-[150px]">
-                        {user._id}
+                        {user?._id || 'N/A'}
                       </td>
                       <td className="py-3 px-4 text-sm font-medium text-gray-800">
-                        {user.username}
+                        {user?.name || user?.username || 'N/A'}
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-700">{user.email}</td>
+                      <td className="py-3 px-4 text-sm text-gray-700">{user?.email || 'N/A'}</td>
                       <td className="py-3 px-4 text-sm">
-                        {user.isAdmin ? (
+                        {user?.isAdmin ? (
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                             Yes
                           </span>
@@ -117,7 +117,7 @@ const UserList = () => {
                         )}
                       </td>
                       <td className="py-3 px-4 text-sm">
-                        {user.isVendor ? (
+                        {user?.isVendor ? (
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             Yes
                           </span>

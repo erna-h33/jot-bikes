@@ -87,32 +87,34 @@ const UserDetails = () => {
                   <tbody className="divide-y divide-gray-200">
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Name</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{user.username}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">
+                        {user?.name || user?.username || 'N/A'}
+                      </td>
                     </tr>
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Email</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{user.email}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{user?.email || 'N/A'}</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Role</td>
                       <td className="py-3 px-4 text-sm">
                         <span
                           className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.isAdmin
+                            user?.isAdmin
                               ? 'bg-red-100 text-red-800'
-                              : user.isVendor
+                              : user?.isVendor
                               ? 'bg-blue-100 text-blue-800'
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {user.isAdmin ? 'Admin' : user.isVendor ? 'Vendor' : 'Customer'}
+                          {user?.isAdmin ? 'Admin' : user?.isVendor ? 'Vendor' : 'Customer'}
                         </span>
                       </td>
                     </tr>
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Joined</td>
                       <td className="py-3 px-4 text-sm text-gray-900">
-                        {format(new Date(user.createdAt), 'PPP')}
+                        {user?.createdAt ? format(new Date(user.createdAt), 'PPP') : 'N/A'}
                       </td>
                     </tr>
                   </tbody>
