@@ -9,6 +9,13 @@ import { toast } from 'react-toastify';
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
+// Debug logging
+console.log('Environment variables:', {
+  VITE_STRIPE_PUBLISHABLE_KEY: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+  VITE_PRODUCTION_API_URL: import.meta.env.VITE_PRODUCTION_API_URL,
+});
+
 if (!stripeKey) {
   console.error('Stripe publishable key is not defined in environment variables');
 }
