@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCreateFeedbackMutation } from '../../redux/api/feedbackApiSlice';
 import { toast } from 'react-toastify';
+import PageHero from '../../components/PageHero';
+import Footer from '../../components/Footer';
 import {
   FaComments,
   FaHeadset,
@@ -60,8 +62,13 @@ const FeedbackForm = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-100">
+      <PageHero
+        title="Feedback"
+        description="We love to hear from you"
+        backgroundImage="/public/images/feedbackHero.webp"
+      />
+      <div className="max-w-3xl mx-auto my-10">
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
           <div className="bg-gradient-to-r from-pink-600 to-purple-600 px-6 py-8">
             <h2 className="text-3xl font-bold text-white text-center">Share Your Feedback</h2>
@@ -186,6 +193,7 @@ const FeedbackForm = () => {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

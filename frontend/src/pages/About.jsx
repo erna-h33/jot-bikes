@@ -43,7 +43,7 @@ const About = () => {
   return (
     <div className="bg-white">
       {/* Hero Section with Parallax */}
-      <section className="relative h-[60vh] overflow-hidden">
+      <section className="relative h-[80vh] overflow-hidden -mt-20">
         <div
           className="absolute inset-0 bg-cover bg-center bg-fixed"
           style={{

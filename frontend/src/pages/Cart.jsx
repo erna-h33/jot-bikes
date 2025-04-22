@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaTrash, FaArrowLeft } from 'react-icons/fa';
 import { addToCart, removeFromCart } from '../redux/features/cart/cartSlice';
+import PageHero from '../components/PageHero';
+import Footer from '../components/Footer';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -18,29 +20,30 @@ const Cart = () => {
     dispatch(removeFromCart(id));
   };
 
-  const checkoutHandler = () => {
-    navigate('/login?redirect=/shipping');
-  };
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-40 pb-10 -mt-20">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 text-gray-900 pt-40 -mt-40">
+      <PageHero
+        title="Cart"
+        description="Enjoy your seamless shopping experience"
+        backgroundImage="/public/images/cartHero.webp"
+      />
+      <div className="container mx-auto px-4 my-10">
         <Link
           to="/shop"
-          className="inline-flex items-center text-white hover:text-pink-400 transition-colors mb-8"
+          className="inline-flex items-center text-gray-900 hover:text-pink-400 transition-colors mb-8"
         >
-          <FaArrowLeft className="mr-2" /> Back to Shop
+          <FaArrowLeft className="mr-2 text-gray-900" /> Back to Shop
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
             {cartItems.length === 0 ? (
-              <div className="bg-gray-800 p-8 rounded-lg text-center">
+              <div className="bg-gray-800 text-gray-50 p-8 rounded-lg text-center">
                 <p className="text-xl mb-4">Your cart is empty</p>
                 <Link
                   to="/shop"
-                  className="inline-flex items-center bg-pink-600 text-white px-6 py-2 rounded-full hover:bg-pink-700 transition duration-300"
+                  className="inline-flex items-center bg-pink-600 text-white px-6 pt-1.5 pb-3  rounded-full hover:bg-pink-700 transition duration-300"
                 >
                   Continue Shopping
                 </Link>
@@ -103,17 +106,17 @@ const Cart = () => {
 
           <div className="lg:col-span-1">
             <div className="bg-gray-800 rounded-lg p-6 sticky top-24">
-              <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
+              <h2 className="text-2xl font-bold mb-6 text-gray-50">Order Summary</h2>
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Items</span>
-                  <span className="font-semibold">
+                  <span className="text-gray-100">Items</span>
+                  <span className="font-semibold text-gray-100">
                     {cartItems.reduce((acc, item) => acc + item.qty, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Subtotal</span>
-                  <span className="font-semibold">
+                  <span className="text-gray-100">Subtotal</span>
+                  <span className="font-semibold text-gray-100">
                     $
                     {Number(
                       cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
@@ -121,8 +124,8 @@ const Cart = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Tax</span>
-                  <span className="font-semibold">
+                  <span className="text-gray-100">Tax</span>
+                  <span className="font-semibold text-gray-100">
                     $
                     {Number(
                       cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
@@ -154,6 +157,7 @@ const Cart = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
