@@ -11,7 +11,7 @@ const Product = ({ product }) => {
             product.image
           }`}
           alt={product.name}
-          className="w-full h-64 object-cover hover:opacity-90 transition duration-300"
+          className="w-full h-64 object-contain hover:opacity-90 transition duration-300"
         />
       </div>
 
