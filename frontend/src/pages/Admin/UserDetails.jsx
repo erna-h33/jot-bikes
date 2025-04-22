@@ -133,7 +133,7 @@ const UserDetails = () => {
                         Total Bookings
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-900">
-                        {rentalHistory.total || 0}
+                        {rentalHistory?.total || 0}
                       </td>
                     </tr>
                     <tr>
@@ -147,7 +147,7 @@ const UserDetails = () => {
                         Active Rentals
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-900">
-                        {rentalHistory.confirmed || 0}
+                        {rentalHistory?.confirmed || 0}
                       </td>
                     </tr>
                     <tr>
@@ -155,7 +155,7 @@ const UserDetails = () => {
                         Completed Rentals
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-900">
-                        {rentalHistory.completed || 0}
+                        {rentalHistory?.completed || 0}
                       </td>
                     </tr>
                   </tbody>
