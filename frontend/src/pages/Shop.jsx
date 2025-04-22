@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useGetFilteredProductsQuery } from '../redux/api/productApiSlice';
 import { useFetchCategoriesQuery } from '../redux/api/categoryApiSlice';
 import { useLocation } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 import { setCategories, setProducts, setChecked, setRadio } from '../redux/features/shop/shopSlice';
 import Loader from '../components/Loader';
@@ -266,6 +267,7 @@ const Shop = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

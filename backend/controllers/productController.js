@@ -298,7 +298,7 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
       .populate('category')
       .populate('vendor', 'name email vendorName')
       .sort({ rating: -1 })
-      .limit(4);
+      .limit(6);
 
     // Get newer products without ratings
     const newProducts = await Product.find({
@@ -307,7 +307,7 @@ const fetchTopProducts = asyncHandler(async (req, res) => {
       .populate('category')
       .populate('vendor', 'name email vendorName')
       .sort({ createdAt: -1 })
-      .limit(4);
+      .limit(6);
 
     // Combine and deduplicate products
     const allProducts = [...ratedProducts];
