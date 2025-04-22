@@ -1,23 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserDetails } from '../../redux/actions/userActions';
+import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import AdminMenu from './AdminMenu';
+import { useGetUserDetailsQuery } from '../../redux/api/apiSlice';
 
 const UserDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { userDetails, loading, error } = useSelector((state) => state.userDetails);
   const { userInfo } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(getUserDetails(id));
-    }
-  }, [dispatch, id, userInfo]);
+  const {
+    data: userDetails,
+    isLoading,
+    error,
+  } = useGetUserDetailsQuery(id, {
+    skip: !userInfo || !userInfo.isAdmin,
+  });
 
   if (!userInfo || !userInfo.isAdmin) {
     return (
@@ -32,7 +30,7 @@ const UserDetails = () => {
     );
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex">
         <AdminMenu />
@@ -51,7 +49,9 @@ const UserDetails = () => {
         <AdminMenu />
         <div className="flex-1 ml-[250px] p-8">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
+            <span className="block sm:inline">
+              {error?.data?.message || 'An error occurred while fetching user details.'}
+            </span>
           </div>
         </div>
       </div>
