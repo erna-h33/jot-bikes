@@ -156,7 +156,7 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
     const { status } = req.body;
-    if (!['confirmed', 'cancelled'].includes(status)) {
+    if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
     booking.status = status;

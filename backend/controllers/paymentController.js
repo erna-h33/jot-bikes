@@ -47,6 +47,12 @@ const processPayment = asyncHandler(async (req, res) => {
       if (bookingId) {
         const booking = await Booking.findById(bookingId);
         if (booking) {
+          if (booking.status !== 'pending') {
+            return res.status(400).json({
+              success: false,
+              message: 'Booking is not in pending status',
+            });
+          }
           booking.status = 'confirmed';
           await booking.save();
         }

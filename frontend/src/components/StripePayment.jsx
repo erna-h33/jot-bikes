@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { clearCartItems } from '../redux/features/cart/cartSlice';
-import { useUpdateBookingStatusMutation } from '../redux/api/bookingApiSlice';
 import { toast } from 'react-toastify';
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
@@ -31,7 +30,6 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth);
-  const [updateBookingStatus] = useUpdateBookingStatusMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,20 +72,6 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
       const result = await response.json();
 
       if (result.success) {
-        // If payment is successful, update booking status to confirmed
-        if (bookingId) {
-          try {
-            await updateBookingStatus({
-              bookingId,
-              status: 'confirmed',
-            }).unwrap();
-          } catch (err) {
-            console.error('Error updating booking status:', err);
-            // Continue with success flow even if booking status update fails
-            // The admin can manually confirm the booking if needed
-          }
-        }
-
         toast.success('Payment successful!');
         dispatch(clearCartItems());
         navigate('/order-success');
