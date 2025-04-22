@@ -7,12 +7,14 @@ import { clearCartItems } from '../redux/features/cart/cartSlice';
 import { useUpdateBookingStatusMutation } from '../redux/api/bookingApiSlice';
 import { toast } from 'react-toastify';
 
-// Load Stripe outside of component render to avoid recreating Stripe object on every render
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
-if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+if (!stripeKey) {
   console.error('Stripe publishable key is not defined in environment variables');
 }
+
+// Load Stripe outside of component render to avoid recreating Stripe object on every render
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 const CheckoutForm = ({ totalPrice, bookingId }) => {
   const stripe = useStripe();
@@ -95,48 +97,64 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
-      <div className="mb-4">
-        <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="card-element">
-          Credit or debit card
-        </label>
-        <div className="p-3 border border-gray-600 rounded-md bg-gray-700">
-          <CardElement
-            id="card-element"
-            options={{
-              style: {
-                base: {
-                  color: '#ffffff',
-                  fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                  fontSmoothing: 'antialiased',
-                  fontSize: '16px',
-                  '::placeholder': {
-                    color: '#aab7c4',
-                  },
-                },
-                invalid: {
-                  color: '#fa755a',
-                  iconColor: '#fa755a',
-                },
-              },
-            }}
-          />
+      {!stripeKey ? (
+        <div className="text-red-500 text-center p-4 bg-red-100 rounded-md">
+          Payment system is currently unavailable. Please try again later.
         </div>
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      </div>
-      <button
-        type="submit"
-        disabled={!stripe || loading}
-        className={`w-full py-2 px-4 rounded-md text-white font-medium ${
-          loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'
-        }`}
-      >
-        {loading ? 'Processing...' : `Pay $${Number(totalPrice).toFixed(2)}`}
-      </button>
+      ) : (
+        <>
+          <div className="mb-4">
+            <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="card-element">
+              Credit or debit card
+            </label>
+            <div className="p-3 border border-gray-600 rounded-md bg-gray-700">
+              <CardElement
+                id="card-element"
+                options={{
+                  style: {
+                    base: {
+                      color: '#ffffff',
+                      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                      fontSmoothing: 'antialiased',
+                      fontSize: '16px',
+                      '::placeholder': {
+                        color: '#aab7c4',
+                      },
+                    },
+                    invalid: {
+                      color: '#fa755a',
+                      iconColor: '#fa755a',
+                    },
+                  },
+                }}
+              />
+            </div>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          </div>
+          <button
+            type="submit"
+            disabled={!stripe || loading}
+            className={`w-full py-2 px-4 rounded-md text-white font-medium ${
+              loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'
+            }`}
+          >
+            {loading ? 'Processing...' : `Pay $${Number(totalPrice).toFixed(2)}`}
+          </button>
+        </>
+      )}
     </form>
   );
 };
 
 const StripePayment = ({ totalPrice, bookingId }) => {
+  if (!stripeKey) {
+    return (
+      <div className="text-red-500 text-center p-4 bg-red-100 rounded-md">
+        Payment system is currently unavailable. Please try again later.
+      </div>
+    );
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <CheckoutForm totalPrice={totalPrice} bookingId={bookingId} />
