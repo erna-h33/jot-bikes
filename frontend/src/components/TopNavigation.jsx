@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   AiOutlineHome,
   AiOutlineShopping,
@@ -14,27 +14,21 @@ import {
   AiOutlineLogout,
   AiOutlineCalendar,
 } from 'react-icons/ai';
-import { FaComments } from 'react-icons/fa';
+import { FaComments, FaUser, FaShoppingCart, FaSignOutAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLogoutMutation } from '../redux/api/usersApiSlice';
+import { useLogoutMutation } from '../redux/api/apiSlice';
 import { logout } from '../redux/features/auth/authSlice';
+import { toast } from 'react-toastify';
 
 const TopNavigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    console.log('User Info:', userInfo);
-    console.log('User Info Details:', {
-      name: userInfo?.name,
-      username: userInfo?.username,
-      email: userInfo?.email,
-      isVendor: userInfo?.isVendor,
-    });
-  }, [userInfo]);
+  const navigate = useNavigate();
+  const [logoutApiCall, { isLoading }] = useLogoutMutation();
+  const dispatch = useDispatch();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -44,23 +38,18 @@ const TopNavigation = () => {
     setDropdownOpen(false);
   };
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const [logoutApiCall] = useLogoutMutation();
-
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
       navigate('/');
-      closeDropdown();
-    } catch (error) {
-      console.error(error);
+      toast.success('Logged out successfully');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
     }
   };
 
-  const cartItemsCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
+  const cartItemsCount = cartItems?.reduce((acc, item) => acc + item.qty, 0) || 0;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[9999] bg-black bg-opacity-50">
@@ -100,7 +89,7 @@ const TopNavigation = () => {
                   onClick={toggleDropdown}
                   className="flex items-center text-white hover:text-pink-400 transition-colors"
                 >
-                  <span>{userInfo.name}</span>
+                  <span>{userInfo?.name || 'User'}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className={`h-4 w-4 ml-1 ${dropdownOpen ? 'transform rotate-180' : ''}`}
@@ -121,7 +110,7 @@ const TopNavigation = () => {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-2 z-10">
                     {/* Admin menu items */}
-                    {userInfo.isAdmin && (
+                    {userInfo?.isAdmin && (
                       <>
                         <Link
                           to="/admin/dashboard"
@@ -167,7 +156,7 @@ const TopNavigation = () => {
                     )}
 
                     {/* Vendor menu items */}
-                    {userInfo.isVendor && (
+                    {userInfo?.isVendor && (
                       <>
                         <Link
                           to="/vendor/dashboard"
@@ -231,10 +220,11 @@ const TopNavigation = () => {
                     </Link>
                     <button
                       onClick={logoutHandler}
+                      disabled={isLoading}
                       className="flex items-center px-4 py-2 text-sm text-white hover:bg-gray-700 w-full"
                     >
-                      <AiOutlineLogout className="mr-2" size={18} />
-                      Logout
+                      <FaSignOutAlt className="mr-2" />
+                      {isLoading ? 'Logging out...' : 'Logout'}
                     </button>
                   </div>
                 )}
@@ -245,7 +235,7 @@ const TopNavigation = () => {
                   to="/login"
                   className="flex items-center text-white hover:text-pink-400 transition-colors"
                 >
-                  <AiOutlineLogin className="mr-1" size={18} />
+                  <FaUser className="mr-1" />
                   Login
                 </Link>
                 <Link

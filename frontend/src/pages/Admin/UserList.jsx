@@ -52,6 +52,10 @@ const UserList = () => {
     }
   };
 
+  if (!userInfo) {
+    return <Loader />;
+  }
+
   return (
     <div className="flex">
       <AdminMenu />
