@@ -43,6 +43,7 @@ app.use(
     origin: [
       'http://localhost:5173',
       'https://jot-bikes.vercel.app',
+      'https://jot-bikes-capstone.vercel.app',
       'https://jot-bikes.netlify.app',
     ],
     credentials: true,
