@@ -11,10 +11,26 @@ const UserDetails = () => {
   const dispatch = useDispatch();
 
   const { userDetails, loading, error } = useSelector((state) => state.userDetails);
+  const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(getUserDetails(id));
-  }, [dispatch, id]);
+    if (userInfo && userInfo.isAdmin) {
+      dispatch(getUserDetails(id));
+    }
+  }, [dispatch, id, userInfo]);
+
+  if (!userInfo || !userInfo.isAdmin) {
+    return (
+      <div className="flex">
+        <AdminMenu />
+        <div className="flex-1 ml-[250px] p-8">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <span className="block sm:inline">You must be an admin to view this page.</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -34,10 +50,7 @@ const UserDetails = () => {
       <div className="flex">
         <AdminMenu />
         <div className="flex-1 ml-[250px] p-8">
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
             <span className="block sm:inline">{error}</span>
           </div>
         </div>
@@ -45,16 +58,13 @@ const UserDetails = () => {
     );
   }
 
-  if (!userDetails) {
+  if (!userDetails || !userDetails.user) {
     return (
       <div className="flex">
         <AdminMenu />
         <div className="flex-1 ml-[250px] p-8">
-          <div
-            className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
-            <span className="block sm:inline">User not found</span>
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative">
+            <span className="block sm:inline">No user details found.</span>
           </div>
         </div>
       </div>
@@ -87,9 +97,7 @@ const UserDetails = () => {
                   <tbody className="divide-y divide-gray-200">
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Name</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">
-                        {user?.name || user?.username || 'N/A'}
-                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{user?.username || 'N/A'}</td>
                     </tr>
                     <tr>
                       <td className="py-3 px-4 text-sm font-medium text-gray-500">Email</td>
@@ -186,9 +194,6 @@ const UserDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -206,6 +211,8 @@ const UserDetails = () => {
                           className={`px-2 py-1 text-xs font-semibold rounded-full ${
                             booking.status === 'confirmed'
                               ? 'bg-green-100 text-green-800'
+                              : booking.status === 'completed'
+                              ? 'bg-blue-100 text-blue-800'
                               : 'bg-red-100 text-red-800'
                           }`}
                         >
@@ -214,14 +221,6 @@ const UserDetails = () => {
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-900">
                         ${booking.totalPrice?.toFixed(2)}
-                      </td>
-                      <td className="py-3 px-4 text-sm">
-                        <button
-                          onClick={() => navigate(`/admin/rental-agreements/${booking._id}`)}
-                          className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
-                        >
-                          View Rental Agreement
-                        </button>
                       </td>
                     </tr>
                   ))}

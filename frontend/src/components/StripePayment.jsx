@@ -8,7 +8,11 @@ import { useUpdateBookingStatusMutation } from '../redux/api/bookingApiSlice';
 import { toast } from 'react-toastify';
 
 // Load Stripe outside of component render to avoid recreating Stripe object on every render
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+
+if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+  console.error('Stripe publishable key is not defined in environment variables');
+}
 
 const CheckoutForm = ({ totalPrice, bookingId }) => {
   const stripe = useStripe();
