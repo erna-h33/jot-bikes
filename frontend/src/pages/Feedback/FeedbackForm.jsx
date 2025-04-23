@@ -66,7 +66,7 @@ const FeedbackForm = () => {
       <PageHero
         title="Feedback"
         description="We love to hear from you"
-        backgroundImage="/public/images/feedbackHero.webp"
+        backgroundImage="/images/feedbackHero.webp"
       />
       <div className="max-w-3xl mx-auto my-10">
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">

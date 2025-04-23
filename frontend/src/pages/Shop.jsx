@@ -161,7 +161,7 @@ const Shop = () => {
       <PageHero
         title="Shop"
         description="Discover our amazing collection of products"
-        backgroundImage="/public/images/shopHero.webp"
+        backgroundImage="/images/shopHero.webp"
       />
       <div className="container mx-auto px-4 py-8 my-10">
         <div className="flex flex-col md:flex-row gap-8">

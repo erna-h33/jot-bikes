@@ -166,8 +166,8 @@ const ProductTabs = ({
                 <Loader />
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {data.map((product) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {data.slice(0, 2).map((product) => (
                   <div key={product._id} className="transform transition-transform hover:scale-105">
                     <SmallProduct product={product} />
                   </div>

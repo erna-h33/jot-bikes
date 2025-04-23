@@ -25,7 +25,7 @@ const Cart = () => {
       <PageHero
         title="Cart"
         description="Enjoy your seamless shopping experience"
-        backgroundImage="/public/images/cartHero.webp"
+        backgroundImage="/images/cartHero.webp"
       />
       <div className="container mx-auto px-4 my-10">
         <Link
@@ -134,7 +134,7 @@ const Cart = () => {
                 </div>
                 <div className="border-t border-gray-700 pt-4">
                   <div className="flex justify-between">
-                    <span className="text-xl font-bold">Total</span>
+                    <span className="text-xl font-bold text-gray-100">Total</span>
                     <span className="text-xl font-bold text-pink-500">
                       $
                       {Number(
