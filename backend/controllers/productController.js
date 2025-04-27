@@ -4,7 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import Booking from '../models/bookingModel.js';
-import cloudinary from '../config/cloudinary.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,25 +24,30 @@ export const addProduct = async (req, res) => {
     // If an image was uploaded
     if (req.files && req.files.image) {
       const file = req.files.image;
+      const filename = `upload_${Date.now()}_${file.originalFilename || file.name}`;
+      const targetPath = path.join(__dirname, '../../uploads', filename);
 
       try {
-        // Upload to Cloudinary
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'jot-bikes',
-          resource_type: 'auto',
-        });
-
-        // Use the Cloudinary URL
-        image = result.secure_url;
-        console.log('Image uploaded to Cloudinary:', result.secure_url);
-
-        // Clean up the temporary file
+        // Move the file to the uploads directory
         if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
+          fs.renameSync(file.path, targetPath);
+          image = `/uploads/${filename}`;
+          console.log('Image saved successfully at:', targetPath);
+        } else {
+          console.error('Source file does not exist:', file.path);
+          return res.status(500).json({ error: 'Image upload failed - source file not found' });
         }
-      } catch (uploadError) {
-        console.error('Error uploading to Cloudinary:', uploadError);
-        return res.status(500).json({ error: 'Failed to upload image to Cloudinary' });
+      } catch (fileError) {
+        console.error('Error handling file:', fileError);
+        // Clean up temporary file if it exists
+        if (fs.existsSync(file.path)) {
+          try {
+            fs.unlinkSync(file.path);
+          } catch (cleanupError) {
+            console.error('Error cleaning up temporary file:', cleanupError);
+          }
+        }
+        return res.status(500).json({ error: 'Failed to process image upload' });
       }
     }
 
@@ -113,38 +117,62 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       const file = req.files.image;
       console.log('Image file received:', file);
 
+      // Get the filename and ensure it's unique
+      const filename = `${Date.now()}-${file.originalFilename || file.name}`;
+      const targetPath = path.join(__dirname, '../../uploads', filename);
+
       try {
-        // Upload to Cloudinary
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'jot-bikes',
-          resource_type: 'auto',
-        });
+        // Log the current path and target path
+        console.log('Current file path:', file.path);
+        console.log('Target path:', targetPath);
 
-        // Use the Cloudinary URL
-        updateData.image = result.secure_url;
-        console.log('Image uploaded to Cloudinary:', result.secure_url);
-
-        // Clean up the temporary file
+        // Move the file to the uploads directory
         if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
+          // Delete old image if it exists and is not the default image
+          if (product.image && product.image !== '/uploads/default.jpg') {
+            const oldImagePath = path.join(__dirname, '../..', product.image);
+            if (fs.existsSync(oldImagePath)) {
+              fs.unlinkSync(oldImagePath);
+            }
+          }
+
+          // Move the new image
+          fs.renameSync(file.path, targetPath);
+          updateData.image = `/uploads/${filename}`;
+          console.log('Image saved successfully at:', targetPath);
+        } else {
+          console.error('Source file does not exist:', file.path);
+          return res.status(500).json({ error: 'Image upload failed - source file not found' });
         }
-      } catch (uploadError) {
-        console.error('Error uploading to Cloudinary:', uploadError);
-        return res.status(500).json({ error: 'Failed to upload image to Cloudinary' });
+      } catch (fileError) {
+        console.error('Error handling file:', fileError);
+        // Clean up temporary file if it exists
+        if (fs.existsSync(file.path)) {
+          try {
+            fs.unlinkSync(file.path);
+          } catch (cleanupError) {
+            console.error('Error cleaning up temporary file:', cleanupError);
+          }
+        }
+        return res.status(500).json({ error: 'Failed to process image upload' });
       }
     }
 
     // Update the product fields
+    // Use findByIdAndUpdate instead of Object.assign and save
+    // This approach is more reliable for handling required fields
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
       { new: true, runValidators: false }
     );
 
+    console.log('Product updated successfully:', updatedProduct);
+
     res.json(updatedProduct);
   } catch (error) {
-    console.error('Error in updateProductDetails:', error);
-    res.status(400).json({ message: error.message });
+    console.error('Error updating product:', error);
+    res.status(400).json({ error: error.message });
   }
 });
 
