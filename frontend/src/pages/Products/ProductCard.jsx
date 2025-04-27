@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 
 const ProductCard = ({ p }) => {
+  // Check if the image URL is already a full URL (from Cloudinary)
+  const imageUrl =
+    p.image && p.image.startsWith('http')
+      ? p.image
+      : `${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${p.image}`;
+
   return (
     <div className="max-w-sm h-[550px] relative bg-[#1A1A1A] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <section className="relative">
@@ -11,9 +17,7 @@ const ProductCard = ({ p }) => {
           </span>
           <img
             className="cursor-pointer w-full"
-            src={`${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${
-              p.image
-            }`}
+            src={imageUrl}
             alt={p.name}
             style={{ height: '300px', objectFit: 'cover' }}
           />

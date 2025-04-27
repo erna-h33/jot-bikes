@@ -48,7 +48,13 @@ const AllProductsList = () => {
               <div className="flex p-4">
                 <div className="flex-shrink-0">
                   <img
-                    src={product.image}
+                    src={
+                      product.image && product.image.startsWith('http')
+                        ? product.image
+                        : `${
+                            import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
+                          }${product.image}`
+                    }
                     alt={product.name}
                     className="h-24 w-24 object-cover rounded"
                   />

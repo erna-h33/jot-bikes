@@ -211,9 +211,13 @@ const ProductDetails = () => {
                 {/* Product Image */}
                 <div className="bg-gray-800 rounded-lg overflow-hidden shadow-xl">
                   <img
-                    src={`${
-                      import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
-                    }${product.image}`}
+                    src={
+                      product.image && product.image.startsWith('http')
+                        ? product.image
+                        : `${
+                            import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
+                          }${product.image}`
+                    }
                     alt={product.name}
                     className="w-full h-[500px] object-cover"
                   />
