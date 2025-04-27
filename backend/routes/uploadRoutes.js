@@ -68,4 +68,30 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 });
 
+// Route to check all product images
+router.get('/check-product-images', async (req, res) => {
+  try {
+    // Import your Product model
+    const Product = await import('../models/productModel.js');
+
+    // Get all products with their images
+    const products = await Product.default.find({}, 'name image');
+
+    // Count products with images
+    const productsWithImages = products.filter((product) => product.image);
+
+    res.json({
+      totalProducts: products.length,
+      productsWithImages: productsWithImages.length,
+      products: products.map((product) => ({
+        name: product.name,
+        image: product.image,
+      })),
+    });
+  } catch (error) {
+    console.error('Error checking product images:', error);
+    res.status(500).json({ error: 'Error checking product images' });
+  }
+});
+
 export default router;
