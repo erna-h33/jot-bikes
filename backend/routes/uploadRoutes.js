@@ -48,9 +48,18 @@ router.post('/', upload.single('image'), async (req, res) => {
   }
 
   try {
+    // Log Cloudinary configuration (without sensitive data)
+    console.log('Cloudinary configuration:', {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY ? '***' : 'missing',
+      api_secret: process.env.CLOUDINARY_API_SECRET ? '***' : 'missing',
+    });
+
     // Convert buffer to base64
     const b64 = Buffer.from(req.file.buffer).toString('base64');
     const dataURI = 'data:' + req.file.mimetype + ';base64,' + b64;
+
+    console.log('Attempting to upload to Cloudinary...');
 
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(dataURI, {
@@ -58,24 +67,38 @@ router.post('/', upload.single('image'), async (req, res) => {
       resource_type: 'auto',
     });
 
-    console.log('File uploaded to Cloudinary:', result);
+    console.log('File uploaded to Cloudinary successfully:', {
+      public_id: result.public_id,
+      secure_url: result.secure_url,
+      format: result.format,
+      resource_type: result.resource_type,
+    });
 
     // Return the Cloudinary URL
     res.json({ image: result.secure_url });
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
-    res.status(500).json({ error: 'Error uploading file to Cloudinary' });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      http_code: error.http_code,
+      name: error.name,
+    });
+    res.status(500).json({
+      error: 'Error uploading file to Cloudinary',
+      details: error.message,
+    });
   }
 });
 
 // Route to check all product images
 router.get('/check-product-images', async (req, res) => {
   try {
-    // Import your Product model
-    const Product = await import('../models/productModel.js');
+    // Import your Product model correctly
+    const Product = (await import('../models/productModel.js')).default;
 
     // Get all products with their images
-    const products = await Product.default.find({}, 'name image');
+    const products = await Product.find({}, 'name image');
 
     // Count products with images
     const productsWithImages = products.filter((product) => product.image);
