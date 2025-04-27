@@ -59,11 +59,11 @@ const Home = () => {
                     Based in Redfern, Sydney, we offer the highest quality range of E-Bikes and
                     E-Scooters with Fast Shipping Australia-wide and excellent customer service.
                   </p>
-                  <p className="font-light">
+                  {/* <p className="font-light">
                     We specialise in a range of brands including Dragon, Kristall, NCM, The Cullen,
                     Vamos, Bolzzen, Dulatron, Inokim, Kaabo, Mercane, Segway, Vsett, Xiaomi, Zero
                     and many more!
-                  </p>
+                  </p> */}
                 </div>
                 <Link
                   to="/shop"
