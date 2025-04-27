@@ -11,14 +11,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-// Debug environment variables
-console.log('Environment variables loaded:', {
-  PORT: process.env.PORT,
-  MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET,
-  NODE_ENV: process.env.NODE_ENV,
-});
-
 // Utiles
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
