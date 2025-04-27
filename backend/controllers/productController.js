@@ -247,7 +247,6 @@ const fetchAllProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({})
       .populate('category')
       .populate('vendor', 'name email vendorName')
-      .limit(12)
       .sort({ createAt: -1 });
     res.json(products);
   } catch (error) {
