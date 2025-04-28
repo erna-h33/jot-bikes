@@ -145,10 +145,7 @@ const ProductCarousel = () => {
                             <div className="relative">
                               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50 rounded-2xl" />
                               <img
-                                src={`${
-                                  import.meta.env.VITE_API_URL ||
-                                  import.meta.env.VITE_PRODUCTION_API_URL
-                                }${image}`}
+                                src={image}
                                 alt={name}
                                 className="w-full h-[400px] object-contain rounded-2xl transform hover:scale-105 transition duration-500"
                               />
