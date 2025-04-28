@@ -9,7 +9,16 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Validate required environment variables
-const requiredEnvVars = ['PORT', 'MONGO_URI', 'JWT_SECRET', 'STRIPE_SECRET_KEY', 'FRONTEND_URL'];
+const requiredEnvVars = [
+  'PORT',
+  'MONGO_URI',
+  'JWT_SECRET',
+  'STRIPE_SECRET_KEY',
+  'FRONTEND_URL',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+];
 
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 
@@ -24,4 +33,9 @@ export default {
   nodeEnv: process.env.NODE_ENV || 'development',
   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   frontendUrl: process.env.FRONTEND_URL,
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
 };
