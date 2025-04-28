@@ -65,6 +65,12 @@ const migrateToCloudinary = async () => {
         continue;
       }
 
+      // Skip if image is the default image
+      if (product.image === '/uploads/default.jpg') {
+        console.log(`Product ${product.name} has default image, skipping`);
+        continue;
+      }
+
       // Extract filename from image path
       const imagePath = product.image;
       if (!imagePath) {
