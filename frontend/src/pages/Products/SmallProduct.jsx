@@ -7,9 +7,13 @@ const SmallProduct = ({ product }) => {
     <div className="bg-white rounded-lg shadow-md overflow-hidden h-full">
       <div className="relative aspect-w-1 aspect-h-1">
         <img
-          src={`${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${
-            product.image
-          }`}
+          src={
+            product.image && product.image.startsWith('http')
+              ? product.image
+              : `${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${
+                  product.image
+                }`
+          }
           alt={product.name}
           className="w-full h-64 object-contain hover:opacity-90 transition duration-300"
         />
