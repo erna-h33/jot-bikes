@@ -55,9 +55,14 @@ const Products = () => {
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-1/4 p-4">
                     <img
-                      src={`${
-                        import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
-                      }${product.image}`}
+                      src={
+                        product.image && product.image.startsWith('http')
+                          ? product.image
+                          : `${
+                              import.meta.env.VITE_API_URL ||
+                              import.meta.env.VITE_PRODUCTION_API_URL
+                            }${product.image}`
+                      }
                       alt={product.name}
                       className="w-full h-48 object-contain rounded-lg"
                     />
