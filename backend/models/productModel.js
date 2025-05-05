@@ -21,6 +21,7 @@ const productSchema = mongoose.Schema(
     description: { type: String, required: true, default: 'No description' },
     brand: { type: String, required: true },
     price: { type: Number, required: true, default: 0 },
+    salePrice: { type: Number, required: false, default: null },
     category: { type: ObjectId, ref: 'Category', required: true },
     countInStock: { type: Number, required: true, default: 0 },
     image: { type: String, required: true },

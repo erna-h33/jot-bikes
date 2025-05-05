@@ -11,6 +11,7 @@ const ProductList = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState(0);
+  const [salePrice, setSalePrice] = useState('');
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [stock, setStock] = useState(0);
@@ -48,6 +49,7 @@ const ProductList = () => {
       productData.append('name', name);
       productData.append('description', description);
       productData.append('price', price);
+      productData.append('salePrice', salePrice);
       productData.append('category', category);
       productData.append('brand', brand);
       productData.append('countInStock', stock);
@@ -165,6 +167,20 @@ const ProductList = () => {
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full p-2 border rounded"
                   required
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sale Price (Optional)
+                </label>
+                <input
+                  type="number"
+                  value={salePrice}
+                  onChange={(e) => setSalePrice(e.target.value)}
+                  className="w-full p-2 border rounded"
                   min="0"
                   step="0.01"
                 />

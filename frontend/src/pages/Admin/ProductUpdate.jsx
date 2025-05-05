@@ -22,6 +22,7 @@ const AdminProductUpdate = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [salePrice, setSalePrice] = useState('');
   const [category, setCategory] = useState('');
   const [brand, setBrand] = useState('');
   const [stock, setStock] = useState('');
@@ -34,6 +35,7 @@ const AdminProductUpdate = () => {
       setName(productData.name || '');
       setDescription(productData.description || '');
       setPrice(productData.price?.toString() || '');
+      setSalePrice(productData.salePrice?.toString() || '');
       setCategory(productData.category?._id || '');
       setBrand(productData.brand || '');
       setStock(productData.countInStock?.toString() || '');
@@ -69,6 +71,7 @@ const AdminProductUpdate = () => {
       formData.append('name', name);
       formData.append('description', description);
       formData.append('price', price);
+      formData.append('salePrice', salePrice);
       formData.append('category', category);
       formData.append('brand', brand);
       formData.append('countInStock', stock || '0');
@@ -207,6 +210,20 @@ const AdminProductUpdate = () => {
                   onChange={(e) => setPrice(e.target.value)}
                   className="w-full p-2 border rounded"
                   required
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sale Price (Optional)
+                </label>
+                <input
+                  type="number"
+                  value={salePrice}
+                  onChange={(e) => setSalePrice(e.target.value)}
+                  className="w-full p-2 border rounded"
                   min="0"
                   step="0.01"
                 />

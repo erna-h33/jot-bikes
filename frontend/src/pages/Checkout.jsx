@@ -42,9 +42,13 @@ const Checkout = () => {
               {cartItems.map((item) => (
                 <div key={item._id} className="flex items-center space-x-4">
                   <img
-                    src={`${
-                      import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
-                    }${item.image}`}
+                    src={
+                      item.image && item.image.startsWith('http')
+                        ? item.image
+                        : `${
+                            import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
+                          }${item.image}`
+                    }
                     alt={item.name}
                     className="w-20 h-20 object-cover rounded-lg"
                   />

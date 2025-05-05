@@ -57,9 +57,14 @@ const Cart = () => {
                   >
                     <div className="w-24 h-24 flex-shrink-0">
                       <img
-                        src={`${
-                          import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
-                        }${item.image}`}
+                        src={
+                          item.image && item.image.startsWith('http')
+                            ? item.image
+                            : `${
+                                import.meta.env.VITE_API_URL ||
+                                import.meta.env.VITE_PRODUCTION_API_URL
+                              }${item.image}`
+                        }
                         alt={item.name}
                         className="w-full h-full object-cover rounded-lg"
                       />

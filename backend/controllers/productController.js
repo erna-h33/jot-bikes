@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 export const addProduct = async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock, size, color } =
+    const { name, description, brand, price, category, countInStock, size, color, salePrice } =
       req.fields || req.body;
 
     // Validate required fields
@@ -50,6 +50,7 @@ export const addProduct = async (req, res) => {
     const product = new Product({
       name,
       price: Number(price),
+      salePrice: salePrice ? Number(salePrice) : null,
       description,
       image,
       brand,
@@ -69,7 +70,8 @@ export const addProduct = async (req, res) => {
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock, size, color } = req.fields;
+    const { name, description, brand, price, category, countInStock, size, color, salePrice } =
+      req.fields;
 
     // Find the product
     const product = await Product.findById(req.params.id);
@@ -83,6 +85,7 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       if (description) updateData.description = description;
       if (brand) updateData.brand = brand;
       if (price) updateData.price = Number(price);
+      if (salePrice !== undefined) updateData.salePrice = salePrice ? Number(salePrice) : null;
       if (category) updateData.category = category;
       if (countInStock !== undefined) updateData.countInStock = Number(countInStock);
       if (size) updateData.size = size;
