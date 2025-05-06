@@ -72,6 +72,7 @@ const ProductCarousel = () => {
                 createdAt,
                 numReviews,
                 countInStock,
+                salePrice,
               }) => (
                 <Motion.div
                   key={_id}
@@ -124,11 +125,20 @@ const ProductCarousel = () => {
                               </div>
                             </div>
 
-                            <div className="flex items-center space-x-8 pt-4">
-                              <span className="text-4xl font-bold text-white">${price}</span>
+                            <div className="flex flex-col space-y-4 pt-4">
+                              <div className="flex flex-col space-y-2">
+                                <span className="text-3xl font-bold text-white">
+                                  Rent: ${price}/week
+                                </span>
+                                {salePrice && (
+                                  <span className="text-3xl font-bold text-pink-500">
+                                    Buy: ${salePrice}
+                                  </span>
+                                )}
+                              </div>
                               <Link
                                 to={`/product/${_id}`}
-                                className="bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                                className="bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 w-fit"
                               >
                                 <FaShoppingCart />
                                 <span>View Details</span>

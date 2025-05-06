@@ -23,10 +23,20 @@ const Product = ({ product }) => {
             </div>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-2xl font-bold text-pink-600">${product.price}</span>
-            <span className="bg-pink-100 text-pink-800 text-sm px-3 py-1 rounded-full">
-              View Details
-            </span>
+            <div className="space-y-1">
+              {product.salePrice ? (
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg font-semibold text-pink-600">
+                    Buy: ${product.salePrice}
+                  </span>
+                </div>
+              ) : null}
+              <div className="flex items-center space-x-2">
+                <span className="text-lg font-semibold text-gray-800">
+                  Rent: ${product.price}/week
+                </span>
+              </div>
+            </div>
           </div>
         </Link>
 
@@ -40,7 +50,7 @@ const Product = ({ product }) => {
             }`}
           >
             <FaShoppingCart className="mr-2" />
-            {product.countInStock > 0 ? 'Book Now' : 'Out of Stock'}
+            {product.countInStock > 0 ? 'View Details' : 'Out of Stock'}
           </Link>
         </div>
       </div>

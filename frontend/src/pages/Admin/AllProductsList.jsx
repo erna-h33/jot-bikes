@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
-import { useGetProductsQuery, useDeleteProductMutation } from '../../redux/api/productApiSlice';
+import { useAllProductsQuery, useDeleteProductMutation } from '../../redux/api/productApiSlice';
 import { toast } from 'react-toastify';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const AllProductsList = () => {
-  const { data: products, isLoading, error } = useGetProductsQuery();
+  const { data: products, isLoading, error } = useAllProductsQuery();
   const [deleteProduct] = useDeleteProductMutation();
+
+  // Debug log
+  console.log('Products data:', products);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -48,15 +51,13 @@ const AllProductsList = () => {
               <div className="flex p-4">
                 <div className="flex-shrink-0">
                   <img
-                    src={
-                      product.image && product.image.startsWith('http')
-                        ? product.image
-                        : `${
-                            import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL
-                          }${product.image}`
-                    }
+                    src={product.image}
                     alt={product.name}
                     className="h-24 w-24 object-cover rounded"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/uploads/default.jpg';
+                    }}
                   />
                 </div>
                 <div className="ml-4 flex-1">

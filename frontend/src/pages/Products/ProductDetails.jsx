@@ -252,7 +252,7 @@ const ProductDetails = () => {
                           }${product.image}`
                     }
                     alt={product.name}
-                    className="w-full h-[500px] object-cover"
+                    className="w-full h-[500px] object-fit"
                   />
                 </div>
 
