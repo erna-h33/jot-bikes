@@ -49,8 +49,8 @@ export const addProduct = async (req, res) => {
 
     const product = new Product({
       name,
-      price: Number(price),
-      salePrice: salePrice ? Number(salePrice) : null,
+      price: parseInt(price, 10),
+      salePrice: salePrice ? parseInt(salePrice, 10) : null,
       description,
       image,
       brand,
@@ -58,6 +58,7 @@ export const addProduct = async (req, res) => {
       countInStock: Number(countInStock),
       size,
       color,
+      vendor: req.user._id,
     });
 
     const createdProduct = await product.save();
@@ -84,8 +85,9 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       if (name) updateData.name = name;
       if (description) updateData.description = description;
       if (brand) updateData.brand = brand;
-      if (price) updateData.price = Number(price);
-      if (salePrice !== undefined) updateData.salePrice = salePrice ? Number(salePrice) : null;
+      if (price) updateData.price = parseInt(price, 10);
+      if (salePrice !== undefined)
+        updateData.salePrice = salePrice ? parseInt(salePrice, 10) : null;
       if (category) updateData.category = category;
       if (countInStock !== undefined) updateData.countInStock = Number(countInStock);
       if (size) updateData.size = size;

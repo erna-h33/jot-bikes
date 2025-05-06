@@ -173,7 +173,7 @@ const AdminProductUpdate = () => {
                     <option value="All Brands">All Brands</option>
                     <option value="Bolzzen">Bolzzen</option>
                     <option value="Dragon">Dragon</option>
-                    <option value="Dulatron">Dulatron</option>
+                    <option value="Dualtron">Dualtron</option>
                     <option value="Inokim">Inokim</option>
                     <option value="Kaabo">Kaabo</option>
                     <option value="Kristall">Kristall</option>

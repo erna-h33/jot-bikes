@@ -264,12 +264,31 @@ const ProductDetails = () => {
                     <Ratings value={product.rating} text={`${product.numReviews} reviews`} />
                   </div>
 
-                  <div className="flex flex-col space-y-2 mb-4">
-                    <p className="text-4xl font-extrabold text-pink-500">Rent: ${product.price}</p>
+                  <div className="flex flex-col space-y-4 mb-4">
+                    <div className="bg-gray-700 p-4 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-xl font-semibold text-pink-500">Rental Option</h3>
+                          <p className="text-gray-300">Weekly rate</p>
+                        </div>
+                        <span className="text-3xl font-bold text-pink-500">${product.price}</span>
+                      </div>
+                    </div>
+
                     {product.salePrice && (
-                      <p className="text-4xl font-extrabold text-green-500">
-                        Buy: ${product.salePrice}
-                      </p>
+                      <div className="bg-gray-700 p-4 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-xl font-semibold text-green-500">
+                              Purchase Option
+                            </h3>
+                            <p className="text-gray-300">One-time payment</p>
+                          </div>
+                          <span className="text-3xl font-bold text-green-500">
+                            ${product.salePrice}
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </div>
 

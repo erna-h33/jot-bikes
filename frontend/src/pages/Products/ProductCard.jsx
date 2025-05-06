@@ -31,10 +31,10 @@ const ProductCard = ({ p }) => {
         </div>
 
         <div className="space-y-2 mt-2">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-bold text-primary">Rent: ${p.price}/week</span>
+          <div className="flex justify-between items-center mt-2 mb-4">
+            <span className="text-lg font-medium text-pink-500">Rent: ${p.price}/week</span>
             {p.salePrice && (
-              <span className="text-lg font-bold text-green-500">Buy: ${p.salePrice}</span>
+              <span className="text-lg font-medium text-green-500">Buy: ${p.salePrice}</span>
             )}
           </div>
           <span className="text-sm text-gray-500">Stock: {p.countInStock}</span>

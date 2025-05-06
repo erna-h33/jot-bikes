@@ -42,6 +42,23 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
       providesTags: ['Products'],
+      transformResponse: (response) => {
+        return response.map((product) => ({
+          ...product,
+          vendor: product.vendor || null,
+          image: product.image?.startsWith('http')
+            ? product.image
+            : product.image?.startsWith('/uploads')
+            ? `${import.meta.env.VITE_API_URL || import.meta.env.VITE_PRODUCTION_API_URL}${
+                product.image
+              }`
+            : product.image
+            ? `https://res.cloudinary.com/${
+                import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+              }/image/upload/${product.image}`
+            : '/uploads/default.jpg',
+        }));
+      },
     }),
 
     getProductDetails: builder.query({

@@ -7,9 +7,6 @@ const AllProductsList = () => {
   const { data: products, isLoading, error } = useAllProductsQuery();
   const [deleteProduct] = useDeleteProductMutation();
 
-  // Debug log
-  console.log('Products data:', products);
-
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
@@ -53,11 +50,12 @@ const AllProductsList = () => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="h-24 w-24 object-cover rounded"
+                    className="w-full h-48 object-contain rounded-lg"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/uploads/default.jpg';
                     }}
+                    crossOrigin="anonymous"
                   />
                 </div>
                 <div className="ml-4 flex-1">
