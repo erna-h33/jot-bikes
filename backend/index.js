@@ -22,6 +22,7 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 import rentalAgreementRoutes from './routes/rentalAgreementRoutes.js';
+import transactionRoutes from './routes/transactionRoutes.js';
 
 const port = process.env.PORT || 5000;
 
@@ -68,6 +69,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/rental-agreements', rentalAgreementRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 // Test endpoint
 app.get('/api/test', (req, res) => {

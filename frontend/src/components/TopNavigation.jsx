@@ -63,7 +63,7 @@ const TopNavigation = () => {
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/shop" className="text-white hover:text-pink-400 transition-colors">
-              Rent a Bike
+              Shop
             </Link>
             <Link to="/cart" className="text-white hover:text-pink-400 transition-colors relative">
               Cart

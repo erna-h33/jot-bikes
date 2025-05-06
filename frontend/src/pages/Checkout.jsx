@@ -8,9 +8,25 @@ import StripePayment from '../components/StripePayment';
 
 const Checkout = () => {
   const navigate = useNavigate();
-
-  const { cartItems, itemsPrice, taxPrice, totalPrice } = useSelector((state) => state.cart);
+  const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
+
+  // Calculate totals
+  const subtotal = cartItems.reduce((acc, item) => {
+    if (item.isPurchase) {
+      return acc + Number(item.salePrice || 0);
+    }
+    return acc + Number(item.qty || 1) * Number(item.price || 0);
+  }, 0);
+
+  const tax = cartItems.reduce((acc, item) => {
+    if (item.isPurchase) {
+      return acc + Number(item.salePrice || 0) * 0.15;
+    }
+    return acc + Number(item.qty || 1) * Number(item.price || 0) * 0.15;
+  }, 0);
+
+  const total = subtotal + tax;
 
   // Get the booking ID from the cart item
   const bookingId = cartItems[0]?.bookingId;
@@ -54,10 +70,23 @@ const Checkout = () => {
                   />
                   <div>
                     <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-400">
-                      {item.weeks} {item.weeks === 1 ? 'week' : 'weeks'} rental
+                    {item.isPurchase ? (
+                      <p className="text-gray-400">Purchase</p>
+                    ) : (
+                      <p className="text-gray-400">
+                        {item.weeks} {item.weeks === 1 ? 'week' : 'weeks'} rental
+                      </p>
+                    )}
+                    <p
+                      className={`font-semibold ${
+                        item.isPurchase ? 'text-green-500' : 'text-pink-500'
+                      }`}
+                    >
+                      $
+                      {item.isPurchase
+                        ? Number(item.salePrice || 0).toFixed(2)
+                        : Number(item.price || 0).toFixed(2)}
                     </p>
-                    <p className="text-pink-500 font-semibold">${Number(itemsPrice).toFixed(2)}</p>
                   </div>
                 </div>
               ))}
@@ -69,23 +98,21 @@ const Checkout = () => {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-400">Subtotal</span>
-                <span className="font-semibold">${Number(itemsPrice).toFixed(2)}</span>
+                <span className="font-semibold">${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Tax</span>
-                <span className="font-semibold">${Number(taxPrice).toFixed(2)}</span>
+                <span className="font-semibold">${tax.toFixed(2)}</span>
               </div>
               <div className="border-t border-gray-700 pt-4">
                 <div className="flex justify-between">
                   <span className="text-xl font-bold">Total</span>
-                  <span className="text-xl font-bold text-pink-500">
-                    ${Number(totalPrice).toFixed(2)}
-                  </span>
+                  <span className="text-xl font-bold text-pink-500">${total.toFixed(2)}</span>
                 </div>
               </div>
 
               <div className="mt-6">
-                <StripePayment totalPrice={totalPrice} bookingId={bookingId} />
+                <StripePayment totalPrice={total} bookingId={bookingId} />
               </div>
             </div>
           </div>

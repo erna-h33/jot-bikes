@@ -24,6 +24,7 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,6 +61,7 @@ const CheckoutForm = ({ totalPrice, bookingId }) => {
           amount: totalPrice,
           currency: 'usd',
           bookingId: bookingId,
+          cartItems: cartItems,
         }),
       });
 

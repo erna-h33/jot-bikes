@@ -38,8 +38,6 @@ const Dashboard = () => {
       }
     : null;
 
-  console.log('All bookings:', bookings); // Temporary log to check bookings
-
   const isLoading = usersLoading || productsLoading || bookingsLoading || stockStatusLoading;
 
   return (

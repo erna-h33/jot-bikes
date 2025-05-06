@@ -31,10 +31,12 @@ const ProductDetails = () => {
   const [endDate, setEndDate] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [isPurchase, setIsPurchase] = useState(false);
 
   const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
 
   const { userInfo } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
 
   const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
   const [createBooking, { isLoading: bookingLoading }] = useCreateBookingMutation();
@@ -186,6 +188,37 @@ const ProductDetails = () => {
     }
   };
 
+  const handlePurchase = async (product) => {
+    try {
+      setIsPurchase(true);
+      // Add to cart with purchase flag
+      dispatch(addToCart({ ...product, isPurchase: true }));
+      navigate('/cart');
+    } catch (error) {
+      console.error('Purchase error:', error);
+      toast.error('Failed to add to cart');
+    } finally {
+      setIsPurchase(false);
+    }
+  };
+
+  // Calculate totals
+  const subtotal = cartItems.reduce((acc, item) => {
+    if (item.isPurchase) {
+      return acc + Number(item.salePrice);
+    }
+    return acc + item.qty * item.price;
+  }, 0);
+
+  const tax = cartItems.reduce((acc, item) => {
+    if (item.isPurchase) {
+      return acc + Number(item.salePrice) * 0.15;
+    }
+    return acc + item.qty * item.price * 0.15;
+  }, 0);
+
+  const total = subtotal + tax;
+
   return (
     <div className="min-h-screen bg-gray-50 text-white">
       <PageHero title="Product Details" backgroundImage="/images/productDetailsHero.webp" />
@@ -231,7 +264,14 @@ const ProductDetails = () => {
                     <Ratings value={product.rating} text={`${product.numReviews} reviews`} />
                   </div>
 
-                  <p className="text-4xl font-extrabold text-pink-500 mb-4">${product.price}</p>
+                  <div className="flex flex-col space-y-2 mb-4">
+                    <p className="text-4xl font-extrabold text-pink-500">Rent: ${product.price}</p>
+                    {product.salePrice && (
+                      <p className="text-4xl font-extrabold text-green-500">
+                        Buy: ${product.salePrice}
+                      </p>
+                    )}
+                  </div>
 
                   <p className="text-gray-300 text-lg mb-6">{product.description}</p>
 
@@ -274,172 +314,188 @@ const ProductDetails = () => {
               <div className="space-y-6">
                 {/* Book this Bike Section */}
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                  <h2 className="text-2xl font-bold mb-4">Book this bike</h2>
+                  <h2 className="text-2xl font-bold text-white mb-4">Choose Your Option</h2>
 
-                  {/* Availability Calendar */}
-                  <div className="mb-6">
-                    <AvailabilityCalendar product={product} bookings={productBookings} />
-                  </div>
-
-                  <form onSubmit={handleBooking} className="space-y-4">
-                    <div className="flex flex-col md:flex-row md:space-x-4">
-                      <div className="flex flex-col mb-2 md:mb-0 flex-1">
-                        <label htmlFor="startDate" className="text-gray-300 mb-1">
-                          Start Date
-                        </label>
-                        <input
-                          type="date"
-                          id="startDate"
-                          value={startDate}
-                          min={moment().format('YYYY-MM-DD')}
-                          onChange={(e) => setStartDate(e.target.value)}
-                          className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 [color-scheme:dark]"
-                        />
-                      </div>
-                      <div className="flex flex-col flex-1">
-                        <label htmlFor="endDate" className="text-gray-300 mb-1">
-                          End Date
-                        </label>
-                        <input
-                          type="date"
-                          id="endDate"
-                          value={endDate}
-                          min={startDate || moment().format('YYYY-MM-DD')}
-                          onChange={(e) => setEndDate(e.target.value)}
-                          className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 [color-scheme:dark]"
-                        />
-                      </div>
+                  {/* Purchase Option */}
+                  {product.salePrice && (
+                    <div className="mb-6 p-4 border border-green-500 rounded-lg">
+                      <h3 className="text-xl font-semibold text-green-500 mb-2">Purchase</h3>
+                      <p className="text-gray-300 mb-4">Buy this bike for ${product.salePrice}</p>
+                      <button
+                        onClick={() => handlePurchase(product)}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Buy Now
+                      </button>
                     </div>
+                  )}
 
-                    {product.countInStock > 0 && (
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          <label htmlFor="qty" className="text-gray-300 mr-2">
-                            Quantity:
+                  {/* Rental Option */}
+                  <div className="p-4 border border-pink-500 rounded-lg">
+                    <h3 className="text-xl font-semibold text-pink-500 mb-2">Rental</h3>
+                    <form onSubmit={handleBooking} className="space-y-4">
+                      <div className="flex flex-col md:flex-row md:space-x-4">
+                        <div className="flex flex-col mb-2 md:mb-0 flex-1">
+                          <label htmlFor="startDate" className="text-gray-300 mb-1">
+                            Start Date
                           </label>
-                          <select
-                            id="qty"
-                            value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))}
-                            className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                          >
-                            {[...Array(product.countInStock).keys()].map((x) => (
-                              <option key={x + 1} value={x + 1}>
-                                {x + 1}
-                              </option>
-                            ))}
-                          </select>
+                          <input
+                            type="date"
+                            id="startDate"
+                            value={startDate}
+                            min={moment().format('YYYY-MM-DD')}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 [color-scheme:dark]"
+                          />
                         </div>
-
-                        {product.size && (
-                          <div>
-                            <label htmlFor="size" className="text-gray-300 mr-2">
-                              Size:
-                            </label>
-                            <select
-                              id="size"
-                              value={selectedSize}
-                              onChange={(e) => setSelectedSize(e.target.value)}
-                              className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            >
-                              <option value="">Select Size</option>
-                              <option value="S">S</option>
-                              <option value="M">M</option>
-                              <option value="L">L</option>
-                              <option value="XL">XL</option>
-                            </select>
-                          </div>
-                        )}
-
-                        {product.color && (
-                          <div>
-                            <label htmlFor="color" className="text-gray-300 mr-2">
-                              Color:
-                            </label>
-                            <select
-                              id="color"
-                              value={selectedColor}
-                              onChange={(e) => setSelectedColor(e.target.value)}
-                              className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            >
-                              <option value="">Select Color</option>
-                              <option value="White">White</option>
-                              <option value="Black">Black</option>
-                              <option value="Red">Red</option>
-                            </select>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Price Breakdown */}
-                    {bookingDetails && (
-                      <div className="mt-4 p-4 bg-gray-700 rounded-lg space-y-2">
-                        <h3 className="font-semibold text-lg mb-3">Price Breakdown</h3>
-                        <div className="flex justify-between text-gray-300">
-                          <span>Duration:</span>
-                          <span>
-                            {bookingDetails.fullWeeks > 0 &&
-                              `${bookingDetails.fullWeeks} week${
-                                bookingDetails.fullWeeks > 1 ? 's' : ''
-                              }`}
-                            {bookingDetails.remainingDays > 0 &&
-                              ` ${bookingDetails.remainingDays} day${
-                                bookingDetails.remainingDays > 1 ? 's' : ''
-                              }`}
-                            {` (${bookingDetails.days} days total)`}
-                          </span>
-                        </div>
-                        {bookingDetails.fullWeeks > 0 && (
-                          <div className="flex justify-between text-gray-300">
-                            <span>Weekly rate:</span>
-                            <span>
-                              ${bookingDetails.pricePerWeek.toFixed(2)} × {bookingDetails.fullWeeks}{' '}
-                              week{bookingDetails.fullWeeks > 1 ? 's' : ''}
-                            </span>
-                          </div>
-                        )}
-                        {bookingDetails.remainingDays > 0 && (
-                          <div className="flex justify-between text-gray-300">
-                            <span>Daily rate:</span>
-                            <span>
-                              ${bookingDetails.pricePerDay.toFixed(2)} ×{' '}
-                              {bookingDetails.remainingDays} day
-                              {bookingDetails.remainingDays > 1 ? 's' : ''}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex justify-between text-gray-300">
-                          <span>Quantity:</span>
-                          <span>× {qty}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-300">
-                          <span>Subtotal:</span>
-                          <span>${bookingDetails.subtotal.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-300">
-                          <span>Tax (10%):</span>
-                          <span>${bookingDetails.tax.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between text-lg font-bold text-white pt-2 border-t border-gray-700">
-                          <span>Total:</span>
-                          <span className="text-pink-500">${bookingDetails.total.toFixed(2)}</span>
+                        <div className="flex flex-col flex-1">
+                          <label htmlFor="endDate" className="text-gray-300 mb-1">
+                            End Date
+                          </label>
+                          <input
+                            type="date"
+                            id="endDate"
+                            value={endDate}
+                            min={startDate || moment().format('YYYY-MM-DD')}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 [color-scheme:dark]"
+                          />
                         </div>
                       </div>
-                    )}
 
-                    <button
-                      type="submit"
-                      className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
-                      disabled={bookingLoading || !bookingDetails}
-                    >
-                      {bookingLoading
-                        ? 'Booking...'
-                        : bookingDetails
-                        ? `Book Now - $${Number(bookingDetails.total).toFixed(2)}`
-                        : 'Select dates to see price'}
-                    </button>
-                  </form>
+                      {product.countInStock > 0 && (
+                        <div className="flex items-center space-x-4">
+                          <div>
+                            <label htmlFor="qty" className="text-gray-300 mr-2">
+                              Quantity:
+                            </label>
+                            <select
+                              id="qty"
+                              value={qty}
+                              onChange={(e) => setQty(Number(e.target.value))}
+                              className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            >
+                              {[...Array(product.countInStock).keys()].map((x) => (
+                                <option key={x + 1} value={x + 1}>
+                                  {x + 1}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {product.size && (
+                            <div>
+                              <label htmlFor="size" className="text-gray-300 mr-2">
+                                Size:
+                              </label>
+                              <select
+                                id="size"
+                                value={selectedSize}
+                                onChange={(e) => setSelectedSize(e.target.value)}
+                                className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              >
+                                <option value="">Select Size</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                              </select>
+                            </div>
+                          )}
+
+                          {product.color && (
+                            <div>
+                              <label htmlFor="color" className="text-gray-300 mr-2">
+                                Color:
+                              </label>
+                              <select
+                                id="color"
+                                value={selectedColor}
+                                onChange={(e) => setSelectedColor(e.target.value)}
+                                className="bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              >
+                                <option value="">Select Color</option>
+                                <option value="White">White</option>
+                                <option value="Black">Black</option>
+                                <option value="Red">Red</option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Price Breakdown */}
+                      {bookingDetails && (
+                        <div className="mt-4 p-4 bg-gray-700 rounded-lg space-y-2">
+                          <h3 className="font-semibold text-lg mb-3">Price Breakdown</h3>
+                          <div className="flex justify-between text-gray-300">
+                            <span>Duration:</span>
+                            <span>
+                              {bookingDetails.fullWeeks > 0 &&
+                                `${bookingDetails.fullWeeks} week${
+                                  bookingDetails.fullWeeks > 1 ? 's' : ''
+                                }`}
+                              {bookingDetails.remainingDays > 0 &&
+                                ` ${bookingDetails.remainingDays} day${
+                                  bookingDetails.remainingDays > 1 ? 's' : ''
+                                }`}
+                              {` (${bookingDetails.days} days total)`}
+                            </span>
+                          </div>
+                          {bookingDetails.fullWeeks > 0 && (
+                            <div className="flex justify-between text-gray-300">
+                              <span>Weekly rate:</span>
+                              <span>
+                                ${bookingDetails.pricePerWeek.toFixed(2)} ×{' '}
+                                {bookingDetails.fullWeeks} week
+                                {bookingDetails.fullWeeks > 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          )}
+                          {bookingDetails.remainingDays > 0 && (
+                            <div className="flex justify-between text-gray-300">
+                              <span>Daily rate:</span>
+                              <span>
+                                ${bookingDetails.pricePerDay.toFixed(2)} ×{' '}
+                                {bookingDetails.remainingDays} day
+                                {bookingDetails.remainingDays > 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex justify-between text-gray-300">
+                            <span>Quantity:</span>
+                            <span>× {qty}</span>
+                          </div>
+                          <div className="flex justify-between text-gray-300">
+                            <span>Subtotal:</span>
+                            <span>${bookingDetails.subtotal.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-gray-300">
+                            <span>Tax (10%):</span>
+                            <span>${bookingDetails.tax.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-lg font-bold text-white pt-2 border-t border-gray-700">
+                            <span>Total:</span>
+                            <span className="text-pink-500">
+                              ${bookingDetails.total.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-lg transition-colors"
+                        disabled={bookingLoading || !bookingDetails}
+                      >
+                        {bookingLoading
+                          ? 'Booking...'
+                          : bookingDetails
+                          ? `Book Now - $${Number(bookingDetails.total).toFixed(2)}`
+                          : 'Select dates to see price'}
+                      </button>
+                    </form>
+                  </div>
                 </div>
 
                 {/* Reviews Section - Moved here */}

@@ -78,23 +78,38 @@ const Cart = () => {
                         {item.name}
                       </Link>
                       <p className="text-gray-400">{item.brand}</p>
-                      <p className="text-2xl font-bold text-pink-500 mt-2">
-                        ${Number(item.price).toFixed(2)}
-                      </p>
+                      <div className="flex flex-col space-y-1">
+                        {item.isPurchase ? (
+                          <p className="text-2xl font-bold text-green-500">
+                            Purchase Price: ${Number(item.salePrice).toFixed(2)}
+                          </p>
+                        ) : (
+                          <>
+                            <p className="text-2xl font-bold text-pink-500">
+                              Rental Price: ${Number(item.price).toFixed(2)}
+                            </p>
+                            <p className="text-gray-400">
+                              {item.weeks} {item.weeks === 1 ? 'week' : 'weeks'} rental
+                            </p>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <div className="w-24">
-                      <select
-                        className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                        value={item.qty}
-                        onChange={(e) => addToCartHandler(item, Number(e.target.value))}
-                      >
-                        {[...Array(item.countInStock).keys()].map((x) => (
-                          <option key={x + 1} value={x + 1}>
-                            {x + 1}
-                          </option>
-                        ))}
-                      </select>
+                      {!item.isPurchase && (
+                        <select
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          value={item.qty}
+                          onChange={(e) => addToCartHandler(item, Number(e.target.value))}
+                        >
+                          {[...Array(item.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </div>
 
                     <button
@@ -116,7 +131,7 @@ const Cart = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-100">Items</span>
                   <span className="font-semibold text-gray-100">
-                    {cartItems.reduce((acc, item) => acc + item.qty, 0)}
+                    {cartItems.reduce((acc, item) => acc + (item.isPurchase ? 1 : item.qty), 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -124,7 +139,12 @@ const Cart = () => {
                   <span className="font-semibold text-gray-100">
                     $
                     {Number(
-                      cartItems.reduce((acc, item) => acc + item.qty * item.price, 0)
+                      cartItems.reduce((acc, item) => {
+                        if (item.isPurchase) {
+                          return acc + Number(item.salePrice);
+                        }
+                        return acc + item.qty * item.price;
+                      }, 0)
                     ).toFixed(2)}
                   </span>
                 </div>
@@ -133,7 +153,12 @@ const Cart = () => {
                   <span className="font-semibold text-gray-100">
                     $
                     {Number(
-                      cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
+                      cartItems.reduce((acc, item) => {
+                        if (item.isPurchase) {
+                          return acc + Number(item.salePrice) * 0.15;
+                        }
+                        return acc + item.qty * item.price * 0.15;
+                      }, 0)
                     ).toFixed(2)}
                   </span>
                 </div>
@@ -143,8 +168,12 @@ const Cart = () => {
                     <span className="text-xl font-bold text-pink-500">
                       $
                       {Number(
-                        cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) +
-                          cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * 0.15
+                        cartItems.reduce((acc, item) => {
+                          if (item.isPurchase) {
+                            return acc + Number(item.salePrice) * 1.15;
+                          }
+                          return acc + item.qty * item.price * 1.15;
+                        }, 0)
                       ).toFixed(2)}
                     </span>
                   </div>
