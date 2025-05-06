@@ -45,7 +45,11 @@ const Dashboard = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5),
       }
-    : null;
+    : {
+        total: 0,
+        totalRevenue: 0,
+        recentTransactions: [],
+      };
 
   // Calculate low stock products
   const lowStockProducts = products
@@ -60,8 +64,7 @@ const Dashboard = () => {
     : [];
 
   // Separate transactions by type
-  const saleTransactions =
-    transactionStats?.recentTransactions.filter((t) => t.type === 'purchase') || [];
+  const saleTransactions = transactionStats.recentTransactions.filter((t) => t.type === 'purchase');
 
   // Calculate revenue by type
   const rentalRevenue = bookingStats?.totalRevenue || 0;
@@ -266,11 +269,13 @@ const Dashboard = () => {
                                 {transaction.items.map((item) => item.name).join(', ')}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {moment(transaction.createdAt).format('MMM D, YYYY')}
+                                {moment(transaction.createdAt).format('MMM D, YYYY h:mm A')}
                               </p>
                               <p className="text-sm text-gray-600">
                                 Customer:{' '}
-                                {transaction.user?.username || transaction.user?.name || 'Unknown'}
+                                {transaction.user?.vendorName ||
+                                  transaction.user?.username ||
+                                  'Unknown'}
                               </p>
                             </div>
                             <div className="text-right">

@@ -6,7 +6,7 @@ import Transaction from '../models/transactionModel.js';
 // @access  Private/Vendor
 const getVendorTransactions = asyncHandler(async (req, res) => {
   const transactions = await Transaction.find({ vendor: req.user._id })
-    .populate('user', 'name email')
+    .populate('user', 'username vendorName')
     .populate('items.product', 'name')
     .sort('-createdAt');
 
@@ -18,8 +18,8 @@ const getVendorTransactions = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getAdminTransactions = asyncHandler(async (req, res) => {
   const transactions = await Transaction.find({})
-    .populate('user', 'name email')
-    .populate('vendor', 'name email')
+    .populate('user', 'username vendorName')
+    .populate('vendor', 'username vendorName')
     .populate('items.product', 'name')
     .sort('-createdAt');
 
@@ -31,7 +31,7 @@ const getAdminTransactions = asyncHandler(async (req, res) => {
 // @access  Private
 const getUserTransactions = asyncHandler(async (req, res) => {
   const transactions = await Transaction.find({ user: req.user._id })
-    .populate('vendor', 'name email')
+    .populate('vendor', 'username vendorName')
     .populate('items.product', 'name')
     .sort('-createdAt');
 
@@ -43,8 +43,8 @@ const getUserTransactions = asyncHandler(async (req, res) => {
 // @access  Private
 const getTransactionById = asyncHandler(async (req, res) => {
   const transaction = await Transaction.findById(req.params.id)
-    .populate('user', 'name email')
-    .populate('vendor', 'name email')
+    .populate('user', 'username vendorName')
+    .populate('vendor', 'username vendorName')
     .populate('items.product', 'name');
 
   if (transaction) {

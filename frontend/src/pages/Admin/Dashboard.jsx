@@ -50,19 +50,22 @@ const Dashboard = () => {
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5),
       }
-    : null;
-
-  const isLoading =
-    usersLoading || productsLoading || bookingsLoading || stockStatusLoading || transactionsLoading;
+    : {
+        total: 0,
+        totalRevenue: 0,
+        recentTransactions: [],
+      };
 
   // Separate transactions by type
-  const saleTransactions =
-    transactionStats?.recentTransactions.filter((t) => t.type === 'purchase') || [];
+  const saleTransactions = transactionStats.recentTransactions.filter((t) => t.type === 'purchase');
 
   // Calculate revenue by type
   const rentalRevenue = bookingStats?.totalRevenue || 0;
   const saleRevenue = saleTransactions.reduce((sum, t) => sum + t.total, 0);
   const totalRevenue = rentalRevenue + saleRevenue;
+
+  const isLoading =
+    usersLoading || productsLoading || bookingsLoading || stockStatusLoading || transactionsLoading;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -261,16 +264,18 @@ const Dashboard = () => {
                                 {transaction.items.map((item) => item.name).join(', ')}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {moment(transaction.createdAt).format('MMM D, YYYY')}
+                                {moment(transaction.createdAt).format('MMM D, YYYY h:mm A')}
                               </p>
                               <p className="text-sm text-gray-600">
                                 Customer:{' '}
-                                {transaction.user?.username || transaction.user?.name || 'Unknown'}
+                                {transaction.user?.vendorName ||
+                                  transaction.user?.username ||
+                                  'Unknown'}
                               </p>
                               <p className="text-sm text-gray-600">
                                 Vendor:{' '}
-                                {transaction.vendor?.username ||
-                                  transaction.vendor?.name ||
+                                {transaction.vendor?.vendorName ||
+                                  transaction.vendor?.username ||
                                   'Unknown'}
                               </p>
                             </div>
