@@ -63,8 +63,15 @@ const AllProductsList = () => {
                   <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
                   <div className="mt-1 text-sm text-gray-600">
                     <p>
-                      <span className="font-medium">Price:</span> ${product.price}
+                      <span className="font-medium">Price:</span> $
+                      {Number(product.price).toFixed(2)}
                     </p>
+                    {product.salePrice && (
+                      <p>
+                        <span className="font-medium">Sale Price:</span> $
+                        {Number(product.salePrice).toFixed(2)}
+                      </p>
+                    )}
                     <p>
                       <span className="font-medium">Category:</span> {product.category?.name}
                     </p>

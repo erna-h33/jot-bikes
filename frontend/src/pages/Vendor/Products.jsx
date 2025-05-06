@@ -71,7 +71,16 @@ const Products = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.name}</h3>
-                        <p className="text-pink-600 font-bold text-lg">${product.price}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-pink-600 font-bold text-lg">
+                            ${Number(product.price).toFixed(2)}
+                          </p>
+                          {product.salePrice && (
+                            <p className="text-green-600 font-bold text-lg">
+                              Sale: ${Number(product.salePrice).toFixed(2)}
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div className="flex gap-2">
                         <Link

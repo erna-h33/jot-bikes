@@ -57,23 +57,15 @@ const VendorProductUpdate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Validate required fields
-      if (!name || !description || !brand || !price || !stock || !category) {
-        toast.error('All fields are required');
-        return;
-      }
-
       const formData = new FormData();
-      if (image) {
-        formData.append('image', image);
-      }
       formData.append('name', name);
+      formData.append('price', Number(price).toFixed(2));
+      formData.append('salePrice', salePrice ? Number(salePrice).toFixed(2) : '');
       formData.append('description', description);
-      formData.append('price', price);
-      formData.append('salePrice', salePrice);
-      formData.append('category', category);
       formData.append('brand', brand);
+      formData.append('category', category);
       formData.append('countInStock', stock);
+      if (image) formData.append('image', image);
 
       const result = await updateProduct({ id, data: formData });
 

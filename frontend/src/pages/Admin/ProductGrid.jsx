@@ -63,7 +63,16 @@ const ProductGrid = () => {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-800">{product.name}</h3>
-                    <p className="text-lg font-semibold text-pink-600 mt-1">${product.price}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-semibold text-pink-600 mt-1">
+                        ${Number(product.price).toFixed(2)}
+                      </p>
+                      {product.salePrice && (
+                        <p className="text-lg font-semibold text-green-600 mt-1">
+                          Sale: ${Number(product.salePrice).toFixed(2)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 

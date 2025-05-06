@@ -56,7 +56,7 @@ const updateVendorProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/vendor/products
 // @access  Private/Vendor
 const getVendorProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({ vendor: req.user._id });
+  const products = await Product.find({ vendor: req.user._id }).populate('category');
   res.json(products);
 });
 
@@ -65,7 +65,8 @@ const getVendorProducts = asyncHandler(async (req, res) => {
 // @access  Private/Vendor
 const createVendorProduct = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock, size, color } = req.fields;
+    const { name, description, brand, price, category, countInStock, size, color, salePrice } =
+      req.fields;
 
     // Validate required fields
     if (!name || !description || !brand || !price || !category) {
@@ -102,7 +103,8 @@ const createVendorProduct = asyncHandler(async (req, res) => {
 
     const product = new Product({
       name,
-      price: Number(price),
+      price: Number(price).toFixed(2),
+      salePrice: salePrice ? Number(salePrice).toFixed(2) : null,
       description,
       image,
       brand,
@@ -126,7 +128,8 @@ const createVendorProduct = asyncHandler(async (req, res) => {
 // @access  Private/Vendor
 const updateVendorProduct = asyncHandler(async (req, res) => {
   try {
-    const { name, description, brand, price, category, countInStock, size, color } = req.fields;
+    const { name, description, brand, price, category, countInStock, size, color, salePrice } =
+      req.fields;
 
     // Find the product
     const product = await Product.findById(req.params.id);
@@ -164,7 +167,8 @@ const updateVendorProduct = asyncHandler(async (req, res) => {
       }
 
       product.name = name;
-      product.price = Number(price);
+      product.price = Number(price).toFixed(2);
+      product.salePrice = salePrice ? Number(salePrice).toFixed(2) : null;
       product.description = description;
       product.brand = brand;
       product.category = category;

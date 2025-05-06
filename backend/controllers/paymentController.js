@@ -4,6 +4,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import Booking from '../models/bookingModel.js';
+import Transaction from '../models/transactionModel.js';
+import Product from '../models/productModel.js';
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +29,7 @@ const stripe = new Stripe(stripeKey, {
 // @route   POST /api/payment/process
 // @access  Private
 const processPayment = asyncHandler(async (req, res) => {
-  const { paymentMethodId, amount, bookingId } = req.body;
+  const { paymentMethodId, amount, bookingId, cartItems } = req.body;
 
   try {
     // Create a payment intent
@@ -56,6 +58,45 @@ const processPayment = asyncHandler(async (req, res) => {
           booking.status = 'confirmed';
           await booking.save();
         }
+      }
+
+      // Create transaction record
+      if (cartItems && cartItems.length > 0) {
+        const items = await Promise.all(
+          cartItems.map(async (item) => {
+            const product = await Product.findById(item._id);
+            return {
+              product: item._id,
+              name: item.name,
+              qty: item.isPurchase ? 1 : item.qty,
+              image: item.image,
+              price: item.isPurchase ? item.salePrice : item.price,
+              isPurchase: item.isPurchase || false,
+            };
+          })
+        );
+
+        const transaction = new Transaction({
+          user: req.user._id,
+          items,
+          vendor: cartItems[0].vendor,
+          paymentMethod: 'Stripe',
+          paymentResult: {
+            id: paymentIntent.id,
+            status: paymentIntent.status,
+            update_time: new Date().toISOString(),
+            email_address: req.user.email,
+          },
+          subtotal: amount / 1.15, // Remove tax to get subtotal
+          tax: (amount / 1.15) * 0.15, // Calculate tax
+          total: amount,
+          isPaid: true,
+          paidAt: new Date(),
+          type: cartItems[0].isPurchase ? 'purchase' : 'rental',
+          bookingId: bookingId || null,
+        });
+
+        await transaction.save();
       }
 
       res.json({
