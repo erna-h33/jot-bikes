@@ -11,6 +11,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
+// Debug: Check if environment variables are loaded
+console.log('Environment variables loaded:', {
+  MONGO_URI: process.env.MONGO_URI ? 'Present (hidden for security)' : 'Missing',
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env.PORT,
+});
+
 // Utiles
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
@@ -38,6 +45,7 @@ app.use(
       'https://jot-bikes.vercel.app',
       'https://jot-bikes-capstone.vercel.app',
       'https://jot-bikes.netlify.app',
+      'https://jot-bikes.onrender.com',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
