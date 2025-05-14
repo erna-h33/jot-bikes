@@ -191,8 +191,13 @@ const ProductDetails = () => {
   const handlePurchase = async (product) => {
     try {
       setIsPurchase(true);
-      // Add to cart with purchase flag
-      dispatch(addToCart({ ...product, isPurchase: true }));
+      // Add to cart with purchase flag and ensure vendor is included
+      const cartItem = {
+        ...product,
+        isPurchase: true,
+        vendor: product.vendor._id || product.vendor, // Handle both populated and unpopulated vendor
+      };
+      dispatch(addToCart(cartItem));
       navigate('/cart');
     } catch (error) {
       console.error('Purchase error:', error);

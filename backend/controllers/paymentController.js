@@ -76,10 +76,21 @@ const processPayment = asyncHandler(async (req, res) => {
           })
         );
 
+        // Get vendor ID from the first product if not available in cart item
+        const firstProduct = await Product.findById(cartItems[0]._id);
+        const vendorId = cartItems[0].vendor || firstProduct.vendor;
+
+        if (!vendorId) {
+          return res.status(400).json({
+            success: false,
+            message: 'Vendor information is missing',
+          });
+        }
+
         const transaction = new Transaction({
           user: req.user._id,
           items,
-          vendor: cartItems[0].vendor,
+          vendor: vendorId,
           paymentMethod: 'Stripe',
           paymentResult: {
             id: paymentIntent.id,
