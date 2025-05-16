@@ -3,6 +3,7 @@ import TopNavigation from './components/TopNavigation';
 // import Navigation from './pages/Auth/Navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Chatbot from './components/Chatbot';
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
       <main className={isAdminPage ? '' : isHomePage ? '' : 'pt-20'}>
         <Outlet />
       </main>
+      <Chatbot />
     </div>
   );
 }
